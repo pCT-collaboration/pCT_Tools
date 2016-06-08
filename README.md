@@ -1,7 +1,7 @@
 =============
 pCT_Tools
 =============
-#####This repository contains scripts and other tools useful for pCT users.  Users can get help on these scripts by entering `<script name> -h`, which will print a help dialog for the bash script including a description of the scripts purpose, usage, and execution options.    
+#####This repository contains scripts and other tools useful for pCT users.  Bash scripts are executed be entering `./<script_name>` and many have required and/or optional execution parameters/flags that control their behavior.  Users can get help on these scripts by entering `<script name> -h`, which will print a help dialog for the bash script including a description of the scripts purpose, usage, and execution parameters/flags.  
 ------------
 ##Contents
 ------------
