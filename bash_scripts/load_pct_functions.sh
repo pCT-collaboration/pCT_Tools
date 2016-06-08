@@ -513,6 +513,8 @@ function create_recon_user()
     mkdir -p ${old_rcode_path}
     cd ${old_rcode_path}
     git clone ${old_rcode_git_clone_addr}   
+	cd "$old_rcode_git_repo"
+	git checkout Baylor
 }
 function nvccgen()
 {
