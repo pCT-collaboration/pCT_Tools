@@ -67,7 +67,13 @@ rcode_folder="/Reconstruction"
 pcode_folder="/Preprocessing"
 incoming_folder="/incoming"
 staging_folder="/staging"
-
+experimental_data_folder="/Experimental"
+simulated_data_folder="/Simulated"
+GEANT4_run_data_prefix="G_"
+TOPAS_run_data_prefix="T_"
+raw_data_folder="Input"
+projection_data_folder="Output"
+   
 git_code_folder="/git"
 pct_collab_git_account="pCT-collaboration"
 Baylor_git_account="BaylorICTHUS"
@@ -101,7 +107,8 @@ tardis_rcode_path=${tardis_pct}${rcode_path}
 global_data_path=${global_pct}${pct_data_folder}
 tardis_data_path=${tardis_pct}${pct_data_folder}
 
-
+pct_data_parent="${global_data_path}${org_data_folder}"
+tardis_data_parent="${tardis_data_path}${org_data_folder}"
 ###################################################################################################
 ################### Tardis head/compute node IDs, nicknames, and IP addresses #####################
 ###################################################################################################
@@ -164,6 +171,7 @@ tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "lo
 ###################################################################################################
 function exe() { echo -e " $@" ; "$@" ; }
 #function now() { date +"%T %Z %a %m-%d-%Y"; }
+function current_date() { date +"%y-%m-%d"; }
 function dec2int() { echo "scale=0; $@/1" | bc ; }
 function charrep() { printf '%*s' "$2" | tr ' ' "$1" ; }
 function is_integer()
@@ -684,6 +692,160 @@ function can_user_write_to_file()
         done
     fi
     echo 0
+}
+function construct_pct_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)"
+    
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    #pct_dir="${NAS_pct_dir}"
+    parent_dir="${pct_data_parent}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="Output"
+    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            K) parent_dir="${pct_data_parent}";;
+            C) parent_dir="${tardis_data_parent}";;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="Input";;
+            O) data_direction="Output";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
+    #input_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}/${projection_data_folder}/${preprocessed_date}"
+    #output_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
+    echo "${input_path}"
+    echo "${output_path}"
+    if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
+    elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
+    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
+}
+function construct_recon_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)"
+    
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    #pct_dir="${NAS_pct_dir}"
+    parent_dir="${pct_data_parent}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="Output"
+    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_folder}";;
+            O) data_direction="${projection_data_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}/${recon_date}"
+    if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
+    elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
+    echo "${path}"
+    REPLY="${path}"
+    #input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
+    #output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
+    #echo "${input_path}"
+    #echo "${output_path}"
+    #if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
+    #elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
+    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
+}
+function construct_preprocessing_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)"
+    
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    #pct_dir="${NAS_pct_dir}"
+    parent_dir="${pct_data_parent}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="Output"
+    while getopts 'ho:r:n:d:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_folder}";;
+            O) data_direction="${projection_data_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}"
+    if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
+    elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
+    echo "${path}"
+    REPLY="${path}"
+    #input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${raw_data_folder}"
+    #output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
+    #echo "${input_path}"
+    #echo "${output_path}"
+    #if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
+    #elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
+    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
+}
+function parse_pct_config()
+{
+    file="pct_config.txt"
+    object=$(grep -Po "(?<=^object ).*" $file)
+    run_date=$(grep -Po "(?<=^run_date ).*" $file)
+    run_number=$(grep -Po "(?<=^run_number ).*" $file)
+    echo "${object}"
+    echo "${run_date}"
+    echo "${run_number}"
 }
 ###################################################################################################
 ############################### Establish ssh connection shortcuts ################################

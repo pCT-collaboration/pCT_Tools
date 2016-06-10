@@ -1,7 +1,9 @@
 #!/bin/bash
 usage="$(basename "$0") [-h] [-p <path>] [-i <theta>][-E][-G][-T] -- program to generate and organize soft links to preprocessed data files organized by run date
 
-where:
+Unless otherwise specified using execution parameters, this script assumes it is being executed from the directory containing the preprocessed data and that it is experimental.  
+
+Execution parameters/flags:
     -h  show this help text
     -p  path to raw data
     -E  Experimental data flag (default)
