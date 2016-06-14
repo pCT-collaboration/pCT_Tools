@@ -21,7 +21,7 @@ YYMMDD_string=''
 username=$(id -un)
 while getopts 'hvOp:f:' opt; do
     case $opt in        
-        h) echo "${usage}"; return;;
+        h) echo "${usage}"; exit 0;;
         v) verbose_string='v'; flag_string="-${verbose_string}${YYMMDD_string}";;
         d) preprocessed_date=${OPTARG};;
         p) preprocessed_path=${OPTARG};;
