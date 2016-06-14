@@ -48,13 +48,13 @@ else
     echo "ERROR: Invalid scan type ${scan_type} selected"
     exit
 fi
-data_directory="preprocessed_data"                                            # Name of directory where all projection data is stored
-output_folder="projection_data"                                            # Name of directory where all projection data is stored
-pCT_path=${data_path%%${data_directory}*}                                   # Extract pCT data path from projection data path
+data_directory="preprocessed_data"                       # Name of directory where all projection data is stored
+output_folder="projection_data"                          # Name of directory where all projection data is stored
+pCT_path=${data_path%%${data_directory}*}                # Extract pCT data path from projection data path
 echo  "Execution path:$execution_path"
-echo  "pCT data parent directory:$pCT_path"                                 # Print path to pCT data directory to terminal window
+echo  "pCT data parent directory:$pCT_path"              # Print path to pCT data directory to terminal window
 echo  "Projection data source path:$data_directory"
-echo  "Scan Type: ${scan_type}"                                             # Print scan type: Experimental or Simulated
+echo  "Scan Type: ${scan_type}"                          # Print scan type: Experimental or Simulated
 echo  "Run Date:$run_date"
 echo  "Angle interval:$angle_interval" 
 cd "${data_path}"

@@ -74,24 +74,37 @@ TOPAS_run_data_prefix="T_"
 raw_data_folder="Input"
 projection_data_folder="Output"
    
+pct_data_parent_path="${global_pct}${pct_data_folder}"
+raw_data_parent_path="${pct_data_parent_path}${raw_data_folder}"
+pre_data_parent_path="${pct_data_parent_path}${pre_data_folder}"
+proj_data_parent_path="${pct_data_parent_path}${proj_data_folder}"
+org_data_parent_path="${pct_data_parent_path}${org_data_folder}"
+incoming_parent_path="${global_pct}${incoming_folder}"
+staging_parent_path="${global_pct}${staging_folder}"
+# git commands, folder name, and account names
 git_code_folder="/git"
-pct_collab_git_account="pCT-collaboration"
-Baylor_git_account="BaylorICTHUS"
-my_git_account="BlakeSchultze"
-
-rcode_git_repo="pCT_Reconstruction"
-old_rcode_git_repo="pct-recon-copy"
-
 git_clone_addr_base="git@github.com:"
 git_clone_addr_suffix=".git"
-
+pct_collab_git_account="pCT-collaboration"
+Baylor_git_account="BaylorICTHUS"
+Blake_git_account="BlakeSchultze"
+# git repository names
+pct_tools_git_repo="pCT_Tools"
+rcode_git_repo="pCT_Reconstruction"
+old_rcode_git_repo="pct-recon-copy"
+# paths to git repositories on Kodiak
+pct_tools_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}"
+old_rcode_git_repo_path="${global_pct}${pct_code_folder}/${pct_collab_git_account}/${old_rcode_git_repo}"
+Baylor_rcode_git_repo_path="${global_pct}${pct_code_folder}/${Baylor_git_account}/${rcode_git_repo}"
+Blake_rcode_git_repo_path="${global_pct}${pct_code_folder}/${Blake_git_account}/${rcode_git_repo}"
+# git clone arguments for primary git repositories
 old_rcode_git_clone_addr="${git_clone_addr_base}${pct_collab_git_account}/${old_rcode_git_repo}${git_clone_addr_suffix}"
-rcode_git_clone_addr="${git_clone_addr_base}${Baylor_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
-my_rcode_git_clone_addr="${git_clone_addr_base}${my_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
+Baylor_rcode_git_clone_addr="${git_clone_addr_base}${Baylor_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
+Blake_rcode_git_clone_addr="${git_clone_addr_base}${Blake_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
+# filename/path to script loading pCT user functions/shortcuts
+load_pct_functions_script="load_pct_functions.sh"
+pct_functions_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts/${load_pct_functions_script}"
 
-#old_rcode_git_clone_addr="git@github.com:pCT-collaboration/pct-recon-copy.git"
-#rcode_git_clone_addr="git@github.com:BaylorICThUS/pCT_Reconstruction.git"
-#my_rcode_git_clone_addr="git@github.com:BlakeSchultze/pCT_Reconstruction.git"
 current_rcode="/"
 current_rdata="/ion/home/recon/pCT_data/reconstruction_data/CTP404_Sensitom/Simulated/G_15-05-24/0001/Output/15-05-24"
 current_lrdata="/local/pCT_data/reconstruction_data/CTP404_Sensitom/Simulated/G_15-05-24/0001/Output/15-05-24"
@@ -401,34 +414,6 @@ function txrecon2all()
     scp ${user_home}${rcode_path}${user_folder}/src ${current_user}@${tardis_compute_node4_alias}:${tardis_pct}${rcode_path}${user_folder}
     scp ${user_home}${rcode_path}${user_folder}/include ${current_user}@${tardis_compute_node4_alias}:${tardis_pct}${rcode_path}${user_folder}
 }
-function txrecon()
-{   # Process the execution parameters/arguments
-    local OPTIND
-    node_num_flag='true'
-    while getopts 'a:' opt; do
-        case $opt in
-             a) node_num_flag='false'
-             node_num=${!OPTARG};;            
-            *) error "Unexpected option ${flag}";;
-        esac
-    done   
-    
-    # Set node # to last execution argument, convert this to  name and verify a valid node # was provided
-    if ( "$node_num_flag" ); then node_num=${!#}; fi
-    node_info -n $node_num;
-    if [ $? -eq 1 ]; then return; fi
-    node_name=$REPLY 
-    node_info -a $node_num; node_alias=$REPLY
-    node_info -i $node_num; node_IP=$REPLY 
-    
-    # Print destination node and initiate reconstruction code transfer
-    color_text "${node_name}/${node_alias} (${node_IP})" 0,33 6,40 
-    target_node_statement=" ${REPLY}"
-    color_text "\nTransferring reconstruction code to:" 0,32 5,40 4
-    echo -e ${REPLY}${target_node_statement}
-    set_color 0,35 5,40 
-    scp_recon ${node_IP}  
-}
 function lsm()
 {
     local OPTIND
@@ -498,8 +483,8 @@ function add_rcode_repo()
     mkdir -p ${rcode_path}
     cd ${rcode_path}
     
-    rcode_git_clone_addr="${git_clone_addr_base}${account}/${repo}${git_clone_addr_suffix}"
-    git clone ${rcode_git_clone_addr}   
+    Baylor_rcode_git_clone_addr="${git_clone_addr_base}${account}/${repo}${git_clone_addr_suffix}"
+    git clone ${Baylor_rcode_git_clone_addr}   
 }
 function create_recon_user()
 {
@@ -521,8 +506,8 @@ function create_recon_user()
     mkdir -p ${old_rcode_path}
     cd ${old_rcode_path}
     git clone ${old_rcode_git_clone_addr}   
-	cd "$old_rcode_git_repo"
-	git checkout Baylor
+    cd "$old_rcode_git_repo"
+    git checkout Baylor
 }
 function nvccgen()
 {
@@ -775,19 +760,12 @@ function construct_recon_path()
         esac
     done    
     run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}/${recon_date}"
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
     if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
     elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
     echo "${path}"
     REPLY="${path}"
-    #input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
-    #output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
-    #echo "${input_path}"
-    #echo "${output_path}"
-    #if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
-    #elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
-    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
 }
 function construct_preprocessing_path()
 {
@@ -797,19 +775,19 @@ function construct_preprocessing_path()
         -h  show this help text
         -u  desired username (if different from login)"
     local OPTIND
-    username="$(id -un)"
-    
-    data_direction="${projection_link_folder}"
+    username="$(id -un)"  #pre_data_folder
+    data_direction="${projection_data_folder}"
     scan_type_folder="${experimental_data_folder}"
     run_date_folder_prefix=""
-    #pct_dir="${NAS_pct_dir}"
     parent_dir="${pct_data_parent}"
     preprocessed_date=$(current_date)
     recon_date=$(current_date)
     data_direction="Output"
-    while getopts 'ho:r:n:d:KCEGTIO' opt; do
+    verbose_flag='false'
+    while getopts 'hvo:r:n:d:KCEGTIO' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
             o) object=${OPTARG};;
             r) run_date=${OPTARG};;
             n) run_number=${OPTARG};;
@@ -822,20 +800,13 @@ function construct_preprocessing_path()
             *) error "Unexpected option ${flag}";;
         esac
     done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${data_direction}/${preprocessed_date}"
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${raw_data_folder}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
     if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
     elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
-    echo "${path}"
+    if [[ $verbose_flag == 'true' ]]; then echo "${path}"; fi
     REPLY="${path}"
-    #input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${raw_data_folder}"
-    #output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
-    #echo "${input_path}"
-    #echo "${output_path}"
-    #if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
-    #elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
-    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
 }
 function parse_pct_config()
 {
@@ -847,6 +818,183 @@ function parse_pct_config()
     echo "${run_date}"
     echo "${run_number}"
 }
+function read_file()
+{
+    usage="read_file [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+  path=$PWD
+  filename="readme.txt"
+while getopts 'p:f:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            p) path=${OPTARG};;
+            f) filename=${OPTARG};;          
+            *) error "Unexpected option ${flag}";;
+        esac
+    done 
+    data=$(<readme.txt)
+    IFS=$'\n'
+    set -- $data  
+    last_line="$2"
+    IFS=' '
+    set -- $last_line 
+    object="$1"
+    echo $input_data
+    IFS=$'\n'
+}
+function object_id_2_name()
+{
+    objectID=$1
+    if [[ $objectID == "Emp" ]]; then object_name="Empty"
+    elif [[ $objectID == "CalEmp" ]]; then object_name="Calibration"
+    elif [[ $objectID == "Calib" ]]; then object_name="Calibration"
+    elif [[ $objectID == "Rod" ]]; then object_name="Rod"
+    elif [[ $objectID == "Water" ]]; then object_name="Water"   
+    elif [[ $objectID == "Sensitom" ]]; then object_name="CTP404_Sensitom"
+    elif [[ $objectID == "LinePair" ]]; then object_name="CTP528_Linepair"
+    elif [[ $objectID == "LowCon" ]]; then object_name="CTP515_Low_Contrast"
+    elif [[ $objectID == "Dose16" ]]; then object_name="CTP554_Dose"
+    elif [[ $objectID == "CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
+    elif [[ $objectID == "CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
+    elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
+    elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
+    elif [[ $objectID == "Birks" ]]; then object_name="Birks"
+    else error_flag="true"
+    fi
+    if [[ $error_flag == "true" ]]
+    then
+        echo "ERROR: Unknown Phantom ID '$objectID' encountered"
+        error_flag=false;
+        break
+    fi
+}
+function parse_pct_filename()
+{
+    IFS='_'                         
+    extensionless=${1%.*}         
+    L=${#extensionless}
+    start_angle_index=`expr $L - 3`
+    angle=${extensionless:start_angle_index}
+    run_info=${extensionless%_*}                                
+    objectID="${run_info%%_*}"                            
+    run_num_tag="${run_info##${objectID}_}" 
+    IFS=$'\n'                         # Delimiter for splitting path into its directory names    
+}
+function parse_readme()
+{
+    usage="parse_readme [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
+
+    where:
+        -h  show this help text
+        -v  verbose terminal output (default: off)
+        -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
+        -p  path to data and readme text file (default: current working directory)
+        -f  filename of readme text file (default: readme.txt)
+        -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')"
+    local OPTIND
+    preprocessed_path=$PWD
+    filename="readme.txt"
+    verbose_flag='false'
+    YYMMDD_flag='true'
+    while getopts 'hvOp:f:d:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            O) YYMMDD_flag='false';;
+            p) preprocessed_path=${OPTARG};;
+            f) filename=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    readme_path="${preprocessed_path}/${filename}"
+    preprocessed_date="${preprocessed_path##*/}"
+    if [[ $YYMMDD_flag == 'false' ]]
+    then 
+        month="${preprocessed_date:0:2}"
+        day="${preprocessed_date:2:2}"
+        year="${preprocessed_date:4:4}"
+        preprocessed_date="${year:2:2}-${month}-${day}"
+    fi    
+    data=$(<"${readme_path}")
+    IFS=$'\n'
+    set -- $data  
+    last_line="$2"
+    IFS=' '
+    set -- $last_line 
+    input_data="$1"
+    scan_date=$(date --date="$(printf "%s %s %s" $4 $5 $6)" +"%y-%m-%d")
+    parse_pct_filename "$input_data"
+    object_id_2_name "$objectID"
+    if [[ $verbose_flag == 'true' ]]
+    then
+        construct_preprocessing_path -vE -r "${scan_date}" -d "${preprocessed_date}"  -o "${object_name}" -n "${run_num_tag}"    
+        color_text " $path"     0,33 6,40; cpath=$REPLY
+        color_text "${scan_date}" 0,35 6,40; cscan_date=$REPLY
+        color_text "${input_data}" 0,35 6,40; cinput_data=$REPLY
+        color_text "${objectID}" 0,35 6,40; cobjectID=$REPLY
+        color_text "${object_name}" 0,35 6,40; cobject_name=$REPLY
+        color_text "${run_num_tag}" 0,35 6,40; crun_num_tag=$REPLY
+        color_text "${angle}" 0,35 6,40; cangle=$REPLY
+        color_text "${input_path}" 0,35 6,40; cinput_path=$REPLY
+        
+        print "\npreprocessed data path = ${cpath}" 0,32 6,40 
+        print "scan date = $cscan_date" 0,32 6,40 
+        print "raw data filename = $cinput_data" 0,32 6,40 
+        print "object ID = ${cobjectID}" 0,32 6,40 
+        print "object name = $cobject_name" 0,32 6,40 
+        print "run # + subcategory tag(s) = ${crun_num_tag}" 0,32 6,40  
+        print "projection angle = ${cangle}" 0,32 6,40    
+        print "source data = $cinput_path" 0,32 6,40    
+    else
+        construct_preprocessing_path -E -r "${scan_date}" -d "${preprocessed_date}" -o "${object_name}" -n "${run_num_tag}"
+    fi  
+    color_text "${output_path}" 0,35 6,40; coutput_path=$REPLY        
+    print "\npreprocessed data destination:\n${coutput_path}" 0,32 6,40 
+    destination_path="${preprocessed_path}/${output_path}"
+}
+function stage_preprocessed_data()
+{
+    usage="stage_preprocessed_data [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
+
+        where:
+            -h  show this help text
+            -v  verbose terminal output (default: off)
+            -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
+            -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')
+            -p  path to data and readme text file (default: current working directory)
+            -f  filename of readme text file (default: readme.txt)"
+    local OPTIND
+    preprocessed_path=$PWD
+    filename="readme.txt"
+    verbose_flag='false'
+    YYMMDD_flag='true'
+    flag_string=''
+    verbose_string=''
+    YYMMDD_string=''
+    username=$(id -un)
+    while getopts 'hvOp:f:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_string='v'; flag_string="-${verbose_string}${YYMMDD_string}";;
+            d) preprocessed_date=${OPTARG};;
+            p) preprocessed_path=${OPTARG};;
+            f) filename=${OPTARG};;
+            O) YYMMDD_string='O'; flag_string="-${verbose_string}${YYMMDD_string}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    parse_readme -p "${preprocessed_path}" -f "${filename}" "${flag_string}"
+    staging_destination="${staging_parent_path}/${username}/${output_path}"
+    color_text "${staging_destination}" 0,35 6,40; cstaging_destination=$REPLY        
+    print "\nStaging directory destination:\n${cstaging_destination}" 0,32 6,40 
+    mkdir -p "${staging_destination}"
+    cp -vr ${preprocessed_path}/* ${staging_destination}
+}  
 ###################################################################################################
 ############################### Establish ssh connection shortcuts ################################
 ###################################################################################################
@@ -899,3 +1047,4 @@ alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}"            #
 alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}"        #
 
 alias gogrp="cd ${recon_group}"                                        #
+alias gotools="cd ${pct_functions_git_repo_path}"
