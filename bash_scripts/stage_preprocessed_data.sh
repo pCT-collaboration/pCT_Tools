@@ -23,7 +23,7 @@ while getopts 'hvOp:f:' opt; do
     case $opt in        
         h) echo "${usage}"; exit 0;;
         v) verbose_string='v'; flag_string="-${verbose_string}${YYMMDD_string}";;
-        d) preprocessed_date=${OPTARG};;
+        d) preprocessed_date=${OPTARG}; preprocessed_path="/Output/${preprocessed_date}";;
         p) preprocessed_path=${OPTARG};;
         f) filename=${OPTARG};;
         O) YYMMDD_string='O'; flag_string="-${verbose_string}${YYMMDD_string}";;

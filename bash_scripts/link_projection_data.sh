@@ -13,6 +13,8 @@ Execution parameters/flags:
 ######################################################################################################################################
 ########################### Determine the run date for the data in the current projection data directory #############################
 ######################################################################################################################################
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
+#./ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
 execution_path=$PWD
 error_flag="false"                                                          # Initialize error_flag indicating unknown Phantom ID 
 data_path=$PWD  
@@ -58,7 +60,6 @@ echo  "Scan Type: ${scan_type}"                          # Print scan type: Expe
 echo  "Run Date:$run_date"
 echo  "Angle interval:$angle_interval" 
 cd "${data_path}"
-exit
 ######################################################################################################################################
 ######################### Find and create/organize links to projection data files for each angle in [0,360) ##########################
 ######################################################################################################################################
@@ -81,12 +82,15 @@ for ((angle=0; angle<360; angle+=$angle_interval)); do                      # Fo
             j=3                                                             # Set integer # for next token # to access
             var="$j"                                                        # Convert integer j into string to access tokens by #
             while [ ${!var} != "$file_ending" ]; do                         # Parse while next token is not xxx.extension
-                run_num="${run_num}_${!var}"                                # Append token to run # directory name
+                tag="${!var}"
+                formatted_tag=$(subcategory_tagging ${tag})
+                run_num="${run_num}_${formatted_tag}"                       # Append token to run # directory name
                 j=$(($j+1))                                                 # Advance token #
                 var="$j"                                                    # Token # integer -> string so !var accesses next token
             done
             data_file="${objectID}_${run_num}_${file_ending}"
-            if [[ $angle == 0 ]]; then preprocessed_date=$(date +"%y-%m-%d" -r "${data_file}"); echo hello; fi                                                # Extract run date from last directory in the path            
+            #exit
+            if [[ $angle == 0 ]]; then preprocessed_date=$(date +"%y-%m-%d" -r "${data_file}"); fi                                                # Extract run date from last directory in the path            
             ##########################################################################################################################
             ################ Use objectID to lookup the appropriate object folder name corresponding to this phantom #################
             ##########################################################################################################################
@@ -124,8 +128,8 @@ for ((angle=0; angle<360; angle+=$angle_interval)); do                      # Fo
             ##########################################################################################################################
             ############## Create appropriate directories/subdirectories and create/organize the projection data links ###############
             ##########################################################################################################################
-            mkdir -p "${link_path}"                                         # Create directories/subdirectories for links
-            ln -s "${data_path}/${data_file}" "${link_path}${link_file}"    # Create the soft links to the projection data
+            #mkdir -p "${link_path}"                                         # Create directories/subdirectories for links
+            #ln -s "${data_path}/${data_file}" "${link_path}${link_file}"    # Create the soft links to the projection data
         fi
         if [[ $error_flag == "true" ]]
         then

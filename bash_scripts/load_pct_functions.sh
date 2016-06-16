@@ -103,7 +103,8 @@ Baylor_rcode_git_clone_addr="${git_clone_addr_base}${Baylor_git_account}/${rcode
 Blake_rcode_git_clone_addr="${git_clone_addr_base}${Blake_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
 # filename/path to script loading pCT user functions/shortcuts
 load_pct_functions_script="load_pct_functions.sh"
-pct_functions_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts/${load_pct_functions_script}"
+pct_functions_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts"
+pct_functions_script_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts/${load_pct_functions_script}"
 
 current_rcode="/"
 current_rdata="/ion/home/recon/pCT_data/reconstruction_data/CTP404_Sensitom/Simulated/G_15-05-24/0001/Output/15-05-24"
@@ -137,19 +138,20 @@ tardis_compute_node1_alias="ptroughton"
 tardis_compute_node2_alias="jpertwee"
 tardis_compute_node3_alias="tbaker"
 tardis_compute_node4_alias="pdavison"
-# IPs
-tardis_head_node_IP="192.168.225.1"
-tardis_compute_node1_IP="192.168.225.2"
-tardis_compute_node2_IP="192.168.225.3"
-tardis_compute_node3_IP="192.168.225.4"
-tardis_compute_node4_IP="192.168.225.5"
 # Node ID numbers
 kodiak=130
-whartnell=0
-ptroughton=1
-jpertwee=2
-tbaker=3
-pdavison=4
+whartnell=1
+ptroughton=2
+jpertwee=3
+tbaker=4
+pdavison=5
+# IPs
+tardis_IP_base="192.168.225."
+tardis_head_node_IP="${tardis_IP_base}${whartnell}"
+tardis_compute_node1_IP="${tardis_IP_base}${ptroughton}"
+tardis_compute_node2_IP="${tardis_IP_base}${jpertwee}"
+tardis_compute_node3_IP="${tardis_IP_base}${tbaker}"
+tardis_compute_node4_IP="${tardis_IP_base}${pdavison}"
 ###################################################################################################
 ########## Node specific CUDA SDK selection used in loading approprate gcc/nvcc modules ###########
 ###################################################################################################
@@ -179,6 +181,60 @@ tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "lo
 #    "load mvapich2/2.0"
 #    "load mvapich2/gcc/64/2.1"
 #    "load mvapich2/open64/64/2.1"
+
+###################################################################################################
+############################### Establish ssh connection shortcuts ################################
+###################################################################################################
+# ssh aliases
+alias gokodiak="ssh ${current_user}@kodiak.baylor.edu"
+alias gowhartnell="ssh ${current_user}@whartnell"
+alias gojpertwee="ssh ${current_user}@jpertwee"
+alias gotbaker="ssh ${current_user}@tbaker"
+alias goptroughton="ssh ${current_user}@ptroughton"
+alias gopdavison="ssh ${current_user}@pdavison"
+alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu"
+alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu"
+###################################################################################################
+########################### Define shortcut directory change commands #############################
+###################################################################################################
+alias gocode="cd ${global_pct}${pct_code_folder}"                              #
+alias gopcode="cd ${global_pcode_path}"                                       #
+alias gorcode="cd ${global_rcode_path}"                                        #
+alias gomasterpcode="cd ${global_pct}${masterpcode}"                           #
+alias gomasterrcode="cd ${global_pct}${masterrcode}"                          #
+alias gogitpcode="cd ${global_pcode_path}${user_folder}"                       #
+alias gogitrcode="cd ${global_rcode_path}${user_folder}${baylor_recon_repo}"   #
+alias godata="cd ${global_data_path}"                                          #
+alias goraw="cd ${global_data_path}${raw_data_folder}"                         #
+alias gopre="cd ${global_data_path}${pre_data_folder}"                         #
+alias goproj="cd ${global_data_path}${proj_data_folder}"                       #
+alias gorecon="cd ${global_data_path}${recon_data_folder}"                     #
+alias goorg="cd ${global_data_path}${org_data_folder}"                         #
+alias godocs="cd ${global_data_path}${pct_docs_folder}"                       #
+alias goinc="cd ${global_pct}${incoming_folder}"                               #
+alias gostage="cd ${global_pct}${staging_folder}"                              #
+alias gomyinc="cd ${global_pct}${incoming_folder}${user_folder}"               #
+alias gomystage="cd ${global_pct}${staging_folder}${user_folder}"              #
+alias gonewrecon="cd ${current_rdata}"                                         #
+
+alias golpct="cd ${tardis_pct}"                                                #
+alias golcode="cd ${tardis_pct}${pct_code_folder}"                             #
+alias golrcode="cd ${tardis_pct}${rcode_path}${user_folder}"                   #
+alias goldata="cd ${tardis_data_path}"                                         #
+alias golorg="cd ${tardis_data_path}${org_data_folder}"                        #
+alias golrecon="cd ${tardis_data_path}${recon_data_folder}"                    #
+alias golnewrecon="cd ${current_lrdata}"                                         #
+
+alias gomycode="cd ${user_home}${pct_code_folder}"                             #
+alias gomypcode="cd ${user_home}${pcode_path}${user_folder}"                   #
+alias gomyrcode="cd ${user_home}${rcode_path}${user_folder}"                   #
+alias gomydata="cd ${user_home}${pct_data_folder}"                             #
+alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}"            #
+alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}"        #
+
+alias gogrp="cd ${recon_group}"                                        #
+alias gotools="cd ${pct_functions_git_repo_path}"
+
 ###################################################################################################
 ###################################### Function definitions #######################################
 ###################################################################################################
@@ -382,6 +438,221 @@ function print_program_version()
     echo -e "${Green}$1 version:${LightCyan}"
     echo -e "$( $2 )${NoColor} $3"
 }
+function link_raw_data()
+{
+    ######################################################################################################################################
+    ############################### Determine the run date for the data in the current raw data directory ################################
+    ######################################################################################################################################
+    local OPTIND
+    execution_path=$PWD
+    error_flag="false"                                                          # Initialize error_flag indicating unknown Phantom ID 
+    data_path=$PWD  
+    angle_interval=4                                                            # Query path to current raw data directory
+    while getopts 'p:i:' opt; do
+        case $opt in
+            p) data_path=${OPTARG};;
+            i) printf -v angle_interval "%d" ${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    ######################################################################################################################################
+    ########################## Determine path to pCT data directory (parent directory of raw_data directory) #############################
+    ######################################################################################################################################
+    run_date="${data_path##*/}"                                                 # Extract run date from last directory in the path
+    data_directory="raw_data"                                                   # Name of directory where all raw data is stored
+    pCT_path=${data_path%%${data_directory}*}                                   # Extract pCT data path from raw data path
+    echo  "Execution path:$execution_path"
+    echo  "pCT data parent directory:$pCT_path"
+    echo  "Raw data path:$data_directory"
+    echo  "Run Date:$run_date"
+    echo  "Angle interval:$angle_interval" 
+    cd "${data_path}"
+    ######################################################################################################################################
+    ############################# Find and create/organize links to raw data files for each angle in [0,360) #############################
+    ######################################################################################################################################
+    for (( angle=0; angle<360; angle+=$angle_interval )); do                      # For each angle in [0,360) in steps of "angle_interval"
+        ##################################################################################################################################
+        ######################### Parse file names to determine object name and run # for the current angle xxx ##########################
+        ##################################################################################################################################
+        printf -v angle_str "%03d" $angle                                       # Convert each angle into string of the form "xxx"
+        for file in *_$angle_str.*; do                                          # For each file found for the current angle xxx
+            IFS='_'                                                             # Delimiter for splitting path into its directory names
+            set -- $file                                                        # Split file names into '_' separated tokens $1, $2, ...
+            if [[ "$file" != "*_${angle_str}.*" ]]; then                            # Make sure there are 2+ tokens so "$2" is valid token
+                ##########################################################################################################################
+                ################### Combine tokens until reaching xxx.extension to allow run #s like "Run_100_sup_..." ###################
+                ##########################################################################################################################
+                extension=${file##*${angle_str}}                                # Extract file extension from file name
+                file_ending="${angle_str}${extension}"                          # Set string used to stop parsing file names
+                objectID="${1}"                                                 # Set object name as 1st token
+                run_num="${2}"                                                  # Initialize run_num to 1st token after 1st '_'
+                j=3                                                             # Set integer # for next token # to access
+                var="$j"                                                        # Convert integer j into string to access tokens by #
+                while [[ ${!var} != $file_ending ]]; do                         # Parse while next token is not xxx.extension
+                    run_num="${run_num}_${!var}"                                # Append token to run # directory name
+                    j=$(($j+1))                                                 # Advance token #
+                    var="$j"                                                    # Token # integer -> string so !var accesses next token
+                done
+                ##########################################################################################################################
+                ################ Use objectID to lookup the appropriate object folder name corresponding to this phantom #################
+                ##########################################################################################################################
+                if [[ $objectID == "Emp" ]]; then object_name="Empty"
+                elif [[ $objectID == "CalEmp" ]]; then object_name="Calibration"
+                elif [[ $objectID == "Calib" ]]; then object_name="Calibration"
+                elif [[ $objectID == "Rod" ]]; then object_name="Rod"
+                elif [[ $objectID == "Water" ]]; then object_name="Water"   
+                elif [[ $objectID == "Sensitom" ]]; then object_name="CTP404_Sensitom"
+                elif [[ $objectID == "LinePair" ]]; then object_name="CTP528_Linepair"
+                elif [[ $objectID == "LowCon" ]]; then object_name="CTP515_Low_Contrast"
+                elif [[ $objectID == "Dose16" ]]; then object_name="CTP554_Dose"
+                elif [[ $objectID == "CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
+                elif [[ $objectID == "CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
+                elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
+                elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
+                elif [[ $objectID == "Birks" ]]; then object_name="Birks"
+                else error_flag="true"
+                fi
+                ##########################################################################################################################
+                ############################# Construct path/file names for the raw data and the links to it #############################
+                ##########################################################################################################################
+                data_file="${objectID}_${run_num}_${file_ending}"
+                link_path="${pCT_path}organized_data/${object_name}/Experimental/${run_date}/${run_num}/Input/"
+                link_file="raw_${angle_str}.bin"
+                ##########################################################################################################################
+                ################### Print scan properties/characteristics and directory/file names of data and links## ###################
+                ##########################################################################################################################
+                echo "/---------------------------------------------------------------------------------------------------------------------/"
+                echo "Raw data filename = $file"
+                echo "Object ID = ${objectID}"
+                echo "Object Name = ${object_name}"
+                echo "Run # = ${run_num}"
+                echo -e "Link destination = ${link_path}${link_file}"
+                ##########################################################################################################################
+                ################## Create appropriate directories/subdirectories and create/organize the raw data links ##################
+                ##########################################################################################################################
+                mkdir -p "${link_path}"                                            # Create directories/subdirectories for links
+                ln -sv "${data_path}/${data_file}" "${link_path}${link_file}"   # Create the soft links to the raw data
+            fi
+            if [[ $error_flag == "true" ]]
+            then
+                echo "ERROR: Unknown Phantom ID '$objectID' encountered"
+                error_flag=false;
+                break
+            fi
+        done
+    done
+}
+function link_projection_data()
+{
+    ######################################################################################################################################
+    ########################### Determine the run date for the data in the current projection data directory #############################
+    ######################################################################################################################################
+    local OPTIND
+    execution_path=$PWD
+    error_flag="false"                                                          # Initialize error_flag indicating unknown Phantom ID 
+    data_path=$PWD  
+    angle_interval=4  
+    scan_type='Experimental'                                                          # Query path to current raw data directory
+    while getopts 'p:i:t:' opt; do
+        case $opt in
+            p) data_path=${OPTARG};;
+            i) printf -v angle_interval "%d" ${OPTARG};;
+            t) scan_type=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+
+    run_date="${data_path##*/}"                                                 # Extract run date from last directory in the path
+    #scan_type_path="${data_path%/$run_date}"                                    # Remove run date from path so scan type folder is on end
+    #scan_type="${scan_type_path##*/}"                                           # Identify scan type from last folder on scan_type_path
+    data_directory="preprocessed_data"                                            # Name of directory where all projection data is stored
+    output_folder="projection_data"                                            # Name of directory where all projection data is stored
+    pCT_path=${data_path%%${data_directory}*}                                   # Extract pCT data path from projection data path
+    echo  "Execution path:$execution_path"
+    echo  "pCT data parent directory:$pCT_path"                                 # Print path to pCT data directory to terminal window
+    echo  "Raw data path:$data_directory"
+    echo  "Scan Type: ${scan_type}"                                             # Print scan type: Experimental or Simulated
+    echo  "Run Date:$run_date"
+    echo  "Angle interval:$angle_interval" 
+    cd "${data_path}"
+    ######################################################################################################################################
+    ######################### Find and create/organize links to projection data files for each angle in [0,360) ##########################
+    ######################################################################################################################################
+    for ((angle=0; angle<360; angle+=$angle_interval)); do                      # For each angle in [0,360) in steps of "angle_interval"
+        ##################################################################################################################################
+        ########################## Parse file names to determine object ID and run # for the current angle xxx ###########################
+        ##################################################################################################################################
+        printf -v angle_str "%03d" $angle                                       # Convert each angle into string of the form "xxx"
+        for file in *_$angle_str.*; do                                          # For each file found for the current angle xxx
+            IFS='_'                                                             # Delimiter for splitting path into its directory names
+            set -- $file                                                        # Split file names into '_' separated tokens $1, $2, ...
+            if [[ $file != "*_${angle_str}.*" ]]; then                          # Make sure there are 2+ tokens so "$2" is valid token
+                ##########################################################################################################################
+                ################### Combine tokens until reaching xxx.extension to allow run #s like "Run_100_sup_..." ###################
+                ##########################################################################################################################
+                extension=${file##*${angle_str}}                                # Extract file extension from file name
+                file_ending="${angle_str}${extension}"                          # Set string used to stop parsing file names
+                objectID="${1}"                                                 # Set object ID as 1st token
+                run_num="${2}"                                                  # Initialize run_num to 1st token after 1st '_'
+                j=3                                                             # Set integer # for next token # to access
+                var="$j"                                                        # Convert integer j into string to access tokens by #
+                while [ ${!var} != "$file_ending" ]; do                         # Parse while next token is not xxx.extension
+                    run_num="${run_num}_${!var}"                                # Append token to run # directory name
+                    j=$(($j+1))                                                 # Advance token #
+                    var="$j"                                                    # Token # integer -> string so !var accesses next token
+                done
+                data_file="${objectID}_${run_num}_${file_ending}"
+                echo "$data_file"
+                if [[ $angle == 0 ]]; then preprocessed_date=$(date +"%y-%m-%d" -r "${data_file}"); echo hello; fi                                                # Extract run date from last directory in the path            
+                ##########################################################################################################################
+                ################ Use objectID to lookup the appropriate object folder name corresponding to this phantom #################
+                ##########################################################################################################################
+                if [[ $objectID == "Emp" ]]; then object_name="Empty"
+                elif [[ $objectID == "CalEmp" ]]; then object_name="Calibration"
+                elif [[ $objectID == "Calib" ]]; then object_name="Calibration"
+                elif [[ $objectID == "Rod" ]]; then object_name="Rod"
+                elif [[ $objectID == "Water" ]]; then object_name="Water"   
+                elif [[ $objectID == "Sensitom" ]]; then object_name="CTP404_Sensitom"
+                elif [[ $objectID == "LinePair" ]]; then object_name="CTP528_Linepair"
+                elif [[ $objectID == "LowCon" ]]; then object_name="CTP515_Low_Contrast"
+                elif [[ $objectID == "Dose16" ]]; then object_name="CTP554_Dose"
+                elif [[ $objectID == "CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
+                elif [[ $objectID == "CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
+                elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
+                elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
+                elif [[ $objectID == "Birks" ]]; then object_name="Birks"
+                else error_flag="true"
+                fi
+                ##########################################################################################################################
+                ######################### Construct path/file names for the projection data and the links to it ##########################
+                ##########################################################################################################################
+                data_file="${objectID}_${run_num}_${file_ending}"
+                link_path="${pCT_path}organized_data/${object_name}/${scan_type}/${run_date}/${run_num}/Output/${preprocessed_date}/"
+                link_file="projection_${angle_str}.bin"
+                ##########################################################################################################################
+                ################### Print scan properties/characteristics and directory/file names of data and links## ###################
+                ##########################################################################################################################
+                echo "/------------------------------------------------------------------------------/"
+                echo "Projection data filename = $file"
+                echo "Preprocessed date = ${preprocessed_date}"
+                echo "Object Name = ${object_name}"
+                echo "Run # = ${run_num}"
+                echo -e "Link destination = ${link_path}${link_file}"
+                ##########################################################################################################################
+                ############## Create appropriate directories/subdirectories and create/organize the projection data links ###############
+                ##########################################################################################################################
+                mkdir -p "${link_path}"                                         # Create directories/subdirectories for links
+                ln -s "${data_path}/${data_file}" "${link_path}${link_file}"    # Create the soft links to the projection data
+            fi
+            if [[ $error_flag == "true" ]]
+            then
+                echo "ERROR: Unknown Phantom ID '$objectID' encountered"
+                error_flag=false;
+                break
+            fi
+        done
+    done
+}
 function scp_recon()
 {   
     echo -e ${REPLY}
@@ -573,6 +844,64 @@ function runrecon()
          fi
      fi
 }
+function txrecon()
+{   # Process the execution parameters/arguments
+    local OPTIND
+    git_code_folder="/git"
+    pct_collab_git_account="pCT-collaboration"
+    Baylor_git_account="BaylorICTHUS"
+    my_git_account="BlakeSchultze"
+
+    rcode_git_repo="pCT_Reconstruction"
+    old_rcode_git_repo="pct-recon-copy"
+
+    git_clone_addr_base="git@github.com:"
+    git_clone_addr_suffix=".git"
+    node_num_flag='true'
+    pct_code_folder="/pCT_code"
+    spct_data_folder="/pCT_data"
+    baylor_recon_repo="/pCT_Reconstruction"
+    rcode_folder="/Reconstruction"
+
+    rcode_subdirectory="${pct_code_folder}${rcode_folder}"
+    #pct_rcode_path="${global_pct_home}${}${}"
+
+    account=${Baylor_git_account}
+    group=${recon_group}
+    repo=${rcode_git_repo}
+    username="$(id -un)"
+    while getopts 'fg:a:r:u:n:H' opt; do
+        case $opt in
+             f) node_num_flag='false';;
+             g) group=${OPTARG};;
+             a) account=${OPTARG};;  
+             r) repo=${OPTARG};;  
+             u) username=${OPTARG};;  
+             n) node=${OPTARG};;  
+             H) source="";;           
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    /ion/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
+    
+    /ion/home/ionrecon/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
+    /local/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
+    # Set node # to last execution argument, convert this to  name and verify a valid node # was provided
+    if ( "$node_num_flag" ); then node_num=${!#}; fi
+    node_info -n $node_num;
+    if [ $? -eq 1 ]; then return; fi
+    node_name=$REPLY 
+    node_info -a $node_num; node_alias=$REPLY
+    node_info -i $node_num; node_IP=$REPLY 
+    
+    # Print destination node and initiate reconstruction code transfer
+    color_text "${node_name}/${node_alias} (${node_IP})" 0,33 6,40 
+    target_node_statement=" ${REPLY}"
+    color_text "\nTransferring reconstruction code to:" 0,32 5,40 4
+    echo -e ${REPLY}${target_node_statement}
+    set_color 0,35 5,40 
+    scp_recon ${node_IP}  
+}
 function load_CUDA_modules()
 {
     print "\nLoading modules required by selected version of CUDA..." 0,32
@@ -686,8 +1015,7 @@ function construct_pct_path()
         -h  show this help text
         -u  desired username (if different from login)"
     local OPTIND
-    username="$(id -un)"
-    
+    username="$(id -un)"   
     data_direction="${projection_link_folder}"
     scan_type_folder="${experimental_data_folder}"
     run_date_folder_prefix=""
@@ -995,56 +1323,41 @@ function stage_preprocessed_data()
     mkdir -p "${staging_destination}"
     cp -vr ${preprocessed_path}/* ${staging_destination}
 }  
-###################################################################################################
-############################### Establish ssh connection shortcuts ################################
-###################################################################################################
-# ssh aliases
-alias gokodiak="ssh ${current_user}@kodiak.baylor.edu"
-alias gowhartnell="ssh ${current_user}@whartnell"
-alias gojpertwee="ssh ${current_user}@jpertwee"
-alias gotbaker="ssh ${current_user}@tbaker"
-alias goptroughton="ssh ${current_user}@ptroughton"
-alias gopdavison="ssh ${current_user}@pdavison"
-alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu"
-alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu"
-current_node_alias=$(current_node_name )
-###################################################################################################
-########################### Define shortcut directory change commands #############################
-###################################################################################################
-alias gocode="cd ${global_pct}${pct_code_folder}"                              #
-alias gopcode="cd ${global_pcode_path}"                                       #
-alias gorcode="cd ${global_rcode_path}"                                        #
-alias gomasterpcode="cd ${global_pct}${masterpcode}"                           #
-alias gomasterrcode="cd ${global_pct}${masterrcode}"                          #
-alias gogitpcode="cd ${global_pcode_path}${user_folder}"                       #
-alias gogitrcode="cd ${global_rcode_path}${user_folder}${baylor_recon_repo}"   #
-alias godata="cd ${global_data_path}"                                          #
-alias goraw="cd ${global_data_path}${raw_data_folder}"                         #
-alias gopre="cd ${global_data_path}${pre_data_folder}"                         #
-alias goproj="cd ${global_data_path}${proj_data_folder}"                       #
-alias gorecon="cd ${global_data_path}${recon_data_folder}"                     #
-alias goorg="cd ${global_data_path}${org_data_folder}"                         #
-alias godocs="cd ${global_data_path}${pct_docs_folder}"                       #
-alias goinc="cd ${global_pct}${incoming_folder}"                               #
-alias gostage="cd ${global_pct}${staging_folder}"                              #
-alias gomyinc="cd ${global_pct}${incoming_folder}${user_folder}"               #
-alias gomystage="cd ${global_pct}${staging_folder}${user_folder}"              #
-alias gonewrecon="cd ${current_rdata}"                                         #
-
-alias golpct="cd ${tardis_pct}"                                                #
-alias golcode="cd ${tardis_pct}${pct_code_folder}"                             #
-alias golrcode="cd ${tardis_pct}${rcode_path}${user_folder}"                   #
-alias goldata="cd ${tardis_data_path}"                                         #
-alias golorg="cd ${tardis_data_path}${org_data_folder}"                        #
-alias golrecon="cd ${tardis_data_path}${recon_data_folder}"                    #
-alias golnewrecon="cd ${current_lrdata}"                                         #
-
-alias gomycode="cd ${user_home}${pct_code_folder}"                             #
-alias gomypcode="cd ${user_home}${pcode_path}${user_folder}"                   #
-alias gomyrcode="cd ${user_home}${rcode_path}${user_folder}"                   #
-alias gomydata="cd ${user_home}${pct_data_folder}"                             #
-alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}"            #
-alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}"        #
-
-alias gogrp="cd ${recon_group}"                                        #
-alias gotools="cd ${pct_functions_git_repo_path}"
+function subcategory_tagging()
+{
+    tag=$(tolowercase $1)
+    if [[ $tag == "0b" ]]; then tag_out="0b"
+    elif [[ $tag == "1b" ]]; then tag_out="1b"
+    elif [[ $tag == "2b" ]]; then tag_out="2b"
+    elif [[ $tag == "3b" ]]; then tag_out="3b"
+    elif [[ $tag == "4b" ]]; then tag_out="4b"   
+    elif [[ $tag == "nst4b" ]]; then tag_out="nst4b"
+    elif [[ $tag == "cen" ]]; then tag_out="Cen"
+    elif [[ $tag == "per" ]]; then tag_out="Per"
+    elif [[ $tag == "sup" ]]; then tag_out="Sup"
+    elif [[ $tag == "inf" ]]; then tag_out="Inf"
+    elif [[ $tag == "top" ]]; then tag_out="Top"
+    elif [[ $tag == "bot" ]]; then tag_out="Bot"
+    elif [[ $tag == "cont" ]]; then tag_out="Cont"
+    else error_flag="true"
+    fi
+    if [[ $error_flag == "true" ]]
+    then
+        echo "ERROR: Unknown subcategory tag '$tag' encountered"
+        error_flag=false;
+        return
+    else
+        echo $tag_out
+    fi
+}
+function tolowercase()
+{
+    #lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    echo "$1" | awk '{print tolower($0)}'
+}
+function touppercase()
+{
+    #lower=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+    echo "$1" | awk '{print toupper($0)}'
+}
+current_node_alias=$(current_node_name)
