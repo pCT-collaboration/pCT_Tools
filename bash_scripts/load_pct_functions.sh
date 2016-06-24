@@ -1,17 +1,9 @@
 #!/bin/bash
+DEFAULT_IFS=' '
 console_width=90
-dark="0;"
-light="1;"
-red="31m"
-green="32m"
-brown="33m"
-blue="34m"
-purple="35m"
-cyan="36m"
 NoColor="\033[0m"
 Black="\033[0;30m"
 DarkGray="\033[1;30m"
-
 Red="\033[0;31m"
 LightRed="\033[1;31m"
 Green="\033[0;32m"
@@ -35,7 +27,7 @@ reset_color="\033[0;37;6;40m"
 ###################################################################################################
 master="master"
 blake="schultze"
-blake_baylor="schultzeb"
+blake_Baylor="schultzeb"
 paniz="karbasip"
 ritchie="cair"
 andriy="zatserkl"
@@ -46,83 +38,160 @@ vlad="bashkirovv"
 current_user=$(id -un)
 user_folder="/${current_user}"
 recon_group="ionrecon"
+declare -a PCT_USERS
+other_pct_users=("penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout")
 ###################################################################################################
 ######################## Paths/directories common to Kodiak/Tardis nodes ##########################
 ###################################################################################################
 user_home=~
-global_pct="/ion"
-global_pct_homes="${global_pct}/home"
-tardis_pct="/local"
-workstation_pct="/home/share"
+pct_folder="/ion"
+tardis_pct_folder="/local"
+home_folder="/home"
 pct_code_folder="/pCT_code"
 pct_data_folder="/pCT_data"
+incoming_folder="/incoming"
+staging_folder="/staging"
 pct_docs_folder="/pCT_Documentation"
 raw_data_folder="/raw_data"
 pre_data_folder="/preprocessed_data"
 proj_data_folder="/projection_data"
 org_data_folder="/organized_data"
+unorg_data_folder="/unorganized_data"
+temp_input_data_folder="/temp_input_data"
+temp_output_data_folder="/temp_output_data"
+tardis_user_data_folder="/user_data"
 recon_data_folder="/reconstruction_data"
-baylor_recon_repo="/pCT_Reconstruction"
-rcode_folder="/Reconstruction"
-pcode_folder="/Preprocessing"
-incoming_folder="/incoming"
-staging_folder="/staging"
 experimental_data_folder="/Experimental"
 simulated_data_folder="/Simulated"
 GEANT4_run_data_prefix="G_"
 TOPAS_run_data_prefix="T_"
-raw_data_folder="Input"
-projection_data_folder="Output"
-   
-pct_data_parent_path="${global_pct}${pct_data_folder}"
-raw_data_parent_path="${pct_data_parent_path}${raw_data_folder}"
-pre_data_parent_path="${pct_data_parent_path}${pre_data_folder}"
-proj_data_parent_path="${pct_data_parent_path}${proj_data_folder}"
-org_data_parent_path="${pct_data_parent_path}${org_data_folder}"
-incoming_parent_path="${global_pct}${incoming_folder}"
-staging_parent_path="${global_pct}${staging_folder}"
-# git commands, folder name, and account names
+raw_data_link_folder="/Input"
+proj_data_link_folder="/Output"
 git_code_folder="/git"
+rcode_folder="/Reconstruction"
+pcode_folder="/Preprocessing"
 git_clone_addr_base="git@github.com:"
 git_clone_addr_suffix=".git"
+# pCT-collaboration account
 pct_collab_git_account="pCT-collaboration"
-Baylor_git_account="BaylorICTHUS"
-Blake_git_account="BlakeSchultze"
-# git repository names
 pct_tools_git_repo="pCT_Tools"
-rcode_git_repo="pCT_Reconstruction"
+pcode_git_repo="Preprocessing"
 old_rcode_git_repo="pct-recon-copy"
-# paths to git repositories on Kodiak
-pct_tools_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}"
-old_rcode_git_repo_path="${global_pct}${pct_code_folder}/${pct_collab_git_account}/${old_rcode_git_repo}"
-Baylor_rcode_git_repo_path="${global_pct}${pct_code_folder}/${Baylor_git_account}/${rcode_git_repo}"
-Blake_rcode_git_repo_path="${global_pct}${pct_code_folder}/${Blake_git_account}/${rcode_git_repo}"
+# BaylorICTHUS account
+Baylor_git_account="BaylorICTHUS"
+Baylor_rcode_git_repo="pCT_Reconstruction"
+# BlakeSchultze account
+Blake_git_account="BlakeSchultze"
+Blake_rcode_git_repo="pCT_Reconstruction"
+###################################################################################################
+############################ Setting Kodiak/Tardis/GitHub data paths ##############################
+###################################################################################################
+pct_home="${pct_folder}${home_folder}"
+recon_group_home="${pct_home}/${recon_group}"
+workstation_pct="${home_folder}/share"
+incoming_path="${pct_folder}${incoming_folder}"
+staging_path="${pct_folder}${staging_folder}"
+
+pct_data_path="${pct_folder}${pct_data_folder}"
+raw_data_path="${pct_data_path}${raw_data_folder}"
+pre_data_path="${pct_data_path}${pre_data_folder}"
+proj_data_path="${pct_data_path}${proj_data_folder}"
+org_data_path="${pct_data_path}${org_data_folder}"
+recon_data_path="${pct_data_path}${recon_data_folder}"
+
+tardis_data_path=${tardis_pct_folder}${pct_data_folder}
+tardis_raw_data_path="${tardis_data_path}${raw_data_folder}"
+tardis_pre_data_path="${tardis_data_path}${pre_data_folder}"
+tardis_proj_data_path="${tardis_data_path}${proj_data_folder}"
+tardis_org_data_path="${tardis_data_path}${org_data_folder}"
+tardis_recon_data_path="${tardis_data_path}${recon_data_folder}"
+tardis_unorg_data_path="${tardis_data_path}${unorg_data_folder}"
+tardis_user_data_path="${tardis_data_path}${tardis_user_data_folder}"
+tardis_temp_input_data_path="${tardis_data_path}${temp_input_data_folder}"
+tardis_temp_output_data_path="${tardis_recon_data_path}${temp_output_data_folder}"
+###################################################################################################
+############################ Setting Kodiak/Tardis/GitHub code paths ##############################
+###################################################################################################
+pct_tools_git_repo_subdir_path="${pct_collab_git_account}/${pct_tools_git_repo}"
+old_rcode_git_repo_subdir_path="${pct_collab_git_account}/${old_rcode_git_repo}"
+Baylor_rcode_git_repo_subdir_path="${Baylor_git_account}/${Baylor_rcode_git_repo}"
+Blake_rcode_git_repo_subdir_path="${Blake_git_account}/${Blake_rcode_git_repo}"
+pcode_subdir_path=${pct_code_folder}${pcode_folder}
+rcode_subdir_path=${pct_code_folder}${rcode_folder}
+git_code_subdir_path=${pct_code_folder}${git_code_folder}
+
+global_code_path="${pct_folder}${pct_code_folder}"
+global_pcode_path=${pct_folder}${pcode_subdir_path}
+global_rcode_path=${pct_folder}${rcode_subdir_path}
+global_git_code_path=${pct_folder}${git_code_subdir_path}
+global_pct_tools_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}"
+global_old_rcode_git_repo_path="${global_git_code_path}/${old_rcode_git_repo_subdir_path}"
+global_Baylor_rcode_git_repo_path="${global_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
+global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+
+tardis_code_path="${tardis_pct_folder}${pct_code_folder}"
+tardis_pcode_path=${tardis_pct_folder}${pcode_subdir_path}
+tardis_rcode_path=${tardis_pct_folder}${rcode_subdir_path}
+tardis_git_code_path=${tardis_git_clones_dir}
+tardis_git_clones_dir=${tardis_code_path}${git_code_folder}
+tardis_pct_collab_dir=${tardis_git_clones_dir}/${pct_collab_git_account}
+tardis_Baylor_dir=${tardis_git_clones_dir}/${Baylor_git_account}
+tardis_Blake_dir=${tardis_git_clones_dir}/${Blake_git_account}
+tardis_pct_tools_git_repo_path="${tardis_git_code_path}/${pct_tools_git_repo_subdir_path}"
+tardis_old_rcode_git_repo_path="${tardis_git_code_path}/${old_rcode_git_repo_subdir_path}"
+tardis_Baylor_rcode_git_repo_path="${tardis_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
+tardis_Blake_rcode_git_repo_path="${tardis_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+
 # git clone arguments for primary git repositories
-old_rcode_git_clone_addr="${git_clone_addr_base}${pct_collab_git_account}/${old_rcode_git_repo}${git_clone_addr_suffix}"
-Baylor_rcode_git_clone_addr="${git_clone_addr_base}${Baylor_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
-Blake_rcode_git_clone_addr="${git_clone_addr_base}${Blake_git_account}/${rcode_git_repo}${git_clone_addr_suffix}"
+pct_tools_git_clone_addr="${git_clone_addr_base}${pct_tools_git_repo_subdir_path}${git_clone_addr_suffix}"
+old_rcode_git_clone_addr="${git_clone_addr_base}${old_rcode_git_repo_subdir_path}${git_clone_addr_suffix}"
+Baylor_rcode_git_clone_addr="${git_clone_addr_base}/${Baylor_rcode_git_repo_subdir_path}${git_clone_addr_suffix}"
+Blake_rcode_git_clone_addr="${git_clone_addr_base}/${Blake_rcode_git_repo_subdir_path}${git_clone_addr_suffix}"
+
+    
 # filename/path to script loading pCT user functions/shortcuts
 load_pct_functions_script="load_pct_functions.sh"
-pct_functions_git_repo_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts"
-pct_functions_script_path="${global_pct}${pct_code_folder}${git_code_folder}/${pct_collab_git_account}/${pct_tools_git_repo}/bash_scripts/${load_pct_functions_script}"
+pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts"
+pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts/${load_pct_functions_script}"
+###################################################################################################
+################################ Setting current data/code paths ##################################
+###################################################################################################
+direct_git='direct'
+user_git='user'
+direct_git_flag='-g'
+current_rcode_account="${Blake_git_account}"
+current_rcode_repo="${Blake_rcode_git_repo}"
+current_rcode_branch="development"
+current_rcode_git=$direct_git
+if [[ $current_rcode_git == 'direct' ]]
+then
+    current_set_rcode_git_flag=$direct_git_flag
+else
+    current_set_rcode_git_flag=''
+fi
+   
+current_global_git_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+current_global_user_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+current_global_group_rcode_path="${global_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+current_tardis_git_rcode_path="${tardis_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+current_tardis_user_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+current_tardis_group_rcode_path="${tardis_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+current_global_rcode_path=${current_global_git_rcode_path}
+current_tardis_rcode_path=${current_tardis_git_rcode_path}
 
-current_rcode="/"
-current_rdata="/ion/home/recon/pCT_data/reconstruction_data/CTP404_Sensitom/Simulated/G_15-05-24/0001/Output/15-05-24"
-current_lrdata="/local/pCT_data/reconstruction_data/CTP404_Sensitom/Simulated/G_15-05-24/0001/Output/15-05-24"
-#-------------------------------------------------------------------------------------------------#
-#-std=c++11 -gencode arch=$rcode_compute,code=$rcode_sm
-masterpcode=${pct_code_folder}${pcode_folder}/${master}
-masterrcode=${pct_code_folder}${rcode_folder}/${master}
-pcode_path=${pct_code_folder}${pcode_folder}
-rcode_path=${pct_code_folder}${rcode_folder}
-global_pcode_path=${global_pct}${pcode_path}
-global_rcode_path=${global_pct}${rcode_path}
-tardis_rcode_path=${tardis_pct}${rcode_path}
-global_data_path=${global_pct}${pct_data_folder}
-tardis_data_path=${tardis_pct}${pct_data_folder}
+current_pcode_account="${pct_collab_git_account}"
+current_pcode_repo="${pcode_git_repo}"
 
-pct_data_parent="${global_data_path}${org_data_folder}"
-tardis_data_parent="${tardis_data_path}${org_data_folder}"
+current_phantom_ID="LMUDECT"
+current_phantom_name="LMU_DECT"
+current_scan_type="Experimental"
+current_run_date="16-04-26"
+current_run_number="0067_Top_Cont"
+current_preprocessed_date="16-06-09"
+#current_run_number="0074_Bot_Sup_Cont"
+#current_preprocessed_date="16-06-10/"
+#current_run_number="0075_Bot_Inf_Cont"
+#current_preprocessed_date="16-06-11/"
 ###################################################################################################
 ################### Tardis head/compute node IDs, nicknames, and IP addresses #####################
 ###################################################################################################
@@ -181,65 +250,16 @@ tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "lo
 #    "load mvapich2/2.0"
 #    "load mvapich2/gcc/64/2.1"
 #    "load mvapich2/open64/64/2.1"
-
 ###################################################################################################
-############################### Establish ssh connection shortcuts ################################
-###################################################################################################
-# ssh aliases
-alias gokodiak="ssh ${current_user}@kodiak.baylor.edu"
-alias gowhartnell="ssh ${current_user}@whartnell"
-alias gojpertwee="ssh ${current_user}@jpertwee"
-alias gotbaker="ssh ${current_user}@tbaker"
-alias goptroughton="ssh ${current_user}@ptroughton"
-alias gopdavison="ssh ${current_user}@pdavison"
-alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu"
-alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu"
-###################################################################################################
-########################### Define shortcut directory change commands #############################
-###################################################################################################
-alias gocode="cd ${global_pct}${pct_code_folder}"                              #
-alias gopcode="cd ${global_pcode_path}"                                       #
-alias gorcode="cd ${global_rcode_path}"                                        #
-alias gomasterpcode="cd ${global_pct}${masterpcode}"                           #
-alias gomasterrcode="cd ${global_pct}${masterrcode}"                          #
-alias gogitpcode="cd ${global_pcode_path}${user_folder}"                       #
-alias gogitrcode="cd ${global_rcode_path}${user_folder}${baylor_recon_repo}"   #
-alias godata="cd ${global_data_path}"                                          #
-alias goraw="cd ${global_data_path}${raw_data_folder}"                         #
-alias gopre="cd ${global_data_path}${pre_data_folder}"                         #
-alias goproj="cd ${global_data_path}${proj_data_folder}"                       #
-alias gorecon="cd ${global_data_path}${recon_data_folder}"                     #
-alias goorg="cd ${global_data_path}${org_data_folder}"                         #
-alias godocs="cd ${global_data_path}${pct_docs_folder}"                       #
-alias goinc="cd ${global_pct}${incoming_folder}"                               #
-alias gostage="cd ${global_pct}${staging_folder}"                              #
-alias gomyinc="cd ${global_pct}${incoming_folder}${user_folder}"               #
-alias gomystage="cd ${global_pct}${staging_folder}${user_folder}"              #
-alias gonewrecon="cd ${current_rdata}"                                         #
-
-alias golpct="cd ${tardis_pct}"                                                #
-alias golcode="cd ${tardis_pct}${pct_code_folder}"                             #
-alias golrcode="cd ${tardis_pct}${rcode_path}${user_folder}"                   #
-alias goldata="cd ${tardis_data_path}"                                         #
-alias golorg="cd ${tardis_data_path}${org_data_folder}"                        #
-alias golrecon="cd ${tardis_data_path}${recon_data_folder}"                    #
-alias golnewrecon="cd ${current_lrdata}"                                         #
-
-alias gomycode="cd ${user_home}${pct_code_folder}"                             #
-alias gomypcode="cd ${user_home}${pcode_path}${user_folder}"                   #
-alias gomyrcode="cd ${user_home}${rcode_path}${user_folder}"                   #
-alias gomydata="cd ${user_home}${pct_data_folder}"                             #
-alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}"            #
-alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}"        #
-
-alias gogrp="cd ${recon_group}"                                        #
-alias gotools="cd ${pct_functions_git_repo_path}"
-
 ###################################################################################################
 ###################################### Function definitions #######################################
 ###################################################################################################
+###################################################################################################
+#-------------------------------------------------------------------------------------------------#
+#------------------------------ General helper/utility functions ---------------------------------#
+#-------------------------------------------------------------------------------------------------#
 function exe() { echo -e " $@" ; "$@" ; }
-#function now() { date +"%T %Z %a %m-%d-%Y"; }
+function now() { date +"%T %Z (%a) %m-%d-%Y"; }
 function current_date() { date +"%y-%m-%d"; }
 function dec2int() { echo "scale=0; $@/1" | bc ; }
 function charrep() { printf '%*s' "$2" | tr ' ' "$1" ; }
@@ -248,6 +268,111 @@ function is_integer()
     re='^[0-9]+$'
     if [[ $1 =~ $re ]]; then return 0
     else return 1; fi
+}
+function tolowercase()
+{
+    #lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+    echo "$1" | awk '{print tolower($0)}'
+}
+function touppercase()
+{
+    #lower=$(echo "$1" | tr '[:lower:]' '[:upper:]')
+    echo "$1" | awk '{print toupper($0)}'
+}
+function qsort() 
+{
+   local pivot i smaller=() larger=()
+   qsort_ret=()
+   (($#==0)) && return 0
+   pivot=$1
+   shift
+   for i; do
+      if [[ $i < $pivot ]]; then
+         smaller+=( "$i" )
+      else
+         larger+=( "$i" )
+      fi
+   done
+   qsort "${smaller[@]}"
+   smaller=( "${qsort_ret[@]}" )
+   qsort "${larger[@]}"
+   larger=( "${qsort_ret[@]}" )
+   qsort_ret=( "${smaller[@]}" "$pivot" "${larger[@]}" )
+}
+function string_2_array() 
+{ 
+    string=$1
+    declare -a string_array
+    IFS=$'\n'
+    set -- $string
+    j=2   
+    i=0 
+    while [ -n "${!j}" ]; do                        
+        string_array[i]="${!j}"
+        let i++
+        j=$(($j+1)) 
+    done
+    qsort "${string_array[@]}"
+    REPLY="${qsort_ret[@]}"
+}
+function lsdirs() 
+{ 
+    dirs=$(find -maxdepth 1 -type d -printf "%f\n")
+    string_2_array $dirs    
+    dirs_array=( ${qsort_ret[@]} )
+    REPLY="${dirs_array[@]}"
+    IFS=$DEFAULT_IFS   
+}
+function lsm()
+{
+    local OPTIND
+    match_string='*'
+    depth='1'
+    filename_string=''
+    filename='lsm_results.txt'
+    verbose_string=''
+    mtime='' 
+    mtime_string=''
+    file_type='d'
+    period_identifier="days"
+    age=''
+    while getopts 'vm:d:f:o:t:sIMCAR' opt; do
+        case $opt in
+            v) verbose_string='-printf %f\n';;
+            m) match_string=${OPTARG};;
+            d) depth=${OPTARG};;
+            f) filename=${OPTARG};;
+            o) mtime=${OPTARG};;
+            t) file_type=${OPTARG};;
+            I) filename='ROI_analysis_folders.txt';;
+            M) filename='multiplot_folders.txt';;
+            C) filename='compared_folders.txt';;
+            A) filename='averaging_folders.txt';;
+            R) filename='reconstruction_folders.txt';;
+            s) filename_string="$(echo -e "-fprintf ${filename} ")%f\n";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    modified_qualifier=${mtime:0:1}   
+    if [[ $modified_qualifier == "-" ]]; then age_identifier="less than"; age=${mtime:1}
+    elif [[ $modified_qualifier == "+" ]]; then age_identifier="greater than"; age=${mtime:1}
+    else age_identifier="exactly"; age=${mtime:0}; fi
+    if [[ ${age} == 1 ]]; then period_identifier="day"; fi
+    color_text " $match_string" 0,33 6,40; matching=$REPLY
+    color_text " $depth"        0,33 6,40; maxdepth=$REPLY
+    color_text " $filename"     0,33 6,40; filenaming=$REPLY
+    color_text " ${age_identifier} ${age} ${period_identifier} ago"     0,33 6,40; ordering=$REPLY
+    print "Searching for names matching:$matching" 0,32 6,40 underline
+    print "Maximum search depth:$maxdepth"         0,32 6,40 underline
+    if [[ -n $mtime ]]; then print "Only those created/modified:${ordering}" 0,32 6,40 underline; mtime_string="$(echo -e "-mtime $mtime")"; fi
+    if [[ -n $filename_string ]]; then print "Saving results to:$filenaming" 0,32 6,40 underline; filename_string="$(echo -e "-fprintf ${filename} ")%f\n"; fi
+    num_results=$(find -maxdepth $depth -type $file_type -name "${match_string}" ${mtime_string} ${verbose_string} ${filename_string} | wc -l)
+    search_results=$(find -maxdepth $depth -type $file_type -name "${match_string}" ${mtime_string} ${verbose_string} ${filename_string})
+    color_text " $num_results"     0,33 6,40; num_matching=$REPLY
+    color_text "${search_results}" 0,35 6,40; results=$REPLY
+    print "Search matches returned:$num_matching" 0,32 6,40 underline
+    print "Search results:\n$results" 0,32 6,40 underline
+    print_newline
 }
 function current_node_name()
 {
@@ -298,6 +423,84 @@ function node_info()
     if ( "$node_name_flag" ); then target_identifier="${target_base}ID"; fi
     REPLY=${!target_identifier} 
 }
+function read_file()
+{
+    usage="read_file [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+  path=$PWD
+  filename="readme.txt"
+while getopts 'p:f:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            p) path=${OPTARG};;
+            f) filename=${OPTARG};;          
+            *) error "Unexpected option ${flag}";;
+        esac
+    done 
+    data=$(<readme.txt)
+    IFS=$'\n'
+    set -- $data  
+    last_line="$2"
+    IFS=' '
+    set -- $last_line 
+    object="$1"
+    echo $input_data
+    IFS=$'\n'
+}
+function can_user_write_to_file()
+{
+    if [[ $# -lt 2 || ! -r $2 ]]
+    then
+        echo 0
+        return
+    fi
+    local user_id=$(id -u $1 2>/dev/null)
+    local file_owner_id=$(stat -c "%u" $2)
+    if [[ ${user_id} == ${file_owner_id} ]]
+    then
+        echo 1
+        return
+    fi
+    local file_access=$(stat -c "%a" $2)
+    local file_group_access=${file_access:1:1}
+    local file_group_name=$(stat -c "%G" $2)
+    local user_group_list=$(groups $1 2>/dev/null)
+    if [[ ${file_group_access} -ge 6 ]]
+    then
+        for el in ${user_group_list-nop}
+        do
+            if [[ "${el}" == ${file_group_name} ]]
+            then
+                echo 1
+                return
+            fi
+        done
+    fi
+    echo 0
+}
+function dir_sizes() { du -sh *; }
+function subdir_sizes()
+{ 
+    local OPTIND
+    max_depth='1'
+    path="$PWD"
+    while getopts 'h:p:d:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            p) path=${OPTARG};;
+            d) max_depth=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done     
+    du --max-depth $max_depth -h ${path}/* 
+}
+#-------------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------ Console Printing/Formatting Functions ----------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 function set_color()
 {
     if [ -z "$1" ]; then
@@ -362,6 +565,21 @@ function print()
     fi;
   echo -e "${REPLY}${underline_code}${1}\e[m"
 }
+function print_key_value()
+{
+    local OPTIND
+    while getopts 'c:C:k:v:' opt; do
+        case $opt in
+            c) key_color_coding=${OPTARG};;
+            C) value_color_coding=${OPTARG};;
+            k) key=${OPTARG};;
+            v) value=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    color_text " $value" $value_color_coding; value_string=$REPLY
+    print "$key:$value_string" $key_color_coding
+}
 function print_alias()
 {
     equal_pos=$(expr index "$2" = )
@@ -411,32 +629,299 @@ function print_section_header()
     fi
     print_newline
 }
-function print_section_title()
-{
-    heading_length=${#1}
-    num_dashes=$(expr $console_width - $heading_length - 2)
-    num_front=$(expr $num_dashes / 2)
-    num_back=$(expr $num_dashes - $num_front)
-    front_string=$(charrep $separator_char $num_front)
-    back_string=$(charrep $separator_char $num_back)
-    separator_string=$(charrep "-" $console_width)
-    if [ -z "$2" ]                           # If no 2nd parameter present
-    then
-        heading_separator="$Brown$separator_string"
-        echo -e $heading_separator
-        echo -e "$Brown$front_string $1 $back_string"
-        echo -e $heading_separator
-    else
-        heading_separator="$2$separator_string"
-        echo -e $heading_separator
-        echo -e "${2}$front_string $1 $back_string"
-        echo -e $heading_separator
-  fi
-}
 function print_program_version()
 {
     echo -e "${Green}$1 version:${LightCyan}"
     echo -e "$( $2 )${NoColor} $3"
+}
+#-------------------------------------------------------------------------------------------------------------------------#
+#---------------------------------------------- Data naming/organization -------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
+function parse_pct_filename()
+{
+    IFS='_'                         
+    extensionless=${1%.*}         
+    L=${#extensionless}
+    start_angle_index=`expr $L - 3`
+    angle=${extensionless:start_angle_index}
+    run_info=${extensionless%_*}                                
+    objectID="${run_info%%_*}"                            
+    run_num_tag="${run_info##${objectID}_}" 
+    IFS=$'\n'                         # Delimiter for splitting path into its directory names    
+}
+function parse_pct_config()
+{
+    file="pct_config.txt"
+    object=$(grep -Po "(?<=^object ).*" $file)
+    run_date=$(grep -Po "(?<=^run_date ).*" $file)
+    run_number=$(grep -Po "(?<=^run_number ).*" $file)
+    echo "${object}"
+    echo "${run_date}"
+    echo "${run_number}"
+}
+function parse_readme()
+{
+    usage="parse_readme [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
+
+    where:
+        -h  show this help text
+        -v  verbose terminal output (default: off)
+        -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
+        -p  path to data and readme text file (default: current working directory)
+        -f  filename of readme text file (default: readme.txt)
+        -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')"
+    local OPTIND
+    preprocessed_path=$PWD
+    filename="readme.txt"
+    verbose_flag='false'
+    YYMMDD_flag='true'
+    while getopts 'hvOp:f:d:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            O) YYMMDD_flag='false';;
+            p) preprocessed_path=${OPTARG};;
+            f) filename=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    readme_path="${preprocessed_path}/${filename}"
+    preprocessed_date="${preprocessed_path##*/}"
+    if [[ $YYMMDD_flag == 'false' ]]
+    then 
+        month="${preprocessed_date:0:2}"
+        day="${preprocessed_date:2:2}"
+        year="${preprocessed_date:4:4}"
+        preprocessed_date="${year:2:2}-${month}-${day}"
+    fi    
+    data=$(<"${readme_path}")
+    IFS=$'\n'
+    set -- $data  
+    last_line="$2"
+    IFS=' '
+    set -- $last_line 
+    input_data="$1"
+    scan_date=$(date --date="$(printf "%s %s %s" $4 $5 $6)" +"%y-%m-%d")
+    parse_pct_filename "$input_data"
+    object_id_2_name "$objectID"
+    if [[ $verbose_flag == 'true' ]]
+    then
+        construct_preprocessing_path -vE -r "${scan_date}" -d "${preprocessed_date}"  -o "${object_name}" -n "${run_num_tag}"    
+        color_text " $path"     0,33 6,40; cpath=$REPLY
+        color_text "${scan_date}" 0,35 6,40; cscan_date=$REPLY
+        color_text "${input_data}" 0,35 6,40; cinput_data=$REPLY
+        color_text "${objectID}" 0,35 6,40; cobjectID=$REPLY
+        color_text "${object_name}" 0,35 6,40; cobject_name=$REPLY
+        color_text "${run_num_tag}" 0,35 6,40; crun_num_tag=$REPLY
+        color_text "${angle}" 0,35 6,40; cangle=$REPLY
+        color_text "${input_path}" 0,35 6,40; cinput_path=$REPLY
+        
+        print "\npreprocessed data path = ${cpath}" 0,32 6,40 
+        print "scan date = $cscan_date" 0,32 6,40 
+        print "raw data filename = $cinput_data" 0,32 6,40 
+        print "object ID = ${cobjectID}" 0,32 6,40 
+        print "object name = $cobject_name" 0,32 6,40 
+        print "run # + subcategory tag(s) = ${crun_num_tag}" 0,32 6,40  
+        print "projection angle = ${cangle}" 0,32 6,40    
+        print "source data = $cinput_path" 0,32 6,40    
+    else
+        construct_preprocessing_path -E -r "${scan_date}" -d "${preprocessed_date}" -o "${object_name}" -n "${run_num_tag}"
+    fi  
+    color_text "${output_path}" 0,35 6,40; coutput_path=$REPLY        
+    print "\npreprocessed data destination:\n${coutput_path}" 0,32 6,40 
+    destination_path="${preprocessed_path}/${output_path}"
+}
+function object_id_2_name()
+{
+    objectID=$1
+    if [[ $objectID == "Emp" ]]; then object_name="Empty"
+    elif [[ $objectID == "CalEmp" ]]; then object_name="Calibration"
+    elif [[ $objectID == "Calib" ]]; then object_name="Calibration"
+    elif [[ $objectID == "Rod" ]]; then object_name="Rod"
+    elif [[ $objectID == "Water" ]]; then object_name="Water"   
+    elif [[ $objectID == "Sensitom" ]]; then object_name="CTP404_Sensitom"
+    elif [[ $objectID == "LinePair" ]]; then object_name="CTP528_Linepair"
+    elif [[ $objectID == "LowCon" ]]; then object_name="CTP515_Low_Contrast"
+    elif [[ $objectID == "Dose16" ]]; then object_name="CTP554_Dose"
+    elif [[ $objectID == "CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
+    elif [[ $objectID == "CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
+    elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
+    elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
+    elif [[ $objectID == "Birks" ]]; then object_name="Birks"
+    else error_flag="true"
+    fi
+    if [[ $error_flag == "true" ]]
+    then
+        echo "ERROR: Unknown Phantom ID '$objectID' encountered"
+        error_flag=false;
+        break
+    fi
+}
+function subcategory_tagging()
+{
+    tag=$(tolowercase $1)
+    if [[ $tag == "0b" ]]; then tag_out="0b"
+    elif [[ $tag == "1b" ]]; then tag_out="1b"
+    elif [[ $tag == "2b" ]]; then tag_out="2b"
+    elif [[ $tag == "3b" ]]; then tag_out="3b"
+    elif [[ $tag == "4b" ]]; then tag_out="4b"   
+    elif [[ $tag == "nst4b" ]]; then tag_out="nst4b"
+    elif [[ $tag == "cen" ]]; then tag_out="Cen"
+    elif [[ $tag == "per" ]]; then tag_out="Per"
+    elif [[ $tag == "sup" ]]; then tag_out="Sup"
+    elif [[ $tag == "inf" ]]; then tag_out="Inf"
+    elif [[ $tag == "top" ]]; then tag_out="Top"
+    elif [[ $tag == "bot" ]]; then tag_out="Bot"
+    elif [[ $tag == "cont" ]]; then tag_out="Cont"
+    else error_flag="true"
+    fi
+    if [[ $error_flag == "true" ]]
+    then
+        echo "ERROR: Unknown subcategory tag '$tag' encountered"
+        error_flag=false;
+        return
+    else
+        echo $tag_out
+    fi
+}
+function construct_pct_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)"   
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    #pct_dir="${NAS_pct_dir}"
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${raw_data_link_folder:1}"
+    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            K) parent_dir="${org_data_path}";;
+            C) parent_dir="${tardis_org_data_path}";;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
+    #input_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}${proj_data_link_folder}/${preprocessed_date}"
+    #output_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
+    echo "${input_path}"
+    echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder:1}" ]]; then REPLY="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then REPLY="${output_path}"; fi
+    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
+}
+function construct_recon_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)" 
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    #pct_dir="${NAS_pct_dir}"
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
+    #echo "${IO_path}"
+    #REPLY="${IO_path}"
+}
+function construct_preprocessing_path()
+{
+   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+
+    where:
+        -h  show this help text
+        -u  desired username (if different from login)"
+    local OPTIND
+    username="$(id -un)"  #pre_data_folder
+    data_direction="${proj_data_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="proj_data_link_folder"
+    verbose_flag='false'
+    while getopts 'hvo:r:n:d:KCEGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"                                          
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+    if [[ $data_direction == "${raw_data_link_folder:1}" ]]; then path="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then path="${output_path}"; fi
+    if [[ $verbose_flag == 'true' ]]; then echo "${path}"; fi
+    REPLY="${path}"
+}
+function set_current_rdata()
+{
+    construct_recon_path -o $current_phantom_name -r $current_run_date -n $current_run_number -d $current_preprocessed_date 
+    current_rdata=${org_data_path}/${input_path}
+    current_lrdata=${tardis_org_data_path}/${input_path}
+    echo $current_rdata
+    echo $current_lrdata
 }
 function link_raw_data()
 {
@@ -516,7 +1001,7 @@ function link_raw_data()
                 ############################# Construct path/file names for the raw data and the links to it #############################
                 ##########################################################################################################################
                 data_file="${objectID}_${run_num}_${file_ending}"
-                link_path="${pCT_path}organized_data/${object_name}/Experimental/${run_date}/${run_num}/Input/"
+                link_path="${pCT_path}organized_data/${object_name}/Experimental/${run_date}/${run_num}${raw_data_link_folder}/"
                 link_file="raw_${angle_str}.bin"
                 ##########################################################################################################################
                 ################### Print scan properties/characteristics and directory/file names of data and links## ###################
@@ -627,7 +1112,7 @@ function link_projection_data()
                 ######################### Construct path/file names for the projection data and the links to it ##########################
                 ##########################################################################################################################
                 data_file="${objectID}_${run_num}_${file_ending}"
-                link_path="${pCT_path}organized_data/${object_name}/${scan_type}/${run_date}/${run_num}/Output/${preprocessed_date}/"
+                link_path="${pCT_path}organized_data/${object_name}/${scan_type}/${run_date}/${run_num}${raw_data_link_folder}/${preprocessed_date}/"
                 link_file="projection_${angle_str}.bin"
                 ##########################################################################################################################
                 ################### Print scan properties/characteristics and directory/file names of data and links## ###################
@@ -653,11 +1138,155 @@ function link_projection_data()
         done
     done
 }
+function stage_preprocessed_data()
+{
+    usage="stage_preprocessed_data [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
+
+        where:
+            -h  show this help text
+            -v  verbose terminal output (default: off)
+            -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
+            -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')
+            -p  path to data and readme text file (default: current working directory)
+            -f  filename of readme text file (default: readme.txt)"
+    local OPTIND
+    preprocessed_path=$PWD
+    filename="readme.txt"
+    verbose_flag='false'
+    YYMMDD_flag='true'
+    flag_string=''
+    verbose_string=''
+    YYMMDD_string=''
+    username=$(id -un)
+    while getopts 'hvOp:f:' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_string='v'; flag_string="-${verbose_string}${YYMMDD_string}";;
+            d) preprocessed_date=${OPTARG};;
+            p) preprocessed_path=${OPTARG};;
+            f) filename=${OPTARG};;
+            O) YYMMDD_string='O'; flag_string="-${verbose_string}${YYMMDD_string}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    parse_readme -p "${preprocessed_path}" -f "${filename}" "${flag_string}"
+    staging_destination="${staging_parent_path}/${username}/${output_path}"
+    color_text "${staging_destination}" 0,35 6,40; cstaging_destination=$REPLY        
+    print "\nStaging directory destination:\n${cstaging_destination}" 0,32 6,40 
+    mkdir -p "${staging_destination}"
+    cp -vr ${preprocessed_path}/* ${staging_destination}
+}  
+function scppct()
+{
+    usage="stage_preprocessed_data [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
+
+        where:
+            -h  show this help text
+            -v  verbose terminal output (default: off)
+            -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
+            -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')
+            -p  path to data and readme text file (default: current working directory)
+            -f  filename of readme text file (default: readme.txt)"
+    local OPTIND
+    data_path=$PWD  
+    tardis_path="${tardis_pct_folder}${PWD##${pct_folder}}"
+    username=$(id -un)
+    while getopts 'n:A' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            n) node=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            p) preprocessed_path=${OPTARG};;
+            f) filename=${OPTARG};;
+            O) YYMMDD_string='O'; flag_string="-${verbose_string}${YYMMDD_string}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done  
+    mkdir -p "${tardis_path}"
+        
+}
+function add_tardis_data()
+{
+    local OPTIND
+    parent_path="$PWD"
+    permissions='755' 
+    verbose_string='false'
+
+    current_phantom_name="LMU_DECT"
+    current_scan_type="Experimental"
+    current_run_date="16-04-26"
+    current_run_number="0067_Top_Cont"
+    current_preprocessed_date="16-06-09"
+
+    while getopts 'p:P:v' opt; do
+        case $opt in
+            p) parent_path=${OPTARG};; 
+            P) permissions=${OPTARG};;
+            v) verbose_string='true';;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    
+}
+#-------------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------ Code transferring/compilation/execution --------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
+function load_CUDA_modules()
+{
+    print "\nLoading modules required by selected version of CUDA..." 0,32
+    #---------------------------------------------------------------------------------------------#
+    if [ $HOSTNAME == "whartnell" ]
+    then
+        load_CUDA=$version_CUDA_Tardis_Headnode
+    #---------------------------------------------------------------------------------------------#
+    elif [ $HOSTNAME == "ecsn002" -o $HOSTNAME == "ecsn003" -o $HOSTNAME == "ecsn004" -o $HOSTNAME == "ecsn005" ]
+    then
+        load_CUDA=$version_CUDA_Tardis
+    #---------------------------------------------------------------------------------------------#
+    elif [ $HOSTNAME == "tardis-student1" -o $HOSTNAME == "tardis-student2" ]
+    then
+        load_CUDA=$version_CUDA_Workstation
+    else
+        load_CUDA="none"
+    fi
+    #---------------------------------------------------------------------------------------------#
+    if [ ${load_CUDA} == 55 ]
+    then
+        print_module_load "unload gcc"
+        print_module_load "load cuda55"
+          print_module_load "load cuda55/blas/5.5.22"
+          print_module_load "load cuda55/fft/5.5.22"
+          print_module_load "load cuda55/toolkit/5.5.22"
+    #---------------------------------------------------------------------------------------------#
+    elif [ ${load_CUDA} == 65 ]
+    then
+        print_module_load "unload gcc"
+        print_module_load "load gcc/4.8.4"
+        print_module_load "load cuda65/blas/6.5.14"
+        print_module_load "load cuda65/fft/6.5.14"
+        print_module_load "load cuda65/gdk/340.29"
+          print_module_load "load cuda65/nsight/6.5.14"
+          print_module_load "load cuda65/profiler/6.5.14"
+        print_module_load "load cuda65/toolkit/6.5.14"
+    #---------------------------------------------------------------------------------------------#
+    elif [ ${load_CUDA} == 70 ]
+    then
+        print_module_load "unload gcc"
+        print_module_load "load gcc/4.9.2"
+        print_module_load "load cuda70"
+          print_module_load "load cuda70/blas/7.0.28"
+          print_module_load "load cuda70/fft/7.0.28"
+          print_module_load "load cuda70/gdk/346.46"
+          print_module_load "load cuda70/nsight/7.0.28"
+        print_module_load "load cuda70/profiler/7.0.28"
+          print_module_load "load cuda70/toolkit/7.0.28"
+    fi
+}
 function scp_recon()
 {   
     echo -e ${REPLY}
-    scp ${user_home}${rcode_path}${user_folder}/src ${1}:${tardis_pct}${rcode_path}${user_folder}
-    scp ${user_home}${rcode_path}${user_folder}/include ${1}:${tardis_pct}${rcode_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/src ${1}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/include ${1}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
     print_newline
 }
 function txrecon2all()
@@ -667,126 +1296,72 @@ function txrecon2all()
     print "\nTransferring to: " 0,32;  print "${tardis_compute_node1_alias}" 0,35
     set_color ${default_text_color} ${default_background_color} 
     echo -e ${REPLY}
-    scp ${user_home}${rcode_path}${user_folder}/src ${current_user}@${tardis_compute_node1_alias}:${tardis_pct}${rcode_path}${user_folder}
-    scp ${user_home}${rcode_path}${user_folder}/include ${current_user}@${tardis_compute_node1_alias}:${tardis_pct}${rcode_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/src ${current_user}@${tardis_compute_node1_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/include ${current_user}@${tardis_compute_node1_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
     print "\nTransferring to: " 0,32;  print "${tardis_compute_node2_alias}" 0,35
     set_color ${default_text_color} ${default_background_color}
     echo -e $REPLY
-    scp ${user_home}${rcode_path}${user_folder}/src ${current_user}@${tardis_compute_node2_alias}:${tardis_pct}${rcode_path}${user_folder}
-    scp ${user_home}${rcode_path}${user_folder}/include ${current_user}@${tardis_compute_node2_alias}:${tardis_pct}${rcode_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/src ${current_user}@${tardis_compute_node2_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/include ${current_user}@${tardis_compute_node2_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
     print "\nTransferring to: " 0,32;  print "${tardis_compute_node3_alias}" 0,35
     set_color ${default_text_color} ${default_background_color}
     echo -e $REPLY
-    scp ${user_home}${rcode_path}${user_folder}/src ${current_user}@${tardis_compute_node3_alias}:${tardis_pct}${rcode_path}${user_folder}
-    scp ${user_home}${rcode_path}${user_folder}/include ${current_user}@${tardis_compute_node3_alias}:${tardis_pct}${rcode_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/src ${current_user}@${tardis_compute_node3_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/include ${current_user}@${tardis_compute_node3_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
     print "\nTransferring to: " 0,32;  print "${tardis_compute_node4_alias}" 0,35
    set_color ${default_text_color} ${default_background_color}
     echo -e $REPLY
-    scp ${user_home}${rcode_path}${user_folder}/src ${current_user}@${tardis_compute_node4_alias}:${tardis_pct}${rcode_path}${user_folder}
-    scp ${user_home}${rcode_path}${user_folder}/include ${current_user}@${tardis_compute_node4_alias}:${tardis_pct}${rcode_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/src ${current_user}@${tardis_compute_node4_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
+    scp ${user_home}${rcode_subdir_path}${user_folder}/include ${current_user}@${tardis_compute_node4_alias}:${tardis_pct_folder}${rcode_subdir_path}${user_folder}
 }
-function lsm()
-{
+function txrecon()
+{   # Process the execution parameters/arguments
     local OPTIND
-    match_string='*'
-    depth='1'
-    filename_string=''
-    filename='lsm_results.txt'
-    verbose_string=''
-    mtime='' 
-    mtime_string=''
-    file_type='d'
-    period_identifier="days"
-    age=''
-    while getopts 'vm:d:f:o:t:sIMCAR' opt; do
-        case $opt in
-            v) verbose_string='-printf %f\n';;
-            m) match_string=${OPTARG};;
-            d) depth=${OPTARG};;
-            f) filename=${OPTARG};;
-            o) mtime=${OPTARG};;
-            t) file_type=${OPTARG};;
-            I) filename='ROI_analysis_folders.txt';;
-            M) filename='multiplot_folders.txt';;
-            C) filename='compared_folders.txt';;
-            A) filename='averaging_folders.txt';;
-            R) filename='reconstruction_folders.txt';;
-            s) filename_string="$(echo -e "-fprintf ${filename} ")%f\n";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done
-    modified_qualifier=${mtime:0:1}   
-    if [[ $modified_qualifier == "-" ]]; then age_identifier="less than"; age=${mtime:1}
-    elif [[ $modified_qualifier == "+" ]]; then age_identifier="greater than"; age=${mtime:1}
-    else age_identifier="exactly"; age=${mtime:0}; fi
-    if [[ ${age} == 1 ]]; then period_identifier="day"; fi
-    color_text " $match_string" 0,33 6,40; matching=$REPLY
-    color_text " $depth"        0,33 6,40; maxdepth=$REPLY
-    color_text " $filename"     0,33 6,40; filenaming=$REPLY
-    color_text " ${age_identifier} ${age} ${period_identifier} ago"     0,33 6,40; ordering=$REPLY
-    print "Searching for names matching:$matching" 0,32 6,40 underline
-    print "Maximum search depth:$maxdepth"         0,32 6,40 underline
-    if [[ -n $mtime ]]; then print "Only those created/modified:${ordering}" 0,32 6,40 underline; mtime_string="$(echo -e "-mtime $mtime")"; fi
-    if [[ -n $filename_string ]]; then print "Saving results to:$filenaming" 0,32 6,40 underline; filename_string="$(echo -e "-fprintf ${filename} ")%f\n"; fi
-    num_results=$(find -maxdepth $depth -type $file_type -name "${match_string}" ${mtime_string} ${verbose_string} ${filename_string} | wc -l)
-    search_results=$(find -maxdepth $depth -type $file_type -name "${match_string}" ${mtime_string} ${verbose_string} ${filename_string})
-    color_text " $num_results"     0,33 6,40; num_matching=$REPLY
-    color_text "${search_results}" 0,35 6,40; results=$REPLY
-    print "Search matches returned:$num_matching" 0,32 6,40 underline
-    print "Search results:\n$results" 0,32 6,40 underline
-    print_newline
-}
-function add_rcode_repo()
-{
-    local OPTIND
+    node_num_flag='true'
+    account=${Baylor_git_account}
+    group=${recon_group}
+    repo=${Baylor_rcode_git_repo}
     username="$(id -un)"
-    account=${pct_collab_git_account}
-    repo=${old_rcode_git_repo}
-    while getopts 'u:a:r:' opt; do
+    while getopts 'fg:a:r:u:n:H' opt; do
         case $opt in
-            u) username=${OPTARG};;
-            a) account=${OPTARG};;
-            r) repo=${OPTARG};;           
+             f) node_num_flag='false';;
+             g) group=${OPTARG};;
+             a) account=${OPTARG};;  
+             r) repo=${OPTARG};;  
+             u) username=${OPTARG};;  
+             n) node=${OPTARG};;  
+             H) source="";;           
             *) error "Unexpected option ${flag}";;
         esac
-    done
-    rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${account}/"
-    mkdir -p ${rcode_path}
-    cd ${rcode_path}
+    done   
+    /ion/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
     
-    Baylor_rcode_git_clone_addr="${git_clone_addr_base}${account}/${repo}${git_clone_addr_suffix}"
-    git clone ${Baylor_rcode_git_clone_addr}   
-}
-function create_recon_user()
-{
-    usage="$(basename "$0") [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  username (if different from login)"
-    local OPTIND
-    username="$(id -un)"
-    while getopts 'u:h' opt; do
-        case $opt in
-            h) echo "${usage}"; exit;;
-            u) username=${OPTARG};;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    old_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${pct_collab_git_account}/"
-    mkdir -p ${old_rcode_path}
-    cd ${old_rcode_path}
-    git clone ${old_rcode_git_clone_addr}   
-    cd "$old_rcode_git_repo"
-    git checkout Baylor
+    /ion${home_folder}/ionrecon/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
+    /local/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
+    # Set node # to last execution argument, convert this to  name and verify a valid node # was provided
+    if ( "$node_num_flag" ); then node_num=${!#}; fi
+    node_info -n $node_num;
+    if [ $? -eq 1 ]; then return; fi
+    node_name=$REPLY 
+    node_info -a $node_num; node_alias=$REPLY
+    node_info -i $node_num; node_IP=$REPLY 
+    
+    # Print destination node and initiate reconstruction code transfer
+    color_text "${node_name}/${node_alias} (${node_IP})" 0,33 6,40 
+    target_node_statement=" ${REPLY}"
+    color_text "\nTransferring reconstruction code to:" 0,32 5,40 4
+    echo -e ${REPLY}${target_node_statement}
+    set_color 0,35 5,40 
+    scp_recon ${node_IP}  
 }
 function nvccgen()
 {
     #nvcc11="nvcc -std=c++11 -gencode arch=compute_35,code=sm_35 -O3"
+    #-std=c++11 -gencode arch=$rcode_compute,code=$rcode_sm
     print_newline
     color_prefix="\033[0;34;5;47m"
     color_postfix="\033[3;40;5;1;34m"
-    target_source_code="${tardis_pct}${rcode_path}${user_folder}${rcode_cu_file}"
+    target_source_code="${tardis_pct_folder}${rcode_subdir_path}${user_folder}${rcode_cu_file}"
     if [ -z "$1" ] # If no 2nd parameter present
     then
         print_section_header "Using compute/sm 35 (default)" 0,34 5,47
@@ -844,115 +1419,9 @@ function runrecon()
          fi
      fi
 }
-function txrecon()
-{   # Process the execution parameters/arguments
-    local OPTIND
-    git_code_folder="/git"
-    pct_collab_git_account="pCT-collaboration"
-    Baylor_git_account="BaylorICTHUS"
-    my_git_account="BlakeSchultze"
-
-    rcode_git_repo="pCT_Reconstruction"
-    old_rcode_git_repo="pct-recon-copy"
-
-    git_clone_addr_base="git@github.com:"
-    git_clone_addr_suffix=".git"
-    node_num_flag='true'
-    pct_code_folder="/pCT_code"
-    spct_data_folder="/pCT_data"
-    baylor_recon_repo="/pCT_Reconstruction"
-    rcode_folder="/Reconstruction"
-
-    rcode_subdirectory="${pct_code_folder}${rcode_folder}"
-    #pct_rcode_path="${global_pct_home}${}${}"
-
-    account=${Baylor_git_account}
-    group=${recon_group}
-    repo=${rcode_git_repo}
-    username="$(id -un)"
-    while getopts 'fg:a:r:u:n:H' opt; do
-        case $opt in
-             f) node_num_flag='false';;
-             g) group=${OPTARG};;
-             a) account=${OPTARG};;  
-             r) repo=${OPTARG};;  
-             u) username=${OPTARG};;  
-             n) node=${OPTARG};;  
-             H) source="";;           
-            *) error "Unexpected option ${flag}";;
-        esac
-    done   
-    /ion/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
-    
-    /ion/home/ionrecon/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
-    /local/pCT_code/Reconstruction/schultze/BaylorICTHUS/pCT_Reconstruction
-    # Set node # to last execution argument, convert this to  name and verify a valid node # was provided
-    if ( "$node_num_flag" ); then node_num=${!#}; fi
-    node_info -n $node_num;
-    if [ $? -eq 1 ]; then return; fi
-    node_name=$REPLY 
-    node_info -a $node_num; node_alias=$REPLY
-    node_info -i $node_num; node_IP=$REPLY 
-    
-    # Print destination node and initiate reconstruction code transfer
-    color_text "${node_name}/${node_alias} (${node_IP})" 0,33 6,40 
-    target_node_statement=" ${REPLY}"
-    color_text "\nTransferring reconstruction code to:" 0,32 5,40 4
-    echo -e ${REPLY}${target_node_statement}
-    set_color 0,35 5,40 
-    scp_recon ${node_IP}  
-}
-function load_CUDA_modules()
-{
-    print "\nLoading modules required by selected version of CUDA..." 0,32
-    #---------------------------------------------------------------------------------------------#
-    if [ $HOSTNAME == "whartnell" ]
-    then
-        load_CUDA=$version_CUDA_Tardis_Headnode
-    #---------------------------------------------------------------------------------------------#
-    elif [ $HOSTNAME == "ecsn002" -o $HOSTNAME == "ecsn003" -o $HOSTNAME == "ecsn004" -o $HOSTNAME == "ecsn005" ]
-    then
-        load_CUDA=$version_CUDA_Tardis
-    #---------------------------------------------------------------------------------------------#
-    elif [ $HOSTNAME == "tardis-student1" -o $HOSTNAME == "tardis-student2" ]
-    then
-        load_CUDA=$version_CUDA_Workstation
-    else
-        load_CUDA="none"
-    fi
-    #---------------------------------------------------------------------------------------------#
-    if [ ${load_CUDA} == 55 ]
-    then
-        print_module_load "unload gcc"
-        print_module_load "load cuda55"
-          print_module_load "load cuda55/blas/5.5.22"
-          print_module_load "load cuda55/fft/5.5.22"
-          print_module_load "load cuda55/toolkit/5.5.22"
-    #---------------------------------------------------------------------------------------------#
-    elif [ ${load_CUDA} == 65 ]
-    then
-        print_module_load "unload gcc"
-        print_module_load "load gcc/4.8.4"
-        print_module_load "load cuda65/blas/6.5.14"
-        print_module_load "load cuda65/fft/6.5.14"
-        print_module_load "load cuda65/gdk/340.29"
-          print_module_load "load cuda65/nsight/6.5.14"
-          print_module_load "load cuda65/profiler/6.5.14"
-        print_module_load "load cuda65/toolkit/6.5.14"
-    #---------------------------------------------------------------------------------------------#
-    elif [ ${load_CUDA} == 70 ]
-    then
-        print_module_load "unload gcc"
-        print_module_load "load gcc/4.9.2"
-        print_module_load "load cuda70"
-          print_module_load "load cuda70/blas/7.0.28"
-          print_module_load "load cuda70/fft/7.0.28"
-          print_module_load "load cuda70/gdk/346.46"
-          print_module_load "load cuda70/nsight/7.0.28"
-        print_module_load "load cuda70/profiler/7.0.28"
-          print_module_load "load cuda70/toolkit/7.0.28"
-    fi
-}
+#-------------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------------------- Git  ------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 function find_git_branch()
 {
   # Based on: http://stackoverflow.com/a/13003854/170413
@@ -966,7 +1435,6 @@ function find_git_branch()
     git_branch=""
   fi
 }
-
 function find_git_dirty()
 {
   local status=$(git status --porcelain 2> /dev/null)
@@ -976,388 +1444,228 @@ function find_git_dirty()
     git_dirty=''
   fi
 }
-function can_user_write_to_file()
+function add_rcode_repo()
 {
-    if [[ $# -lt 2 || ! -r $2 ]]
-    then
-        echo 0
-        return
-    fi
-    local user_id=$(id -u $1 2>/dev/null)
-    local file_owner_id=$(stat -c "%u" $2)
-    if [[ ${user_id} == ${file_owner_id} ]]
-    then
-        echo 1
-        return
-    fi
-    local file_access=$(stat -c "%a" $2)
-    local file_group_access=${file_access:1:1}
-    local file_group_name=$(stat -c "%G" $2)
-    local user_group_list=$(groups $1 2>/dev/null)
-    if [[ ${file_group_access} -ge 6 ]]
-    then
-        for el in ${user_group_list-nop}
-        do
-            if [[ "${el}" == ${file_group_name} ]]
-            then
-                echo 1
-                return
-            fi
-        done
-    fi
-    echo 0
-}
-function construct_pct_path()
-{
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
-    local OPTIND
-    username="$(id -un)"   
-    data_direction="${projection_link_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    #pct_dir="${NAS_pct_dir}"
-    parent_dir="${pct_data_parent}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="Output"
-    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            D) recon_date=${OPTARG};;
-            K) parent_dir="${pct_data_parent}";;
-            C) parent_dir="${tardis_data_parent}";;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="Input";;
-            O) data_direction="Output";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
-    #input_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}/${projection_data_folder}/${preprocessed_date}"
-    #output_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
-    echo "${input_path}"
-    echo "${output_path}"
-    if [[ $data_direction == "Input" ]]; then REPLY="${input_path}"
-    elif [[ $data_direction == "Output" ]]; then REPLY="${output_path}"; fi
-    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
-}
-function construct_recon_path()
-{
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
     local OPTIND
     username="$(id -un)"
+    account=${pct_collab_git_account}
+    repo=${old_rcode_git_repo}
+    while getopts 'u:a:r:' opt; do
+        case $opt in
+            u) username=${OPTARG};;
+            a) account=${OPTARG};;
+            r) repo=${OPTARG};;           
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    adding_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${account}/"
+    echo $adding_rcode_path
+    #mkdir -p ${adding_rcode_path}
+    #cd ${adding_rcode_path}
     
-    data_direction="${projection_link_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    #pct_dir="${NAS_pct_dir}"
-    parent_dir="${pct_data_parent}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="Output"
-    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            D) recon_date=${OPTARG};;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="${raw_data_folder}";;
-            O) data_direction="${projection_data_folder}";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}/${recon_date}"
-    if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
-    elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
-    echo "${path}"
-    REPLY="${path}"
+    #git clone ${Baylor_rcode_git_clone_addr}   
 }
-function construct_preprocessing_path()
+function create_recon_user()
 {
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+    usage="$(basename "$0") [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
 
     where:
         -h  show this help text
-        -u  desired username (if different from login)"
+        -u  username (if different from login)"
     local OPTIND
-    username="$(id -un)"  #pre_data_folder
-    data_direction="${projection_data_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    parent_dir="${pct_data_parent}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="Output"
-    verbose_flag='false'
-    while getopts 'hvo:r:n:d:KCEGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            v) verbose_flag='true';;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="${raw_data_folder}";;
-            O) data_direction="${projection_data_folder}";;
+    username="$(id -un)"
+    while getopts 'u:h' opt; do
+        case $opt in
+            h) echo "${usage}"; exit;;
+            u) username=${OPTARG};;
             *) error "Unexpected option ${flag}";;
         esac
     done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"                                          
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${raw_data_folder}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}/${projection_data_folder}/${preprocessed_date}"
-    if [[ $data_direction == "${raw_data_folder}" ]]; then path="${input_path}"
-    elif [[ $data_direction == "${projection_data_folder}" ]]; then path="${output_path}"; fi
-    if [[ $verbose_flag == 'true' ]]; then echo "${path}"; fi
-    REPLY="${path}"
+    old_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${pct_collab_git_account}/"
+    mkdir -p ${old_rcode_path}
+    cd ${old_rcode_path}
+    git clone ${old_rcode_git_clone_addr}   
+    cd "$old_rcode_git_repo"
+    git checkout Baylor
 }
-function parse_pct_config()
+function set_rcode()
 {
-    file="pct_config.txt"
-    object=$(grep -Po "(?<=^object ).*" $file)
-    run_date=$(grep -Po "(?<=^run_date ).*" $file)
-    run_number=$(grep -Po "(?<=^run_number ).*" $file)
-    echo "${object}"
-    echo "${run_date}"
-    echo "${run_number}"
-}
-function read_file()
-{
-    usage="read_file [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
     local OPTIND
-  path=$PWD
-  filename="readme.txt"
-while getopts 'p:f:' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            p) path=${OPTARG};;
-            f) filename=${OPTARG};;          
+    username="$(id -un)"
+    account=${pct_collab_git_account}
+    repo=${old_rcode_git_repo}
+    git_direct='false' 
+    #checkout=''
+    while getopts 'u:a:r:c:Gg' opt; do
+        case $opt in
+            u) username=${OPTARG};;
+            a) account=${OPTARG};;
+            r) repo=${OPTARG};;           
+            c) checkout=${OPTARG};;           
+            G) username=${recon_group};;  
+            g) git_direct='true';;               
             *) error "Unexpected option ${flag}";;
         esac
+    done
+    if [[ $git_direct == 'true' ]]
+    then
+        setting_tardis_rcode_path="${tardis_git_code_path}/${account}/${repo}"
+        setting_global_rcode_path="${global_git_code_path}/${account}/${repo}"
+    else
+        setting_tardis_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${account}/${repo}"
+        setting_global_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${account}/${repo}"   
+    fi
+    if [ $HOSTNAME == "kodiak" -o $HOSTNAME == "n130" ]
+    then
+        cd ${setting_global_rcode_path}
+    else
+        cd ${setting_tardis_rcode_path}
+    fi
+ if [[ -n $checkout ]]
+    then
+        git checkout $checkout
+    fi
+    
+}    
+function tardis_default_cloning()
+{
+    mkdir -p ${tardis_git_clones_dir}
+    mkdir -p ${tardis_pct_collab_dir}
+    mkdir -p ${tardis_Baylor_dir}
+    mkdir -p ${tardis_Blake_dir}
+    
+    cd ${tardis_pct_collab_dir}
+    git clone ${old_rcode_git_clone_addr}
+    git clone ${pct_tools_git_clone_addr}
+    cd ${tardis_Baylor_dir}
+    git clone ${Baylor_rcode_git_clone_addr}
+    cd ${tardis_Blake_dir}
+    git clone ${Blake_rcode_git_clone_addr}
+}
+#-------------------------------------------------------------------------------------------------------------------------#
+#------------------------------------------------ pCT user management  ---------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
+function pctusers()
+{
+    users=$(find /ion/home -maxdepth 1 -type d -printf "%f\n")
+    declare -a pct_users
+    declare -a sorting_pct_users
+    IFS=$'\n'
+    set -- $users
+    j=2   
+    i=0 
+    while [ -n "${!j}" ]; do                        
+        pct_users[i]="${!j}"
+        let i++
+        j=$(($j+1)) 
+    done
+    sorting_pct_users=( ${pct_users[@]} ${other_pct_users[@]} )
+    qsort "${sorting_pct_users[@]}"
+    PCT_USERS="${qsort_ret[@]}"
+    IFS=$DEFAULT_IFS
+    #declare -p PCT_USERS
+}
+function print_users()
+{
+    print "pCT Users:" 0,32 6,40 underline 
+    for i in ${PCT_USERS[@]}
+    do
+        print $i 0,35 6,40
+    done   
+}
+function login_tasks()
+{
+    print_info "Login Home" "${login_dir}"
+    pctusers
+    print_info "Current git Access" "${current_rcode_git}"
+    print_info "Current git Account" "${current_rcode_account}"
+    print_info "Current git Repository" "${current_rcode_repo}"
+    print_info "Current git Branch" "${current_rcode_branch}"
+    set_rcode -a "$current_rcode_account" -r "$current_rcode_repo" -c "$current_rcode_branch" $current_set_rcode_git_flag
+    color_text "[$(now)]" 0,33 5,49; now_string=$REPLY
+    color_text "$PWD" 0,35 5,49; pwd_string=$REPLY
+    color_text "${git_branch}${git_dirty}" 0,34 5,49; git_string=$REPLY
+    color_text "[${current_user}.${HOSTNAME}/$current_node_alias]" 0,36 5,49; current_user_string=$REPLY
+    print "$now_string $pwd_string $git_string" 0,35 6,49
+    print "$current_user_string" 0,36 5,49
+    print_result "$(ls -a)"
+}
+function create_user_dirs()
+{
+    local OPTIND
+    path="$PWD"
+    permissions='777'
+    while getopts 'p:P:' opt; do
+        case $opt in
+            p) path=${OPTARG};; 
+            P) permissions=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    for i in ${PCT_USERS[@]}
+     do
+        mkdir -p "${path}/$i"
+        chmod $permissions "$i"
+     done 
+}
+function create_tardis_user_dirs()
+{
+    local OPTIND
+    parent_path="$PWD"
+    permissions='755'
+    verbose_string='false'
+    while getopts 'p:P:v' opt; do
+        case $opt in
+            p) parent_path=${OPTARG};; 
+            P) permissions=${OPTARG};;
+            v) verbose_string='true';;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    for i in ${PCT_USERS[@]}
+    do
+        if [[ $verbose_string == 'true' ]]; then echo "${parent_path}/$i"; fi
+        mkdir -p "${parent_path}/$i"
+        chmod $permissions "${parent_path}/$i"
     done 
-    data=$(<readme.txt)
-    IFS=$'\n'
-    set -- $data  
-    last_line="$2"
-    IFS=' '
-    set -- $last_line 
-    object="$1"
-    echo $input_data
-    IFS=$'\n'
 }
-function object_id_2_name()
+function apply_permission_blocks()
 {
-    objectID=$1
-    if [[ $objectID == "Emp" ]]; then object_name="Empty"
-    elif [[ $objectID == "CalEmp" ]]; then object_name="Calibration"
-    elif [[ $objectID == "Calib" ]]; then object_name="Calibration"
-    elif [[ $objectID == "Rod" ]]; then object_name="Rod"
-    elif [[ $objectID == "Water" ]]; then object_name="Water"   
-    elif [[ $objectID == "Sensitom" ]]; then object_name="CTP404_Sensitom"
-    elif [[ $objectID == "LinePair" ]]; then object_name="CTP528_Linepair"
-    elif [[ $objectID == "LowCon" ]]; then object_name="CTP515_Low_Contrast"
-    elif [[ $objectID == "Dose16" ]]; then object_name="CTP554_Dose"
-    elif [[ $objectID == "CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
-    elif [[ $objectID == "CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
-    elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
-    elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
-    elif [[ $objectID == "Birks" ]]; then object_name="Birks"
-    else error_flag="true"
-    fi
-    if [[ $error_flag == "true" ]]
-    then
-        echo "ERROR: Unknown Phantom ID '$objectID' encountered"
-        error_flag=false;
-        break
-    fi
+    # # restricted permission folders
+    # /local/pCT_code/*                                       #$tardis_code_path          
+    # /local/pCT_data/*                                       #$tardis_data_path  
+    # /local/pCT_data/reconstruction_data/*                   #$tardis_recon_data_path  
+    # /local/pCT_data/organized_data/*                        #$tardis_org_data_path  
+    blocked_dirs=( $tardis_code_path $tardis_data_path $tardis_recon_data_path $tardis_user_data_path )
+    permanent_dir_permissions='755'
+    expanding_dir_permissions='775'
+    chmod $permanent_dir_permissions $tardis_code_path
+    chmod $permanent_dir_permissions $tardis_code_path/*
+    chmod $permanent_dir_permissions $tardis_git_code_path/*
+    chmod $permanent_dir_permissions $tardis_rcode_path/*
+    chmod $permanent_dir_permissions $tardis_pcode_path/*
+    
+    chmod $permanent_dir_permissions $tardis_data_path
+    chmod $permanent_dir_permissions $tardis_data_path/*
+    #chmod $permanent_dir_permissions $tardis_recon_data_path 
+    chmod $expanding_dir_permissions $tardis_recon_data_path/* 
+    #chmod $permanent_dir_permissions $tardis_org_data_path 
+    chmod $expanding_dir_permissions $tardis_org_data_path/* 
+    chmod $permanent_dir_permissions $tardis_user_data_path/*
+    chmod $permanent_dir_permissions $tardis_temp_input_data_path/*
+    chmod $permanent_dir_permissions $tardis_temp_output_data_path/*
 }
-function parse_pct_filename()
+function create_all_tardis_user_dirs()
 {
-    IFS='_'                         
-    extensionless=${1%.*}         
-    L=${#extensionless}
-    start_angle_index=`expr $L - 3`
-    angle=${extensionless:start_angle_index}
-    run_info=${extensionless%_*}                                
-    objectID="${run_info%%_*}"                            
-    run_num_tag="${run_info##${objectID}_}" 
-    IFS=$'\n'                         # Delimiter for splitting path into its directory names    
+     # #user directories
+    # /local/pCT_code/Reconstruction/*                        #tardis_rcode_path
+    # /local/pCT_code/Preprocessing/*                         #tardis_pcode_path
+    # /local/pCT_data/user_data/*                             #tardis_user_data_path
+    # /local/pCT_data/temp_input_data/*                       #tardis_temp_input_data_path
+    # /local/pCT_data/reconstruction_data/temp_output_data/*  #tardis_temp_output_data_path
+    create_tardis_user_dirs -p ${tardis_rcode_path} -P 755
+    create_tardis_user_dirs -p ${tardis_pcode_path} -P 755
+    create_tardis_user_dirs -p ${tardis_user_data_path} -P 755
+    create_tardis_user_dirs -p ${tardis_temp_input_data_path} -P 755
+    create_tardis_user_dirs -p ${tardis_temp_output_data_path} -P 755
 }
-function parse_readme()
-{
-    usage="parse_readme [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
-
-    where:
-        -h  show this help text
-        -v  verbose terminal output (default: off)
-        -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
-        -p  path to data and readme text file (default: current working directory)
-        -f  filename of readme text file (default: readme.txt)
-        -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')"
-    local OPTIND
-    preprocessed_path=$PWD
-    filename="readme.txt"
-    verbose_flag='false'
-    YYMMDD_flag='true'
-    while getopts 'hvOp:f:d:' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            v) verbose_flag='true';;
-            O) YYMMDD_flag='false';;
-            p) preprocessed_path=${OPTARG};;
-            f) filename=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done   
-    readme_path="${preprocessed_path}/${filename}"
-    preprocessed_date="${preprocessed_path##*/}"
-    if [[ $YYMMDD_flag == 'false' ]]
-    then 
-        month="${preprocessed_date:0:2}"
-        day="${preprocessed_date:2:2}"
-        year="${preprocessed_date:4:4}"
-        preprocessed_date="${year:2:2}-${month}-${day}"
-    fi    
-    data=$(<"${readme_path}")
-    IFS=$'\n'
-    set -- $data  
-    last_line="$2"
-    IFS=' '
-    set -- $last_line 
-    input_data="$1"
-    scan_date=$(date --date="$(printf "%s %s %s" $4 $5 $6)" +"%y-%m-%d")
-    parse_pct_filename "$input_data"
-    object_id_2_name "$objectID"
-    if [[ $verbose_flag == 'true' ]]
-    then
-        construct_preprocessing_path -vE -r "${scan_date}" -d "${preprocessed_date}"  -o "${object_name}" -n "${run_num_tag}"    
-        color_text " $path"     0,33 6,40; cpath=$REPLY
-        color_text "${scan_date}" 0,35 6,40; cscan_date=$REPLY
-        color_text "${input_data}" 0,35 6,40; cinput_data=$REPLY
-        color_text "${objectID}" 0,35 6,40; cobjectID=$REPLY
-        color_text "${object_name}" 0,35 6,40; cobject_name=$REPLY
-        color_text "${run_num_tag}" 0,35 6,40; crun_num_tag=$REPLY
-        color_text "${angle}" 0,35 6,40; cangle=$REPLY
-        color_text "${input_path}" 0,35 6,40; cinput_path=$REPLY
-        
-        print "\npreprocessed data path = ${cpath}" 0,32 6,40 
-        print "scan date = $cscan_date" 0,32 6,40 
-        print "raw data filename = $cinput_data" 0,32 6,40 
-        print "object ID = ${cobjectID}" 0,32 6,40 
-        print "object name = $cobject_name" 0,32 6,40 
-        print "run # + subcategory tag(s) = ${crun_num_tag}" 0,32 6,40  
-        print "projection angle = ${cangle}" 0,32 6,40    
-        print "source data = $cinput_path" 0,32 6,40    
-    else
-        construct_preprocessing_path -E -r "${scan_date}" -d "${preprocessed_date}" -o "${object_name}" -n "${run_num_tag}"
-    fi  
-    color_text "${output_path}" 0,35 6,40; coutput_path=$REPLY        
-    print "\npreprocessed data destination:\n${coutput_path}" 0,32 6,40 
-    destination_path="${preprocessed_path}/${output_path}"
-}
-function stage_preprocessed_data()
-{
-    usage="stage_preprocessed_data [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
-
-        where:
-            -h  show this help text
-            -v  verbose terminal output (default: off)
-            -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
-            -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')
-            -p  path to data and readme text file (default: current working directory)
-            -f  filename of readme text file (default: readme.txt)"
-    local OPTIND
-    preprocessed_path=$PWD
-    filename="readme.txt"
-    verbose_flag='false'
-    YYMMDD_flag='true'
-    flag_string=''
-    verbose_string=''
-    YYMMDD_string=''
-    username=$(id -un)
-    while getopts 'hvOp:f:' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            v) verbose_string='v'; flag_string="-${verbose_string}${YYMMDD_string}";;
-            d) preprocessed_date=${OPTARG};;
-            p) preprocessed_path=${OPTARG};;
-            f) filename=${OPTARG};;
-            O) YYMMDD_string='O'; flag_string="-${verbose_string}${YYMMDD_string}";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done   
-    parse_readme -p "${preprocessed_path}" -f "${filename}" "${flag_string}"
-    staging_destination="${staging_parent_path}/${username}/${output_path}"
-    color_text "${staging_destination}" 0,35 6,40; cstaging_destination=$REPLY        
-    print "\nStaging directory destination:\n${cstaging_destination}" 0,32 6,40 
-    mkdir -p "${staging_destination}"
-    cp -vr ${preprocessed_path}/* ${staging_destination}
-}  
-function subcategory_tagging()
-{
-    tag=$(tolowercase $1)
-    if [[ $tag == "0b" ]]; then tag_out="0b"
-    elif [[ $tag == "1b" ]]; then tag_out="1b"
-    elif [[ $tag == "2b" ]]; then tag_out="2b"
-    elif [[ $tag == "3b" ]]; then tag_out="3b"
-    elif [[ $tag == "4b" ]]; then tag_out="4b"   
-    elif [[ $tag == "nst4b" ]]; then tag_out="nst4b"
-    elif [[ $tag == "cen" ]]; then tag_out="Cen"
-    elif [[ $tag == "per" ]]; then tag_out="Per"
-    elif [[ $tag == "sup" ]]; then tag_out="Sup"
-    elif [[ $tag == "inf" ]]; then tag_out="Inf"
-    elif [[ $tag == "top" ]]; then tag_out="Top"
-    elif [[ $tag == "bot" ]]; then tag_out="Bot"
-    elif [[ $tag == "cont" ]]; then tag_out="Cont"
-    else error_flag="true"
-    fi
-    if [[ $error_flag == "true" ]]
-    then
-        echo "ERROR: Unknown subcategory tag '$tag' encountered"
-        error_flag=false;
-        return
-    else
-        echo $tag_out
-    fi
-}
-function tolowercase()
-{
-    #lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
-    echo "$1" | awk '{print tolower($0)}'
-}
-function touppercase()
-{
-    #lower=$(echo "$1" | tr '[:lower:]' '[:upper:]')
-    echo "$1" | awk '{print toupper($0)}'
-}
-current_node_alias=$(current_node_name)
