@@ -26,15 +26,6 @@ reset_color="\033[0;37;6;40m"
 ########### User names of collaborators, including internal Baylor student user names #############
 ###################################################################################################
 master="master"
-blake="schultze"
-blake_Baylor="schultzeb"
-paniz="karbasip"
-ritchie="cair"
-andriy="zatserkl"
-pier="piersimonip"
-tia="plautzt"
-val="giamcomettiv"
-vlad="bashkirovv"
 current_user=$(id -un)
 user_folder="/${current_user}"
 recon_group="ionrecon"
@@ -47,29 +38,37 @@ user_home=~
 pct_folder="/ion"
 tardis_pct_folder="/local"
 home_folder="/home"
-pct_code_folder="/pCT_code"
-pct_data_folder="/pCT_data"
 incoming_folder="/incoming"
 staging_folder="/staging"
-pct_docs_folder="/pCT_Documentation"
+pct_code_folder="/pCT_code"
+pct_data_folder="/pCT_data"
+
 raw_data_folder="/raw_data"
 pre_data_folder="/preprocessed_data"
 proj_data_folder="/projection_data"
 org_data_folder="/organized_data"
+recon_data_folder="/reconstruction_data"
+
 unorg_data_folder="/unorganized_data"
 temp_input_data_folder="/temp_input_data"
 temp_output_data_folder="/temp_output_data"
 tardis_user_data_folder="/user_data"
-recon_data_folder="/reconstruction_data"
+
+ref_images_folder="/Reference_Images"
 experimental_data_folder="/Experimental"
 simulated_data_folder="/Simulated"
+
 GEANT4_run_data_prefix="G_"
 TOPAS_run_data_prefix="T_"
+
 raw_data_link_folder="/Input"
 proj_data_link_folder="/Output"
+
 git_code_folder="/git"
 rcode_folder="/Reconstruction"
 pcode_folder="/Preprocessing"
+pct_docs_folder="/pCT_Documentation"
+
 git_clone_addr_base="git@github.com:"
 git_clone_addr_suffix=".git"
 # pCT-collaboration account
@@ -77,34 +76,38 @@ pct_collab_git_account="pCT-collaboration"
 pct_tools_git_repo="pCT_Tools"
 pcode_git_repo="Preprocessing"
 old_rcode_git_repo="pct-recon-copy"
+geant4_git_repo="Geant4"
 # BaylorICTHUS account
 Baylor_git_account="BaylorICTHUS"
 Baylor_rcode_git_repo="pCT_Reconstruction"
 # BlakeSchultze account
 Blake_git_account="BlakeSchultze"
 Blake_rcode_git_repo="pCT_Reconstruction"
+Blake_doc_git_repo="pCT_Documentation"
 ###################################################################################################
 ############################ Setting Kodiak/Tardis/GitHub data paths ##############################
 ###################################################################################################
 pct_home="${pct_folder}${home_folder}"
-recon_group_home="${pct_home}/${recon_group}"
+tardis_home="${tardis_pct_folder}${home_folder}"
 workstation_pct="${home_folder}/share"
+recon_group_home="${pct_home}/${recon_group}"
+#-------- Kodiak code/data paths ------------#
 incoming_path="${pct_folder}${incoming_folder}"
 staging_path="${pct_folder}${staging_folder}"
-
 pct_data_path="${pct_folder}${pct_data_folder}"
 raw_data_path="${pct_data_path}${raw_data_folder}"
 pre_data_path="${pct_data_path}${pre_data_folder}"
 proj_data_path="${pct_data_path}${proj_data_folder}"
 org_data_path="${pct_data_path}${org_data_folder}"
 recon_data_path="${pct_data_path}${recon_data_folder}"
-
+pct_code_path="${pct_folder}${pct_code_folder}"
+#-------- Tardis code/data paths ------------#
 tardis_data_path=${tardis_pct_folder}${pct_data_folder}
 tardis_raw_data_path="${tardis_data_path}${raw_data_folder}"
 tardis_pre_data_path="${tardis_data_path}${pre_data_folder}"
 tardis_proj_data_path="${tardis_data_path}${proj_data_folder}"
-tardis_org_data_path="${tardis_data_path}${org_data_folder}"
 tardis_recon_data_path="${tardis_data_path}${recon_data_folder}"
+tardis_org_data_path="${tardis_data_path}${org_data_folder}"
 tardis_unorg_data_path="${tardis_data_path}${unorg_data_folder}"
 tardis_user_data_path="${tardis_data_path}${tardis_user_data_folder}"
 tardis_temp_input_data_path="${tardis_data_path}${temp_input_data_folder}"
@@ -124,6 +127,10 @@ global_code_path="${pct_folder}${pct_code_folder}"
 global_pcode_path=${pct_folder}${pcode_subdir_path}
 global_rcode_path=${pct_folder}${rcode_subdir_path}
 global_git_code_path=${pct_folder}${git_code_subdir_path}
+global_git_clones_dir=${global_code_path}${git_code_folder}
+global_pct_collab_dir=${global_git_clones_dir}/${pct_collab_git_account}
+global_Baylor_dir=${global_git_clones_dir}/${Baylor_git_account}
+global_Blake_dir=${global_git_clones_dir}/${Blake_git_account}
 global_pct_tools_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}"
 global_old_rcode_git_repo_path="${global_git_code_path}/${old_rcode_git_repo_subdir_path}"
 global_Baylor_rcode_git_repo_path="${global_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
@@ -148,11 +155,27 @@ old_rcode_git_clone_addr="${git_clone_addr_base}${old_rcode_git_repo_subdir_path
 Baylor_rcode_git_clone_addr="${git_clone_addr_base}/${Baylor_rcode_git_repo_subdir_path}${git_clone_addr_suffix}"
 Blake_rcode_git_clone_addr="${git_clone_addr_base}/${Blake_rcode_git_repo_subdir_path}${git_clone_addr_suffix}"
 
-    
 # filename/path to script loading pCT user functions/shortcuts
 load_pct_functions_script="load_pct_functions.sh"
 pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts"
 pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts/${load_pct_functions_script}"
+
+pct_data_subdirs=( $org_data_folder $raw_data_folder $pre_data_folder $proj_data_folder $recon_data_folder )
+pct_code_subdirs=( $git_code_folder $rcode_folder $pcode_folder )
+phantom_subdirs=( $experimental_data_folder $simulated_data_folder $ref_images_folder )
+run_number_subdirs=( $raw_data_link_folder $proj_data_link_folder )
+ion_subdirs=( $incoming_folder $staging_folder $pct_code_folder $pct_data_folder )
+
+git_accounts=( $pct_collab_git_account $Baylor_git_account $Blake_git_account )
+pct_collab_repos=( $pct_tools_git_repo $pcode_git_repo $old_rcode_git_repo $geant4_git_repo )
+Baylor_repos=( $Baylor_rcode_git_repo )
+Blake_repos=( $Blake_rcode_git_repo $Blake_doc_git_repo )
+
+pct_data_paths=( $org_data_path $raw_data_path $pre_data_path $proj_data_path $recon_data_path )
+pct_code_paths=( $global_git_code_path $global_pcode_path $global_rcode_path )
+ion_paths=( $incoming_path $staging_path $pct_code_path $pct_data_path )
+tardis_user_paths=( $tardis_rcode_path $tardis_pcode_path $tardis_user_data_path $tardis_temp_input_data_path $tardis_temp_output_data_path )
+
 ###################################################################################################
 ################################ Setting current data/code paths ##################################
 ###################################################################################################
@@ -234,29 +257,18 @@ rcode_sm="sm_35"
 rcode_object="recon.out"
 rcode_flags="-O3"
 alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
-###################################################################################################
-###################################### Function definitions #######################################
-###################################################################################################
 kodiak_modules=("purge" "unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
 tardis_modules_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load mpich/ge/gcc/64/3.1.4" "load mpich/ge/open64/64/3.1.4" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.1" "load mvapich2/open64/64/2.1" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
 tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
-#    modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
-#    "load mvapich2/1.9"
-#    "load mvapich2/1.9-centos"
-#    "load mvapich2/1.9-gcc-4.7.2"
-#    "load mvapich2/1.9-gcc-4.9.2"
-#    "load mvapich2/1.9-intel"
-#    "load mvapich2/1.9-intel-noaffinity"
-#    "load mvapich2/2.0"
-#    "load mvapich2/gcc/64/2.1"
-#    "load mvapich2/open64/64/2.1"
 ###################################################################################################
 ###################################################################################################
 ###################################### Function definitions #######################################
 ###################################################################################################
 ###################################################################################################
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
 #------------------------------ General helper/utility functions ---------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
 function exe() { echo -e " $@" ; "$@" ; }
 function now() { date +"%T %Z (%a) %m-%d-%Y"; }
@@ -499,7 +511,9 @@ function subdir_sizes()
     du --max-depth $max_depth -h ${path}/* 
 }
 #-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #------------------------------------------ Console Printing/Formatting Functions ----------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 function set_color()
 {
@@ -635,7 +649,9 @@ function print_program_version()
     echo -e "$( $2 )${NoColor} $3"
 }
 #-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #---------------------------------------------- Data naming/organization -------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 function parse_pct_filename()
 {
@@ -661,7 +677,7 @@ function parse_pct_config()
 }
 function parse_readme()
 {
-    usage="parse_readme [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
+    usage="$(basename "$0") [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
 
     where:
         -h  show this help text
@@ -833,22 +849,30 @@ function construct_pct_path()
 }
 function construct_recon_path()
 {
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
     local OPTIND
     username="$(id -un)" 
     data_direction="${projection_link_folder}"
     scan_type_folder="${experimental_data_folder}"
     run_date_folder_prefix=""
-    #pct_dir="${NAS_pct_dir}"
     parent_dir="${org_data_path}"
     preprocessed_date=$(current_date)
     recon_date=$(current_date)
     data_direction="${proj_data_link_folder}"
-    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
+    usage="$(basename "$0") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+
+    where:
+        -h  show this help text
+        -o  object name (REQUIRED)
+		-r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'ho:r:n:d:D:EGTIO' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
             o) object=${OPTARG};;
@@ -876,13 +900,8 @@ function construct_recon_path()
 }
 function construct_preprocessing_path()
 {
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
     local OPTIND
-    username="$(id -un)"  #pre_data_folder
+    username="$(id -un)"
     data_direction="${proj_data_link_folder}"
     scan_type_folder="${experimental_data_folder}"
     run_date_folder_prefix=""
@@ -891,7 +910,21 @@ function construct_preprocessing_path()
     recon_date=$(current_date)
     data_direction="proj_data_link_folder"
     verbose_flag='false'
-    while getopts 'hvo:r:n:d:KCEGTIO' opt; do
+    usage="$(basename "$0") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] -- construct input or output data path for appropriately organized preprocessed data
+	
+    where:
+        -h  show this help text
+        -v  verbose: console output on (DEFAULT: 'off')
+		-o  object name (REQUIRED)
+		-r  run date (REQUIRED)
+		-n  run # + tag(s) (REQUIRED)
+		-d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+		-E  Experimental data flag (DEFAULT)
+		-G  GEANT4 data flag 
+		-T  TOPAS data flag 
+		-I  input data flag
+		-O  output data flag (DEFAULT)"
+    while getopts 'hvo:r:n:d:EGTIO' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
             v) verbose_flag='true';;
@@ -1140,24 +1173,25 @@ function link_projection_data()
 }
 function stage_preprocessed_data()
 {
-    usage="stage_preprocessed_data [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
-
-        where:
-            -h  show this help text
-            -v  verbose terminal output (default: off)
-            -O  specifies old date format MMDDYYYY is used (default: YY-MM-DD)
-            -d  date of preprocessing (default: parsed from data path '.../Output/<preprocessed date>')
-            -p  path to data and readme text file (default: current working directory)
-            -f  filename of readme text file (default: readme.txt)"
     local OPTIND
     preprocessed_path=$PWD
-    filename="readme.txt"
+    preprocessed_date=$(current_date)
+	filename="readme.txt"
     verbose_flag='false'
     YYMMDD_flag='true'
     flag_string=''
     verbose_string=''
     YYMMDD_string=''
     username=$(id -un)
+    usage="$(basename "$0") [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
+
+        where:
+            -h  show this help text
+            -v  verbose flag: terminal output 'on' (DEFAULT: $verbose_flag)
+            -d  date of preprocessing (DEFAULT: $preprocessed_date (today))
+            -p  path to data and readme text file (DEFAULT: $preprocessed_path)
+            -f  filename of readme text file (DEFAULT: $filename)
+			-O  specifies old date format MMDDYYYY is used (DEFAULT: 'YY-MM-DD')"
     while getopts 'hvOp:f:' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
@@ -1229,7 +1263,9 @@ function add_tardis_data()
     
 }
 #-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #------------------------------------------ Code transferring/compilation/execution --------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 function load_CUDA_modules()
 {
@@ -1356,11 +1392,22 @@ function txrecon()
 }
 function nvccgen()
 {
-    #nvcc11="nvcc -std=c++11 -gencode arch=compute_35,code=sm_35 -O3"
+    usage="$(basename "$0") [-h] [$1] [$2] -- compile pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
+
+    where:
+        -h  show this help text
+        $1  architecture (DEFAULT: arch=compute_35)
+        $2  code (DEFAULT: code=sm_35)"
+    while getopts 'h' opt; do
+        case $opt in
+            h) echo "${usage}"; return;;
+			*) error "Unexpected option ${flag}";;
+        esac
+    done
+    
+	#nvcc11="nvcc -std=c++11 -gencode arch=compute_35,code=sm_35 -O3"
     #-std=c++11 -gencode arch=$rcode_compute,code=$rcode_sm
     print_newline
-    color_prefix="\033[0;34;5;47m"
-    color_postfix="\033[3;40;5;1;34m"
     target_source_code="${tardis_pct_folder}${rcode_subdir_path}${user_folder}${rcode_cu_file}"
     if [ -z "$1" ] # If no 2nd parameter present
     then
@@ -1398,6 +1445,18 @@ function nvccgen()
 }
 function runrecon()
 {
+    usage="$(basename "$0") [-h] [$1] [$2] -- compile and run pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
+
+    where:
+        -h  show this help text
+        $1  architecture (DEFAULT: arch=compute_35)
+        $2  code (DEFAULT: code=sm_35)"
+     while getopts 'h' opt; do
+        case $opt in
+            h) echo "${usage}"; return;;
+			*) error "Unexpected option ${flag}";;
+        esac
+    done
       if [ -z "$1" ]
       then
          nvccgen
@@ -1420,7 +1479,9 @@ function runrecon()
      fi
 }
 #-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #------------------------------------------------------- Git  ------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 function find_git_branch()
 {
@@ -1444,26 +1505,58 @@ function find_git_dirty()
     git_dirty=''
   fi
 }
+function construct_git_clone_addr()
+{
+    local OPTIND
+    account=${pct_collab_git_account}
+    repo=${old_rcode_git_repo}
+    usage="$(basename "$0") [-h] [-a <git account>] [-r <git repository>] -- construct GitHub address used to clone the account/repository
+
+    where:
+        -h  show this help text
+        -a  git account (DEFAULT: ${account})
+        -r  git repository (DEFAULT: ${repo})"
+    while getopts 'a:r:' opt; do
+        case $opt in
+            h) echo "${usage}"; return;;
+			a) account=${OPTARG};;
+            r) repo=${OPTARG};;           
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    git_clone_addr="${git_clone_addr_base}/${account}/${repo}${git_clone_addr_suffix}"
+    REPLY=$git_clone_addr
+}
 function add_rcode_repo()
 {
     local OPTIND
     username="$(id -un)"
     account=${pct_collab_git_account}
     repo=${old_rcode_git_repo}
-    while getopts 'u:a:r:' opt; do
+    usage="$(basename "$0") [-h] [-u <username>] [-a <git account>] [-r <git repository>] -- add directory and clone GitHub repository code to Tardis node
+
+    where:
+        -h  show this help text
+        -u  username (DEFAULT: ${username})
+        -a  git account (DEFAULT: ${account})
+        -r  git repository (DEFAULT: ${repo})"
+    while getopts 'hu:a:r:' opt; do
         case $opt in
-            u) username=${OPTARG};;
+            h) echo "${usage}"; return;;
+			u) username=${OPTARG};;
             a) account=${OPTARG};;
             r) repo=${OPTARG};;           
             *) error "Unexpected option ${flag}";;
         esac
     done
     adding_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${account}/"
+    construct_git_clone_addr -a $account -r $repo 
+    git_clone_addr=$REPLY
     echo $adding_rcode_path
+    echo $git_clone_addr
     #mkdir -p ${adding_rcode_path}
-    #cd ${adding_rcode_path}
-    
-    #git clone ${Baylor_rcode_git_clone_addr}   
+    #cd ${adding_rcode_path}   
+    #git clone ${git_clone_addr}   
 }
 function create_recon_user()
 {
@@ -1495,13 +1588,24 @@ function set_rcode()
     account=${pct_collab_git_account}
     repo=${old_rcode_git_repo}
     git_direct='false' 
-    #checkout=''
-    while getopts 'u:a:r:c:Gg' opt; do
+    branch='master'
+    usage="$(basename "$0") [-h][-G][-g] [-a <git account>] [-r <git repository>] [-b <git branch>] [-u <username>] -- set the git account/repository and branch (optional) to use for the reconstruction code, either the global clone or a clone to the user's code directory
+
+        where:
+            -h  show this help text
+            -a  git account (DEFAULT: ${account})
+			-r  git repository (DEFAULT: ${repo})	
+			-b  git branch (DEFAULT: $branch)
+			-u  username, if applicable (DEFAULT: $username)
+            -G  reconstruction group username flag (DEFAULT: ${username})
+			-g  global git code repositories flag (DEFAULT: user git code directories)"
+    while getopts 'hu:a:r:b:Gg' opt; do
         case $opt in
-            u) username=${OPTARG};;
+            h) echo "${usage}"; return;;
+			u) username=${OPTARG};;
             a) account=${OPTARG};;
             r) repo=${OPTARG};;           
-            c) checkout=${OPTARG};;           
+            b) branch=${OPTARG};;           
             G) username=${recon_group};;  
             g) git_direct='true';;               
             *) error "Unexpected option ${flag}";;
@@ -1521,29 +1625,26 @@ function set_rcode()
     else
         cd ${setting_tardis_rcode_path}
     fi
- if [[ -n $checkout ]]
+    if [[ $branch != 'master']]
     then
-        git checkout $checkout
-    fi
-    
+        git checkout $branch
+    fi  
+	current_rcode_account="${account}"
+	current_rcode_repo="${repo}"
+	current_rcode_branch="${branch}"
+	if [[ $git_direct == 'true' ]]
+	then
+		current_rcode_git=$direct_git
+		current_set_rcode_git_flag=$direct_git_flag
+	else
+		current_rcode_git=$user_git
+		current_set_rcode_git_flag=''
+	fi	
 }    
-function tardis_default_cloning()
-{
-    mkdir -p ${tardis_git_clones_dir}
-    mkdir -p ${tardis_pct_collab_dir}
-    mkdir -p ${tardis_Baylor_dir}
-    mkdir -p ${tardis_Blake_dir}
-    
-    cd ${tardis_pct_collab_dir}
-    git clone ${old_rcode_git_clone_addr}
-    git clone ${pct_tools_git_clone_addr}
-    cd ${tardis_Baylor_dir}
-    git clone ${Baylor_rcode_git_clone_addr}
-    cd ${tardis_Blake_dir}
-    git clone ${Blake_rcode_git_clone_addr}
-}
 #-------------------------------------------------------------------------------------------------------------------------#
-#------------------------------------------------ pCT user management  ---------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
+#---------------------------------------------- pCT user/data management  ------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 function pctusers()
 {
@@ -1663,9 +1764,26 @@ function create_all_tardis_user_dirs()
     # /local/pCT_data/user_data/*                             #tardis_user_data_path
     # /local/pCT_data/temp_input_data/*                       #tardis_temp_input_data_path
     # /local/pCT_data/reconstruction_data/temp_output_data/*  #tardis_temp_output_data_path
+    #tardis_user_dirs=( $tardis_rcode_path $tardis_pcode_path $tardis_user_data_path $tardis_temp_input_data_path $tardis_temp_output_data_path )
     create_tardis_user_dirs -p ${tardis_rcode_path} -P 755
     create_tardis_user_dirs -p ${tardis_pcode_path} -P 755
     create_tardis_user_dirs -p ${tardis_user_data_path} -P 755
     create_tardis_user_dirs -p ${tardis_temp_input_data_path} -P 755
     create_tardis_user_dirs -p ${tardis_temp_output_data_path} -P 755
 }
+function tardis_default_cloning()
+{
+    mkdir -p ${tardis_git_clones_dir}
+    mkdir -p ${tardis_pct_collab_dir}
+    mkdir -p ${tardis_Baylor_dir}
+    mkdir -p ${tardis_Blake_dir}
+    
+    cd ${tardis_pct_collab_dir}
+    git clone ${old_rcode_git_clone_addr}
+    git clone ${pct_tools_git_clone_addr}
+    cd ${tardis_Baylor_dir}
+    git clone ${Baylor_rcode_git_clone_addr}
+    cd ${tardis_Blake_dir}
+    git clone ${Blake_rcode_git_clone_addr}
+}
+

@@ -26,19 +26,20 @@ alias cp="cp -apv"
 alias cpdir="cp -apRv"
 alias rm="rm -v"
 alias mv="mv -v"
+alias echo="echo -e"
 alias deldir="rm -rf"
 alias rld="echo -e \"Reload ~/.bash_profile ...\"; . ~/.bash_profile"
 alias scp="scp -rCp -c blowfish"
-alias back="cd 
--"
+alias back="cd -"
 alias contents="tree -dluDC"
 alias host=$(hostname)
+DEFAULT_IFS=' '
 ###################################################################################################
 ################################### Console output definitions ####################################
 ###################################################################################################
 #cd /ion/pCT_code/pCT-collaboration/pCT_Tools/bash_scripts
 #./load_pct_functions.sh
-. /ion/pCT_code/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
 ###################################################################################################
 ######### Console output written on login before subsequent cluster/node dependent output #########
 ###################################################################################################
@@ -49,11 +50,11 @@ alias host=$(hostname)
 #   [4] ecsn004 - tbaker     - 192.168.225.4 ${Brown}
 #   [5] ecsn005 - pdavison   - 192.168.225.5
 print_section_header "CLUSTER NODE SYSTEMS" 1,33  5,40
-print_result "${LightRed}-> ${Brown}[1] ${Green}${tardis_head_node_ID} - ${LightBlue}${tardis_head_node_alias}  - ${LightPurple}${tardis_head_node_IP}"
-print_result "${LightRed}-> ${Brown}[2] ${Green}${tardis_compute_node1_ID} - ${LightBlue}${tardis_compute_node1_alias}  - ${LightPurple}${tardis_compute_node1_IP}"
-print_result "${LightRed}-> ${Brown}[3] ${Green}${tardis_compute_node2_ID} - ${LightBlue}${tardis_compute_node2_alias}  - ${LightPurple}${tardis_compute_node2_IP}"
-print_result "${LightRed}-> ${Brown}[4] ${Green}${tardis_compute_node3_ID} - ${LightBlue}${tardis_compute_node3_alias}  - ${LightPurple}${tardis_compute_node3_IP}"
-print_result "${LightRed}-> ${Brown}[5] ${Green}${tardis_compute_node4_ID} - ${LightBlue}${tardis_compute_node4_alias}  - ${LightPurple}${tardis_compute_node4_IP}"
+echo "${LightRed}-> ${Brown}[1] ${Green}${tardis_head_node_ID} - ${LightBlue}${tardis_head_node_alias}  - ${LightPurple}${tardis_head_node_IP}"
+echo "${LightRed}-> ${Brown}[2] ${Green}${tardis_compute_node1_ID} - ${LightBlue}${tardis_compute_node1_alias}  - ${LightPurple}${tardis_compute_node1_IP}"
+echo "${LightRed}-> ${Brown}[3] ${Green}${tardis_compute_node2_ID} - ${LightBlue}${tardis_compute_node2_alias}  - ${LightPurple}${tardis_compute_node2_IP}"
+echo "${LightRed}-> ${Brown}[4] ${Green}${tardis_compute_node3_ID} - ${LightBlue}${tardis_compute_node3_alias}  - ${LightPurple}${tardis_compute_node3_IP}"
+echo "${LightRed}-> ${Brown}[5] ${Green}${tardis_compute_node4_ID} - ${LightBlue}${tardis_compute_node4_alias}  - ${LightPurple}${tardis_compute_node4_IP}"
 ###################################################################################################
 ############################### Establish ssh connection shortcuts ################################
 ###################################################################################################
@@ -69,49 +70,76 @@ print_alias $(exe alias goptroughton="ssh ${current_user}@ptroughton")
 print_alias $(exe alias gopdavison="ssh ${current_user}@pdavison")
 print_alias $(exe alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu")
 print_alias $(exe alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu")
-current_node_alias=$(current_node_name )
 ###################################################################################################
 ########################### Define shortcut directory change commands #############################
 ###################################################################################################
 #-------------------------------------------------------------------------------------------------#
-print_section_header "directory change shortcut (alias) commands" 1,33 5,40
+print_section_header "Kodiak data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias gocode="cd ${global_pct}${pct_code_folder}")                              #
-print_alias $(exe alias gopcode="cd ${global_pcode_path}")                                        #
-print_alias $(exe alias gorcode="cd ${global_rcode_path}")                                        #
-print_alias $(exe alias gomasterpcode="cd ${global_pct}${masterpcode}")                           #
-print_alias $(exe alias gomasterrcode="cd ${global_pct}${masterrcode}")                           #
-print_alias $(exe alias gogitpcode="cd ${global_pcode_path}${user_folder}")                       #
-print_alias $(exe alias gogitrcode="cd ${global_rcode_path}${user_folder}${baylor_recon_repo}")   #
-print_alias $(exe alias godata="cd ${global_data_path}")                                          #
-print_alias $(exe alias goraw="cd ${global_data_path}${raw_data_folder}")                         #
-print_alias $(exe alias gopre="cd ${global_data_path}${pre_data_folder}")                         #
-print_alias $(exe alias goproj="cd ${global_data_path}${proj_data_folder}")                       #
-print_alias $(exe alias gorecon="cd ${global_data_path}${recon_data_folder}")                     #
-print_alias $(exe alias goorg="cd ${global_data_path}${org_data_folder}")                         #
-print_alias $(exe alias godocs="cd ${global_data_path}${pct_docs_folder}")                        #
-print_alias $(exe alias goinc="cd ${global_pct}${incoming_folder}")                               #
-print_alias $(exe alias gostage="cd ${global_pct}${staging_folder}")                              #
-print_alias $(exe alias gomyinc="cd ${global_pct}${incoming_folder}${user_folder}")               #
-print_alias $(exe alias gomystage="cd ${global_pct}${staging_folder}${user_folder}")              #
-print_alias $(exe alias gonewrecon="cd ${current_rdata}")                                         #
-
-print_alias $(exe alias golpct="cd ${tardis_pct}")                                                #
-print_alias $(exe alias golcode="cd ${tardis_pct}${pct_code_folder}")                             #
-print_alias $(exe alias golrcode="cd ${tardis_pct}${rcode_path}${user_folder}")                   #
-print_alias $(exe alias goldata="cd ${tardis_data_path}")                                         #
-print_alias $(exe alias golorg="cd ${tardis_data_path}${org_data_folder}")                        #
-print_alias $(exe alias golrecon="cd ${tardis_data_path}${recon_data_folder}")                    #
-print_alias $(exe alias golnewrecon="cd ${current_lrdata}")                                         #
-
-print_alias $(exe alias gomycode="cd ${user_home}${pct_code_folder}")                             #
-print_alias $(exe alias gomypcode="cd ${user_home}${pcode_path}${user_folder}")                   #
-print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_path}${user_folder}")                   #
-print_alias $(exe alias gomydata="cd ${user_home}${pct_data_folder}")                             #
-print_alias $(exe alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}")            #
+print_alias $(exe alias goinc="cd ${incoming_path}")                               #
+print_alias $(exe alias gostage="cd ${staging_path}")                              #
+print_alias $(exe alias godata="cd ${pct_data_path}")                                          #
+print_alias $(exe alias goraw="cd ${raw_data_path}")                         #
+print_alias $(exe alias gopre="cd ${pre_data_path}")                         #
+print_alias $(exe alias goproj="cd ${proj_data_path}")                       #
+print_alias $(exe alias goorg="cd ${org_data_path}")                         #
+print_alias $(exe alias gorecon="cd ${recon_data_path}")                     #
+#print_alias $(exe alias gonewrecon="cd ${current_rdata}")                                         #
+print_alias $(exe alias godocs="cd ${pct_data_path}${pct_docs_folder}" )                      #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Kodiak code directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+print_alias $(exe alias gocode="cd ${global_code_path}" )                             #
+print_alias $(exe alias gogitcode="cd ${global_git_code_path}" )                             #
+print_alias $(exe alias gopcode="cd ${global_pcode_path}" )                                      #
+print_alias $(exe alias gorcode="cd ${global_rcode_path}" )                                       #
+print_alias $(exe alias gotools="cd ${pct_functions_git_repo_path}")
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Kodiak user data/code directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+print_alias $(exe alias gomyinc="cd ${incoming_path}${user_folder}"  )             #
+print_alias $(exe alias gomystage="cd ${staging_path}${user_folder}" )             #
+print_alias $(exe alias gomydata="cd ${user_home}${pct_data_folder}"  )                           #
+print_alias $(exe alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}" )           #
 print_alias $(exe alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}")        #
+print_alias $(exe alias gomycode="cd ${user_home}${pct_code_folder}"   )                          #
+print_alias $(exe alias gomypcode="cd ${user_home}${pcode_subdir_path}${user_folder}")                   #
+print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_subdir_path}${user_folder}" )                  #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Tardis data/code directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+print_alias $(exe alias golpct="cd ${tardis_pct_folder}" )                                               #
+print_alias $(exe alias golcode="cd ${tardis_code_path}")                             #
+print_alias $(exe alias golgitcode="cd ${tardis_git_code_path}" )                             #
+print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}")                   #
+print_alias $(exe alias golpcode="cd ${tardis_pcode_path}${user_folder}")                   #
+print_alias $(exe alias goldata="cd ${tardis_data_path}")                                         #
+print_alias $(exe alias golorg="cd ${tardis_org_data_path}")                        #
+print_alias $(exe alias golrecon="cd ${tardis_recon_data_path}")                    #
+print_alias $(exe alias golusers="cd ${tardis_user_data_path}")                    #
+print_alias $(exe alias goltempin="cd ${tardis_temp_input_data_path}")                    #
+print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")                    #
 
-print_alias $(exe alias gogrp="cd ${recon_group}")                                         #
+
+#print_alias $(exe alias golnewrecon="cd ${current_lrdata}")                                         #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Kodiak recon group directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+#print_alias $(exe alias gorgrpgit="cd ${pct_home}/${recon_group}/")                                        #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Kodiak group data/code directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+print_alias $(exe alias gorgrp="cd ${pct_home}/${recon_group}")        #
+print_alias $(exe alias goghome="cd ${pct_home}/${recon_group}")        #
+print_alias $(exe alias gogdata="cd ${recon_group_home}${pct_data_folder}"  )                           #
+print_alias $(exe alias gogorg="cd ${recon_group_home}${pct_data_folder}${org_data_folder}" )           #
+print_alias $(exe alias gogrecon="cd ${recon_group_home}${pct_data_folder}${recon_data_folder}")        #
+print_alias $(exe alias gogcode="cd ${recon_group_home}${pct_code_folder}"   )                          #
+print_alias $(exe alias gogpcode="cd ${recon_group_home}${pcode_subdir_path}${user_folder}")                   #
+print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}" )                  #
+
+#alias goBlake=
+
 
 ###################################################################################################
 ################## Set up Kodiak modules, environment variables, and user prompt ##################
@@ -126,15 +154,17 @@ then
     #---------------------------------------------------------------------------------------------#
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32 6,40 on
-
     modules=("unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
     num_modules=$(expr ${#kodiak_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${kodiak_modules[$i]}" ; done
+    for i in "${kodiak_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
-    login_dir=${user_home}${rcode_path}${user_folder}
+    login_dir="${current_global_rcode_path}"
     #---------------------------------------------------------------------------------------------#
 ###################################################################################################
 ############### Set up Tardis node modules, environment variables, and user prompt ################
@@ -150,7 +180,11 @@ then
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     num_modules=$(expr ${#tardis_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    for i in "${tardis_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     load_CUDA_modules
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
@@ -169,13 +203,17 @@ then
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     num_modules=$(expr ${#tardis_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    for i in "${tardis_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     load_CUDA_modules
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
-    login_dir="${tardis_pct}${pct_code_folder}${rcode_folder}${user_folder}"
+    login_dir="${current_tardis_rcode_path}"
     #---------------------------------------------------------------------------------------------#
 #*************************************************************************************************#
 #*********************************** JPertwee login procedure ************************************#
@@ -188,13 +226,17 @@ then
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     num_modules=$(expr ${#tardis_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    for i in "${tardis_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     load_CUDA_modules
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
-    login_dir="${tardis_pct}${pct_code_folder}${rcode_folder}${user_folder}"
+    login_dir="${current_tardis_rcode_path}"
     #---------------------------------------------------------------------------------------------#
 #*************************************************************************************************#
 #************************************ TBaker login procedure *************************************#
@@ -207,13 +249,17 @@ then
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     num_modules=$(expr ${#tardis_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    for i in "${tardis_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     load_CUDA_modules
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
-    login_dir="${tardis_pct}${pct_code_folder}${rcode_folder}${user_folder}"
+    login_dir="${current_tardis_rcode_path}"
     #---------------------------------------------------------------------------------------------#
 #*************************************************************************************************#
 #*********************************** PDavison login procedure ************************************#
@@ -226,13 +272,18 @@ then
     print_section_header "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     num_modules=$(expr ${#tardis_modules[@]} - 1)
-    for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
+    for i in "${tardis_modules[@]}"    
+    do  
+      print_module_load "$i"    
+    done
     load_CUDA_modules
     #---------------------------------------------------------------------------------------------#
     print "\nCurrently loaded modules:" 0,32
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
-    login_dir="${tardis_pct}${pct_code_folder}${rcode_folder}${user_folder}"
+    current_global_rcode_path=${current_global_git_rcode_path}
+    login_dir="${current_tardis_rcode_path}"
     #---------------------------------------------------------------------------------------------#
 #*************************************************************************************************#
 #****************************** Workstation #1/#2 login procedure ********************************#
@@ -320,7 +371,7 @@ print_info "$(uname -s) Kernel Release" "$(uname -r)"
 ###################################################################################################
 ######################### Query/print user/group information and status ###########################
 ###################################################################################################
-cd "${login_dir}"
+#cd "${login_dir}"
 print_section_header "User Information" 1,33 5,40
 print_info "Username" "$(id -un) ${LightBlue}($(id -u))"
 print_info "User Group(s)" "$(id -Gn) ${LightBlue}($(id -G))"
@@ -328,10 +379,8 @@ print_info "Current Group" "$(id -gn) ${LightBlue}($(id -g))"
 print_info "User Home" "${user_home}"
 print_info "User Data Home" "${user_home}${pct_data_folder}"
 print_info "User Code Home" "${user_home}${pct_code_folder}"
-print_info "Login Home" "${login_dir}"
-print_result "$(ls -a)"
 #top
 ###################################################################################################
 ########################################### END OF FILE ###########################################
 ###################################################################################################
-
+login_tasks
