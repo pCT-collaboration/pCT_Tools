@@ -1977,7 +1977,9 @@ function organize_data()
     where:
         -h  show this help text
         -v  verbose: console output on (DEFAULT: 'off')
-        -M  move data (DEFAULT: copy)
+        -P  preprocessing data flag (DEFAULT)
+		-R  reconstruction data flag (DEFAULT: preprocessing)
+		-M  move data (DEFAULT: copy)
         -C  move data (DEFAULT: copy)
         -p  path to data (DEFAULT: current working directory)
         -t  write output hierarchy to (DEFAULT: current working directory)
@@ -1995,8 +1997,8 @@ function organize_data()
         case $opt in               
             h) echo "${usage}"; return;;
             v) verbose_flag='true';;
-            #P) preprocessing_flag='true';;
-            #R) preprocessing_flag='false';;
+            P) preprocessing_flag='true';;
+            R) preprocessing_flag='false';;
             M) copy_flag='false';;
             C) copy_flag='true';;
             p) data_path=${OPTARG};;
