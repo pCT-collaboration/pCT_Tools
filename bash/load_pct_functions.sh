@@ -1051,6 +1051,150 @@ function construct_recon_path()
     REPLY="${path}"
     #REPLY="${IO_path}"
 }
+function construct_pct_path()
+{
+    local OPTIND
+    username="$(id -un)" 
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    preprocessing_flag='true'
+    verbose_flag='false'
+    usage="${echo $FUNCNAME} [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+
+    where:
+        -h  show this help text
+        -P  preprocessing path request flag (DEFAULT)
+        -R  reconstruction path request flag (DEFAULT: preprocessing )
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'hvPRo:r:n:d:D:EGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            P) preprocessing_flag='true';;
+            R) preprocessing_flag='false';;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    if [[ $preprocessing_flag == 'true' ]]
+    then
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+    else
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
+    fi
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
+    #echo "${IO_path}"
+    REPLY="${IO_path}"         
+}
+function organize_data()
+{
+    local OPTIND
+    username="$(id -un)" 
+    current_pwd=$PWD
+    data_path=$PWD
+    destination=$current_pwd
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    verbose_flag='false'
+    copy_flag='true'
+    usage="$(echo "${FUNCNAME}") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+    
+    where:
+        -h  show this help text
+        -v  verbose: console output on (DEFAULT: 'off')
+        -P  preprocessing data flag (DEFAULT)
+        -R  reconstruction data flag (DEFAULT: preprocessing)
+        -M  move data (DEFAULT: copy)
+        -C  move data (DEFAULT: copy)
+        -p  path to data (DEFAULT: current working directory)
+        -t  write output hierarchy to (DEFAULT: current working directory)
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'hvMCPRp:t:o:r:n:d:D:EGTIO' opt; do
+        case $opt in               
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            P) preprocessing_flag='true';;
+            R) preprocessing_flag='false';;
+            M) copy_flag='false';;
+            C) copy_flag='true';;
+            p) data_path=${OPTARG};;
+            t) destination=${OPTARG};;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    if [[ $preprocessing_flag == 'true' ]]
+    then
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+    else
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
+    fi
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder}" ]]; then hierarchy_path="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then hierarchy_path="${output_path}"; fi
+    dest_path="$destination/${hierarchy_path}"
+    echo "${dest_path}"
+    mkdir -p $dest_path
+    if [[ $copy_flag == 'true' ]]; then find ${data_path}/* -maxdepth 1 -type f -exec cp -vt $dest_path {} + # cp ${data_path}/* $dest_path  
+    else mv ${data_path}/* $dest_path; fi
+    REPLY="$destination${dest_path}"            
+}
 function set_current_rdata()
 {
     construct_recon_path -o $current_phantom_name -r $current_run_date -n $current_run_number -d $current_preprocessed_date 
@@ -1341,29 +1485,6 @@ function scppct()
     done  
     mkdir -p "${tardis_path}"
         
-}
-function add_tardis_data()
-{
-    local OPTIND
-    parent_path="$PWD"
-    permissions='755' 
-    verbose_string='false'
-
-    current_phantom_name="LMU_DECT"
-    current_scan_type="Experimental"
-    current_run_date="16-04-26"
-    current_run_number="0067_Top_Cont"
-    current_preprocessed_date="16-06-09"
-
-    while getopts 'p:P:v' opt; do
-        case $opt in
-            p) parent_path=${OPTARG};; 
-            P) permissions=${OPTARG};;
-            v) verbose_string='true';;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done
-    
 }
 #-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
@@ -1889,76 +2010,19 @@ function tardis_default_cloning()
     cd ${tardis_Blake_dir}
     git clone ${Blake_rcode_git_clone_addr}
 }
-function construct_pct_path()
+#####################################################################################################################################
+#####################################################################################################################################
+############################################################ DEVELOPMENT ############################################################
+#####################################################################################################################################
+#####################################################################################################################################
+function add_tardis_data()
 {
     local OPTIND
-    username="$(id -un)" 
-    data_direction="${projection_link_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    parent_dir="${org_data_path}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="${proj_data_link_folder}"
-    preprocessing_flag='true'
-    verbose_flag='false'
-    usage="${echo $FUNCNAME} [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
-
-    where:
-        -h  show this help text
-        -P  preprocessing path request flag (DEFAULT)
-        -R  reconstruction path request flag (DEFAULT: preprocessing )
-        -o  object name (REQUIRED)
-        -r  run date (REQUIRED)
-        -n  run # + tag(s) (REQUIRED)
-        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
-        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
-        -E  Experimental data flag (DEFAULT)
-        -G  GEANT4 data flag 
-        -T  TOPAS data flag 
-        -I  input data flag
-        -O  output data flag (DEFAULT)"
-    while getopts 'hvPRo:r:n:d:D:EGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            v) verbose_flag='true';;
-            P) preprocessing_flag='true';;
-            R) preprocessing_flag='false';;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            D) recon_date=${OPTARG};;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="${raw_data_link_folder}";;
-            O) data_direction="${proj_data_link_folder}";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
-    if [[ $preprocessing_flag == 'true' ]]
-    then
-        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
-        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
-    else
-        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
-        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
-    fi
-    #echo "${input_path}"
-    #echo "${output_path}"
-    if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
-    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
-    #echo "${IO_path}"
-    REPLY="${IO_path}"         
-}
-#-P  preprocessing path request flag (DEFAULT)
-        #-R  reconstruction path request flag (DEFAULT: preprocessing )
-    
-function organize_data()
-{
-    local OPTIND
+    username=$(id -un)
+    unorganized_flag='false'
+    verbose_string='false'
+    node_number='3'
+    organize_first_flag='false'
     username="$(id -un)" 
     current_pwd=$PWD
     data_path=$PWD
@@ -1978,11 +2042,12 @@ function organize_data()
         -h  show this help text
         -v  verbose: console output on (DEFAULT: 'off')
         -P  preprocessing data flag (DEFAULT)
-		-R  reconstruction data flag (DEFAULT: preprocessing)
-		-M  move data (DEFAULT: copy)
+        -R  reconstruction data flag (DEFAULT: preprocessing)
+        -M  move data (DEFAULT: copy)
         -C  move data (DEFAULT: copy)
         -p  path to data (DEFAULT: current working directory)
-        -t  write output hierarchy to (DEFAULT: current working directory)
+        -t  destination path for pre-organized data on Kodiak or unorganized data on Tardis  (DEFAULT: current working directory)
+        -F  organize data before transfer (DEFAULT: false)
         -o  object name (REQUIRED)
         -r  run date (REQUIRED)
         -n  run # + tag(s) (REQUIRED)
@@ -1992,15 +2057,21 @@ function organize_data()
         -G  GEANT4 data flag 
         -T  TOPAS data flag 
         -I  input data flag
-        -O  output data flag (DEFAULT)"
-    while getopts 'hvMCp:PRo:r:n:d:D:EGTIO' opt; do
+        -O  output data flag (DEFAULT)
+        -U  unorganized data flag (DEFAULT: organized)
+        -H  organized data heirarchy flag (DEFAULT)
+        -N  destination Tardis node number (3-5) (DEFAULT: '3')"
+    while getopts 'hvPRMCFUHp:t:o:r:n:d:D:N:EGTIO' opt; do
         case $opt in               
             h) echo "${usage}"; return;;
             v) verbose_flag='true';;
+            U) unorganized_flag='true';;
+            H) unorganized_flag='false';;            
             P) preprocessing_flag='true';;
             R) preprocessing_flag='false';;
             M) copy_flag='false';;
             C) copy_flag='true';;
+            F) organize_first_flag='true';;
             p) data_path=${OPTARG};;
             t) destination=${OPTARG};;
             o) object=${OPTARG};;
@@ -2013,27 +2084,65 @@ function organize_data()
             T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
             I) data_direction="${raw_data_link_folder}";;
             O) data_direction="${proj_data_link_folder}";;
+            N) node_number=${OPTARG};;
             *) error "Unexpected option ${flag}";;
         esac
     done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
-    if [[ $preprocessing_flag == 'true' ]]
+    node_address="ecsn00${node_number}"
+    user_unorganized_path="${tardis_user_data_path}/${username}"    
+    if [[ $unorganized_flag == 'true' ]]
     then
-        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
-        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+        if [[ $organize_first_flag == 'true' ]]
+        then
+            print "Unorganized data being organized first and then copied to Tardis" 0,32 6,40
+            run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+            if [[ $preprocessing_flag == 'true' ]]
+            then
+                input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+                output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+            else
+                input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+                output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
+            fi
+            #echo "${input_path}"
+            #echo "${output_path}"
+            if [[ $data_direction == "${raw_data_link_folder}" ]]; then hierarchy_path="${input_path}"
+            elif [[ $data_direction == "${proj_data_link_folder}" ]]; then hierarchy_path="${output_path}"; fi
+            dest_path="${destination}/${hierarchy_path}"
+            node_path="${tardis_org_data_path}/${hierarchy_path}"    
+            color_text " ${dest_path}"     0,33 6,40; dest_path_string=$REPLY
+            color_text " ${node_path}"     0,33 6,40; node_path_string=$REPLY
+            print "Organized path on Kodiak:$dest_path_string" 0,32 6,40 underline
+            print "Destination path on Tardis:$node_path_string" 0,32 6,40 underline   
+            #echo "${dest_path}"
+            mkdir -p $dest_path
+            if [[ $copy_flag == 'true' ]]; then find ${data_path}/* -maxdepth 1 -type f -exec cp -vt $dest_path {} + #
+            else mv ${data_path}/* $dest_path; fi 
+            ssh $node_address "mkdir -p $node_path"
+            scp -rCp -c blowfish $dest_path/* "$node_address:$node_path"
+            #REPLY="${destination}${dest_path}"            
+        else
+            print "Unorganized data being copied to /local/pCT_data/user_data/<username> on Tardis" 0,32 6,40
+            dest_path="${data_path}"
+            node_path="${user_unorganized_path}/${destination}"    
+            color_text " ${dest_path}"     0,33 6,40; dest_path_string=$REPLY
+            color_text " ${node_path}"     0,33 6,40; node_path_string=$REPLY
+            print "Organized path on Kodiak:$dest_path_string" 0,32 6,40 underline
+            print "Destination path on Tardis:$node_path_string" 0,32 6,40 underline   
+            ssh $node_address "mkdir -p $node_path"
+            scp -rCp -c blowfish $dest_path/* "$node_address:$node_path"
+            #REPLY="${destination}${dest_path}"    
+        fi
     else
-        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
-        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
-    fi
-    #echo "${input_path}"
-    #echo "${output_path}"
-    if [[ $data_direction == "${raw_data_link_folder}" ]]; then hierarchy_path="${input_path}"
-    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then hierarchy_path="${output_path}"; fi
-    dest_path="$destination/${hierarchy_path}"
-    echo "${dest_path}"
-    mkdir -p $dest_path
-    if [[ $copy_flag == 'true' ]]; then find ${data_path}/* -maxdepth 1 -type f -exec cp -vt $dest_path {} + # cp ${data_path}/* $dest_path  
-    else mv ${data_path}/* $dest_path; fi
-    REPLY="$destination${dest_path}"            
+        print "Organized data being copied directly to Tardis" 0,32 6,40
+        dest_path="${data_path}"
+        node_path="${tardis_user_data_path}/${hierarchy_path}"    
+        color_text " ${dest_path}"     0,33 6,40; dest_path_string=$REPLY
+        color_text " ${node_path}"     0,33 6,40; node_path_string=$REPLY
+        print "Organized path on Kodiak:$dest_path_string" 0,32 6,40 underline
+        print "Destination path on Tardis:$node_path_string" 0,32 6,40 underline   
+        ssh $node_address "mkdir -p $node_path"
+        scp -rCp -c blowfish $dest_path/* "$node_address:$node_path"
+        #REPLY="$destination${dest_path}" 
+    fi  
 }
-
