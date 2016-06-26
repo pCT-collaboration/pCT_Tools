@@ -1,27 +1,4 @@
 #!/bin/bash
-DEFAULT_IFS=' '
-console_width=90
-NoColor="\033[0m"
-Black="\033[0;30m"
-DarkGray="\033[1;30m"
-Red="\033[0;31m"
-LightRed="\033[1;31m"
-Green="\033[0;32m"
-LightGreen="\033[1;32m"
-Brown="\033[1;33m"
-Yellow="\033[0;33m"
-Blue="\033[0;34m"
-LightBlue="\033[1;34m"
-Purple="\033[0;35m"
-LightPurple="\033[1;35m"
-Cyan="\033[0;36m"
-LightCyan="\033[1;36m"
-LightGray="\033[0;37m"
-White="\033[1;37m"
-separator_char="-"
-default_background_color="6,40"
-default_text_color="0,37"
-reset_color="\033[0;37;6;40m"
 ###################################################################################################
 ########### User names of collaborators, including internal Baylor student user names #############
 ###################################################################################################
@@ -29,10 +6,10 @@ master="master"
 current_user=$(id -un)
 user_folder="/${current_user}"
 recon_group="ionrecon"
-declare -a PCT_USERS
 other_pct_users=("penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout")
+declare -a PCT_USERS
 ###################################################################################################
-######################## Paths/directories common to Kodiak/Tardis nodes ##########################
+#################### Folder name variables for Kodiak/Tardis nodes code/data ######################
 ###################################################################################################
 user_home=~
 pct_folder="/ion"
@@ -42,33 +19,29 @@ incoming_folder="/incoming"
 staging_folder="/staging"
 pct_code_folder="/pCT_code"
 pct_data_folder="/pCT_data"
-
 raw_data_folder="/raw_data"
 pre_data_folder="/preprocessed_data"
 proj_data_folder="/projection_data"
 org_data_folder="/organized_data"
 recon_data_folder="/reconstruction_data"
-
 unorg_data_folder="/unorganized_data"
 temp_input_data_folder="/temp_input_data"
 temp_output_data_folder="/temp_output_data"
 tardis_user_data_folder="/user_data"
-
 ref_images_folder="/Reference_Images"
 experimental_data_folder="/Experimental"
 simulated_data_folder="/Simulated"
-
 GEANT4_run_data_prefix="G_"
 TOPAS_run_data_prefix="T_"
-
 raw_data_link_folder="/Input"
 proj_data_link_folder="/Output"
-
 git_code_folder="/git"
 rcode_folder="/Reconstruction"
 pcode_folder="/Preprocessing"
 pct_docs_folder="/pCT_Documentation"
-
+###################################################################################################
+############### Define variables for git commands, accounts, repos, branches, etc. ################
+###################################################################################################
 git_clone_addr_base="git@github.com:"
 git_clone_addr_suffix=".git"
 # pCT-collaboration account
@@ -100,7 +73,6 @@ pre_data_path="${pct_data_path}${pre_data_folder}"
 proj_data_path="${pct_data_path}${proj_data_folder}"
 org_data_path="${pct_data_path}${org_data_folder}"
 recon_data_path="${pct_data_path}${recon_data_folder}"
-pct_code_path="${pct_folder}${pct_code_folder}"
 #-------- Tardis code/data paths ------------#
 tardis_data_path=${tardis_pct_folder}${pct_data_folder}
 tardis_raw_data_path="${tardis_data_path}${raw_data_folder}"
@@ -123,6 +95,7 @@ pcode_subdir_path=${pct_code_folder}${pcode_folder}
 rcode_subdir_path=${pct_code_folder}${rcode_folder}
 git_code_subdir_path=${pct_code_folder}${git_code_folder}
 
+pct_code_path="${pct_folder}${pct_code_folder}"
 global_code_path="${pct_folder}${pct_code_folder}"
 global_pcode_path=${pct_folder}${pcode_subdir_path}
 global_rcode_path=${pct_folder}${rcode_subdir_path}
@@ -175,7 +148,6 @@ pct_data_paths=( $org_data_path $raw_data_path $pre_data_path $proj_data_path $r
 pct_code_paths=( $global_git_code_path $global_pcode_path $global_rcode_path )
 ion_paths=( $incoming_path $staging_path $pct_code_path $pct_data_path )
 tardis_user_paths=( $tardis_rcode_path $tardis_pcode_path $tardis_user_data_path $tardis_temp_input_data_path $tardis_temp_output_data_path )
-
 ###################################################################################################
 ################################ Setting current data/code paths ##################################
 ###################################################################################################
@@ -218,18 +190,6 @@ current_preprocessed_date="16-06-09"
 ###################################################################################################
 ################### Tardis head/compute node IDs, nicknames, and IP addresses #####################
 ###################################################################################################
-# IDs
-tardis_head_node_ID="ecsn001"
-tardis_compute_node1_ID="ecsn002"
-tardis_compute_node2_ID="ecsn003"
-tardis_compute_node3_ID="ecsn004"
-tardis_compute_node4_ID="ecsn005"
-# aliases
-tardis_head_node_alias="whartnell"
-tardis_compute_node1_alias="ptroughton"
-tardis_compute_node2_alias="jpertwee"
-tardis_compute_node3_alias="tbaker"
-tardis_compute_node4_alias="pdavison"
 # Node ID numbers
 kodiak=130
 whartnell=1
@@ -237,7 +197,19 @@ ptroughton=2
 jpertwee=3
 tbaker=4
 pdavison=5
-# IPs
+# Tardis node IDs
+tardis_head_node_ID="ecsn001"
+tardis_compute_node1_ID="ecsn002"
+tardis_compute_node2_ID="ecsn003"
+tardis_compute_node3_ID="ecsn004"
+tardis_compute_node4_ID="ecsn005"
+# Tardis node aliases
+tardis_head_node_alias="whartnell"
+tardis_compute_node1_alias="ptroughton"
+tardis_compute_node2_alias="jpertwee"
+tardis_compute_node3_alias="tbaker"
+tardis_compute_node4_alias="pdavison"
+# Tardis node IPs
 tardis_IP_base="192.168.225."
 tardis_head_node_IP="${tardis_IP_base}${whartnell}"
 tardis_compute_node1_IP="${tardis_IP_base}${ptroughton}"
@@ -245,8 +217,11 @@ tardis_compute_node2_IP="${tardis_IP_base}${jpertwee}"
 tardis_compute_node3_IP="${tardis_IP_base}${tbaker}"
 tardis_compute_node4_IP="${tardis_IP_base}${pdavison}"
 ###################################################################################################
-########## Node specific CUDA SDK selection used in loading approprate gcc/nvcc modules ###########
+############### pCT module loading and CUDA info for Kodiak/Tardis gcc/nvcc usage #################
 ###################################################################################################
+kodiak_modules=("purge" "unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
+tardis_modules_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load mpich/ge/gcc/64/3.1.4" "load mpich/ge/open64/64/3.1.4" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.1" "load mvapich2/open64/64/2.1" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
+tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
 version_CUDA_Kodiak="none"
 version_CUDA_Tardis_Headnode=55
 version_CUDA_Tardis=70
@@ -257,9 +232,32 @@ rcode_sm="sm_35"
 rcode_object="recon.out"
 rcode_flags="-O3"
 alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
-kodiak_modules=("purge" "unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
-tardis_modules_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load mpich/ge/gcc/64/3.1.4" "load mpich/ge/open64/64/3.1.4" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.1" "load mvapich2/open64/64/2.1" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
-tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
+###################################################################################################
+######################## Define variables for console output formatting ###########################
+###################################################################################################
+console_width=90
+NoColor="\033[0m"
+Black="\033[0;30m"
+DarkGray="\033[1;30m"
+Red="\033[0;31m"
+LightRed="\033[1;31m"
+Green="\033[0;32m"
+LightGreen="\033[1;32m"
+Brown="\033[1;33m"
+Yellow="\033[0;33m"
+Blue="\033[0;34m"
+LightBlue="\033[1;34m"
+Purple="\033[0;35m"
+LightPurple="\033[1;35m"
+Cyan="\033[0;36m"
+LightCyan="\033[1;36m"
+LightGray="\033[0;37m"
+White="\033[1;37m"
+separator_char="-"
+default_background_color="6,40"
+default_text_color="0,37"
+reset_color="\033[0;37;6;40m"
+DEFAULT_IFS=' '
 ###################################################################################################
 ###################################################################################################
 ###################################### Function definitions #######################################
@@ -281,6 +279,7 @@ function is_integer()
     if [[ $1 =~ $re ]]; then return 0
     else return 1; fi
 }
+function char_occur_count() { number_of_occurrences=$(grep -o "$2" <<< "$1" | wc -l); REPLY=$number_of_occurrences; }
 function tolowercase()
 {
     #lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
@@ -311,6 +310,32 @@ function qsort()
    larger=( "${qsort_ret[@]}" )
    qsort_ret=( "${smaller[@]}" "$pivot" "${larger[@]}" )
 }
+function path_2_parent()
+{
+    path=$1
+    echo "${path:0:1}"
+    if [[ "${path:0:1}" == "/" ]]; then path="${path:1}"; fi
+    parent=${path%%/*}
+    #echo $parent
+    REPLY=$parent
+}
+function path_2_folder()
+{
+    path=$1
+    #echo "${path:0:1}"
+    folder=${path##*/}
+    #echo $folder
+    REPLY=$folder
+}
+function strip_path_folder()
+{
+    path=$1
+    folder=${path##*/}
+    #echo $folder
+    stripped_path=${path%%/$folder}
+    #echo $stripped_path
+    REPLY=$stripped_path
+}
 function string_2_array() 
 { 
     string=$1
@@ -326,6 +351,13 @@ function string_2_array()
     done
     qsort "${string_array[@]}"
     REPLY="${qsort_ret[@]}"
+}
+function array_member_test () 
+{
+    #case "${myarray[@]}" in  *"two"*) echo "found" ;; esac
+    local e
+    for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+    return 1
 }
 function lsdirs() 
 { 
@@ -653,6 +685,74 @@ function print_program_version()
 #---------------------------------------------- Data naming/organization -------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
+function parse_pct_path()
+{
+    local OPTIND
+    parent_path="$PWD"
+    verbose_flag='false'
+    while getopts 'hvp:' opt; do
+        case $opt in
+            h) echo "${usage}"; return;;
+            v) verbose_string='true';;
+            p) parent_path=${OPTARG};; 
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    L=${#parent_path}
+    last_char=`expr $L - 1`    
+    if [[ "${parent_path:$last_char}" == "/" ]]; then parent_path="${parent_path:0:$last_char}"; fi
+    if [[ "${parent_path:0:1}" == "/" ]]; then parent_path="${parent_path:1}"; fi   
+    char_occur_count $parent_path "/"
+    num_folders=$REPLY
+    if [[ $num_folders == '6' ]]
+    then
+        path_2_folder $parent_path
+        recon_date=$REPLY
+        strip_path_folder $parent_path
+        parent_path=$REPLY    
+    fi
+    path_2_folder $parent_path
+    preprocess_date=$REPLY
+    #echo $preprocess_date
+    
+    strip_path_folder $parent_path
+    parent_path=$REPLY  
+    path_2_folder $parent_path  
+    output_folder=$REPLY
+    #echo $output_folder
+    
+    strip_path_folder $parent_path
+    parent_path=$REPLY  
+    path_2_folder $parent_path  
+    run_number=$REPLY
+    #echo $run_number
+    
+    strip_path_folder $parent_path
+    parent_path=$REPLY  
+    path_2_folder $parent_path  
+    run_date=$REPLY
+    #echo $run_date
+    
+    strip_path_folder $parent_path
+    parent_path=$REPLY  
+    path_2_folder $parent_path  
+    scan_type_folder=$REPLY
+    #echo $scan_type_folder
+    
+    strip_path_folder $parent_path
+    #parent_path=$REPLY  
+    #path_2_folder $parent_path  
+    object=$REPLY
+    echo $REPLY
+    #unset PCT_FIELDS
+    if [[ $num_folders == '6' ]]
+    then    
+        PCT_FIELDS=( $object $scan_type_folder $run_date $run_number $output_folder $preprocess_date $recon_date)
+    else
+        PCT_FIELDS=( $object $scan_type_folder $run_date $run_number $output_folder $preprocess_date)
+    fi
+    REPLY=$PCT_FIELDS
+}
 function parse_pct_filename()
 {
     IFS='_'                         
@@ -677,7 +777,7 @@ function parse_pct_config()
 }
 function parse_readme()
 {
-    usage="$(basename "$0") [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
+    usage="$(echo "${FUNCNAME}") [-h] [-p <README path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be extracted.  
 
     where:
         -h  show this help text
@@ -847,57 +947,6 @@ function construct_pct_path()
     elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then REPLY="${output_path}"; fi
     #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
 }
-function construct_recon_path()
-{
-    local OPTIND
-    username="$(id -un)" 
-    data_direction="${projection_link_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    parent_dir="${org_data_path}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="${proj_data_link_folder}"
-    usage="$(basename "$0") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
-
-    where:
-        -h  show this help text
-        -o  object name (REQUIRED)
-		-r  run date (REQUIRED)
-        -n  run # + tag(s) (REQUIRED)
-        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
-        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
-        -E  Experimental data flag (DEFAULT)
-        -G  GEANT4 data flag 
-        -T  TOPAS data flag 
-        -I  input data flag
-        -O  output data flag (DEFAULT)"
-    while getopts 'ho:r:n:d:D:EGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            D) recon_date=${OPTARG};;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="${raw_data_link_folder}";;
-            O) data_direction="${proj_data_link_folder}";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
-    #echo "${input_path}"
-    #echo "${output_path}"
-    if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
-    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
-    #echo "${IO_path}"
-    #REPLY="${IO_path}"
-}
 function construct_preprocessing_path()
 {
     local OPTIND
@@ -910,20 +959,20 @@ function construct_preprocessing_path()
     recon_date=$(current_date)
     data_direction="proj_data_link_folder"
     verbose_flag='false'
-    usage="$(basename "$0") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] -- construct input or output data path for appropriately organized preprocessed data
-	
+    usage="$(echo "${FUNCNAME}") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] -- construct input or output data path for appropriately organized preprocessed data
+    
     where:
         -h  show this help text
         -v  verbose: console output on (DEFAULT: 'off')
-		-o  object name (REQUIRED)
-		-r  run date (REQUIRED)
-		-n  run # + tag(s) (REQUIRED)
-		-d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
-		-E  Experimental data flag (DEFAULT)
-		-G  GEANT4 data flag 
-		-T  TOPAS data flag 
-		-I  input data flag
-		-O  output data flag (DEFAULT)"
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
     while getopts 'hvo:r:n:d:EGTIO' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
@@ -947,6 +996,60 @@ function construct_preprocessing_path()
     elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then path="${output_path}"; fi
     if [[ $verbose_flag == 'true' ]]; then echo "${path}"; fi
     REPLY="${path}"
+}
+function construct_recon_path()
+{
+    local OPTIND
+    username="$(id -un)" 
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    verbose_flag='false'
+    usage="$(echo "${FUNCNAME}") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+
+    where:
+        -h  show this help text
+        -v  verbose: console output on (DEFAULT: 'off')
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'hvo:r:n:d:D:EGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder:1}" ]]; then path="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then path="${output_path}"; fi
+    if [[ $verbose_flag == 'true' ]]; then echo "${path}"; fi
+    REPLY="${path}"
+    #REPLY="${IO_path}"
 }
 function set_current_rdata()
 {
@@ -1176,14 +1279,14 @@ function stage_preprocessed_data()
     local OPTIND
     preprocessed_path=$PWD
     preprocessed_date=$(current_date)
-	filename="readme.txt"
+    filename="readme.txt"
     verbose_flag='false'
     YYMMDD_flag='true'
     flag_string=''
     verbose_string=''
     YYMMDD_string=''
     username=$(id -un)
-    usage="$(basename "$0") [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
+    usage="$(echo "${FUNCNAME}") [-h][-v][-O][-p <README/data path>] [-f <README filename>] -- parse the 'readme' text file included with preprocessed data specifying the filename(s) of the input raw data used as input from which the phantom name, run #/tag(s), and projection angle can be parsed.  
 
         where:
             -h  show this help text
@@ -1191,7 +1294,7 @@ function stage_preprocessed_data()
             -d  date of preprocessing (DEFAULT: $preprocessed_date (today))
             -p  path to data and readme text file (DEFAULT: $preprocessed_path)
             -f  filename of readme text file (DEFAULT: $filename)
-			-O  specifies old date format MMDDYYYY is used (DEFAULT: 'YY-MM-DD')"
+            -O  specifies old date format MMDDYYYY is used (DEFAULT: 'YY-MM-DD')"
     while getopts 'hvOp:f:' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
@@ -1392,7 +1495,7 @@ function txrecon()
 }
 function nvccgen()
 {
-    usage="$(basename "$0") [-h] [$1] [$2] -- compile pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
+    usage="$(echo "${FUNCNAME}") [-h] [$1] [$2] -- compile pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
 
     where:
         -h  show this help text
@@ -1401,11 +1504,11 @@ function nvccgen()
     while getopts 'h' opt; do
         case $opt in
             h) echo "${usage}"; return;;
-			*) error "Unexpected option ${flag}";;
+            *) error "Unexpected option ${flag}";;
         esac
     done
     
-	#nvcc11="nvcc -std=c++11 -gencode arch=compute_35,code=sm_35 -O3"
+    #nvcc11="nvcc -std=c++11 -gencode arch=compute_35,code=sm_35 -O3"
     #-std=c++11 -gencode arch=$rcode_compute,code=$rcode_sm
     print_newline
     target_source_code="${tardis_pct_folder}${rcode_subdir_path}${user_folder}${rcode_cu_file}"
@@ -1445,7 +1548,7 @@ function nvccgen()
 }
 function runrecon()
 {
-    usage="$(basename "$0") [-h] [$1] [$2] -- compile and run pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
+    usage="$(echo "${FUNCNAME}") [-h] [$1] [$2] -- compile and run pCT_Reconstruction code with argument #1/#2 used to set architecture/code 
 
     where:
         -h  show this help text
@@ -1454,7 +1557,7 @@ function runrecon()
      while getopts 'h' opt; do
         case $opt in
             h) echo "${usage}"; return;;
-			*) error "Unexpected option ${flag}";;
+            *) error "Unexpected option ${flag}";;
         esac
     done
       if [ -z "$1" ]
@@ -1510,7 +1613,7 @@ function construct_git_clone_addr()
     local OPTIND
     account=${pct_collab_git_account}
     repo=${old_rcode_git_repo}
-    usage="$(basename "$0") [-h] [-a <git account>] [-r <git repository>] -- construct GitHub address used to clone the account/repository
+    usage="$(echo "${FUNCNAME}") [-h] [-a <git account>] [-r <git repository>] -- construct GitHub address used to clone the account/repository
 
     where:
         -h  show this help text
@@ -1519,7 +1622,7 @@ function construct_git_clone_addr()
     while getopts 'a:r:' opt; do
         case $opt in
             h) echo "${usage}"; return;;
-			a) account=${OPTARG};;
+            a) account=${OPTARG};;
             r) repo=${OPTARG};;           
             *) error "Unexpected option ${flag}";;
         esac
@@ -1533,7 +1636,7 @@ function add_rcode_repo()
     username="$(id -un)"
     account=${pct_collab_git_account}
     repo=${old_rcode_git_repo}
-    usage="$(basename "$0") [-h] [-u <username>] [-a <git account>] [-r <git repository>] -- add directory and clone GitHub repository code to Tardis node
+    usage="$(echo "${FUNCNAME}") [-h] [-u <username>] [-a <git account>] [-r <git repository>] -- add directory and clone GitHub repository code to Tardis node
 
     where:
         -h  show this help text
@@ -1543,7 +1646,7 @@ function add_rcode_repo()
     while getopts 'hu:a:r:' opt; do
         case $opt in
             h) echo "${usage}"; return;;
-			u) username=${OPTARG};;
+            u) username=${OPTARG};;
             a) account=${OPTARG};;
             r) repo=${OPTARG};;           
             *) error "Unexpected option ${flag}";;
@@ -1560,7 +1663,7 @@ function add_rcode_repo()
 }
 function create_recon_user()
 {
-    usage="$(basename "$0") [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
+    usage="$(echo "${FUNCNAME}") [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
 
     where:
         -h  show this help text
@@ -1589,20 +1692,20 @@ function set_rcode()
     repo=${old_rcode_git_repo}
     git_direct='false' 
     branch='master'
-    usage="$(basename "$0") [-h][-G][-g] [-a <git account>] [-r <git repository>] [-b <git branch>] [-u <username>] -- set the git account/repository and branch (optional) to use for the reconstruction code, either the global clone or a clone to the user's code directory
+    usage="$(echo "${FUNCNAME}") [-h][-G][-g] [-a <git account>] [-r <git repository>] [-b <git branch>] [-u <username>] -- set the git account/repository and branch (optional) to use for the reconstruction code, either the global clone or a clone to the user's code directory
 
         where:
             -h  show this help text
             -a  git account (DEFAULT: ${account})
-			-r  git repository (DEFAULT: ${repo})	
-			-b  git branch (DEFAULT: $branch)
-			-u  username, if applicable (DEFAULT: $username)
+            -r  git repository (DEFAULT: ${repo})   
+            -b  git branch (DEFAULT: $branch)
+            -u  username, if applicable (DEFAULT: $username)
             -G  reconstruction group username flag (DEFAULT: ${username})
-			-g  global git code repositories flag (DEFAULT: user git code directories)"
+            -g  global git code repositories flag (DEFAULT: user git code directories)"
     while getopts 'hu:a:r:b:Gg' opt; do
         case $opt in
             h) echo "${usage}"; return;;
-			u) username=${OPTARG};;
+            u) username=${OPTARG};;
             a) account=${OPTARG};;
             r) repo=${OPTARG};;           
             b) branch=${OPTARG};;           
@@ -1625,21 +1728,21 @@ function set_rcode()
     else
         cd ${setting_tardis_rcode_path}
     fi
-    if [[ $branch != 'master']]
+    if [[ $branch != 'master' ]]
     then
         git checkout $branch
     fi  
-	current_rcode_account="${account}"
-	current_rcode_repo="${repo}"
-	current_rcode_branch="${branch}"
-	if [[ $git_direct == 'true' ]]
-	then
-		current_rcode_git=$direct_git
-		current_set_rcode_git_flag=$direct_git_flag
-	else
-		current_rcode_git=$user_git
-		current_set_rcode_git_flag=''
-	fi	
+    current_rcode_account="${account}"
+    current_rcode_repo="${repo}"
+    current_rcode_branch="${branch}"
+    if [[ $git_direct == 'true' ]]
+    then
+        current_rcode_git=$direct_git
+        current_set_rcode_git_flag=$direct_git_flag
+    else
+        current_rcode_git=$user_git
+        current_set_rcode_git_flag=''
+    fi  
 }    
 #-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------#
@@ -1682,7 +1785,7 @@ function login_tasks()
     print_info "Current git Account" "${current_rcode_account}"
     print_info "Current git Repository" "${current_rcode_repo}"
     print_info "Current git Branch" "${current_rcode_branch}"
-    set_rcode -a "$current_rcode_account" -r "$current_rcode_repo" -c "$current_rcode_branch" $current_set_rcode_git_flag
+    set_rcode -a "$current_rcode_account" -r "$current_rcode_repo" -b "$current_rcode_branch" $current_set_rcode_git_flag
     color_text "[$(now)]" 0,33 5,49; now_string=$REPLY
     color_text "$PWD" 0,35 5,49; pwd_string=$REPLY
     color_text "${git_branch}${git_dirty}" 0,34 5,49; git_string=$REPLY
@@ -1785,5 +1888,150 @@ function tardis_default_cloning()
     git clone ${Baylor_rcode_git_clone_addr}
     cd ${tardis_Blake_dir}
     git clone ${Blake_rcode_git_clone_addr}
+}
+function construct_pct_path()
+{
+    local OPTIND
+    username="$(id -un)" 
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    preprocessing_flag='true'
+    verbose_flag='false'
+    usage="${echo $FUNCNAME} [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+
+    where:
+        -h  show this help text
+        -P  preprocessing path request flag (DEFAULT)
+        -R  reconstruction path request flag (DEFAULT: preprocessing )
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'hvPRo:r:n:d:D:EGTIO' opt; do
+        case $opt in        
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            P) preprocessing_flag='true';;
+            R) preprocessing_flag='false';;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    if [[ $preprocessing_flag == 'true' ]]
+    then
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+    else
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
+    fi
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
+    #echo "${IO_path}"
+    REPLY="${IO_path}"         
+}
+#-P  preprocessing path request flag (DEFAULT)
+        #-R  reconstruction path request flag (DEFAULT: preprocessing )
+    
+function organize_data()
+{
+    local OPTIND
+    username="$(id -un)" 
+    current_pwd=$PWD
+    data_path=$PWD
+    destination=$current_pwd
+    data_direction="${projection_link_folder}"
+    scan_type_folder="${experimental_data_folder}"
+    run_date_folder_prefix=""
+    parent_dir="${org_data_path}"
+    preprocessed_date=$(current_date)
+    recon_date=$(current_date)
+    data_direction="${proj_data_link_folder}"
+    verbose_flag='false'
+    copy_flag='true'
+    usage="$(echo "${FUNCNAME}") [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
+    
+    where:
+        -h  show this help text
+        -v  verbose: console output on (DEFAULT: 'off')
+        -M  move data (DEFAULT: copy)
+        -C  move data (DEFAULT: copy)
+        -p  path to data (DEFAULT: current working directory)
+        -t  write output hierarchy to (DEFAULT: current working directory)
+        -o  object name (REQUIRED)
+        -r  run date (REQUIRED)
+        -n  run # + tag(s) (REQUIRED)
+        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
+        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
+        -E  Experimental data flag (DEFAULT)
+        -G  GEANT4 data flag 
+        -T  TOPAS data flag 
+        -I  input data flag
+        -O  output data flag (DEFAULT)"
+    while getopts 'hvMCp:PRo:r:n:d:D:EGTIO' opt; do
+        case $opt in               
+            h) echo "${usage}"; return;;
+            v) verbose_flag='true';;
+            #P) preprocessing_flag='true';;
+            #R) preprocessing_flag='false';;
+            M) copy_flag='false';;
+            C) copy_flag='true';;
+            p) data_path=${OPTARG};;
+            t) destination=${OPTARG};;
+            o) object=${OPTARG};;
+            r) run_date=${OPTARG};;
+            n) run_number=${OPTARG};;
+            d) preprocessed_date=${OPTARG};;
+            D) recon_date=${OPTARG};;
+            E) scan_type_folder="${experimental_data_folder}";;
+            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
+            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
+            I) data_direction="${raw_data_link_folder}";;
+            O) data_direction="${proj_data_link_folder}";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done    
+    run_date_folder="${run_date_folder_prefix}${run_date}"          # Extract run date from last directory in the path
+    if [[ $preprocessing_flag == 'true' ]]
+    then
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${raw_data_link_folder}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"    
+    else
+        input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
+        output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"      
+    fi
+    #echo "${input_path}"
+    #echo "${output_path}"
+    if [[ $data_direction == "${raw_data_link_folder}" ]]; then hierarchy_path="${input_path}"
+    elif [[ $data_direction == "${proj_data_link_folder}" ]]; then hierarchy_path="${output_path}"; fi
+    dest_path="$destination/${hierarchy_path}"
+    echo "${dest_path}"
+    mkdir -p $dest_path
+    if [[ $copy_flag == 'true' ]]; then find ${data_path}/* -maxdepth 1 -type f -exec cp -vt $dest_path {} + # cp ${data_path}/* $dest_path  
+    else mv ${data_path}/* $dest_path; fi
+    REPLY="$destination${dest_path}"            
 }
 

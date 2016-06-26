@@ -13,11 +13,15 @@
 *.a
 
 # text
-.tex
-.log
-.ist
-.mst
-.aux
-.mw
-.sta
-.synctex
+*.tex
+*.log
+*.ist
+*.mst
+*.aux
+*.mw
+*.sta
+*.synctex
+*.synctex(busy)
+*.bak
+*.pygtex
+*.pygstyle

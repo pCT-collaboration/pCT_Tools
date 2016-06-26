@@ -1,39 +1,20 @@
-# .bash_profile
-#newgrp ionrecon
+#!/bin/bash
 ###################################################################################################
-################## Kodiak/Tardis and Workstation bash profile for user schultze ###################
+############################### Redefine common bash functions ####################################
 ###################################################################################################
-# User specific environment and startup programs use Ctrl-X for stop so that Ctrl-S could be used for forward history search
-[ -t 0 ] && stty stop ^X
-###################################################################################################
-########################## Command redefinitions/settings and shortcuts ###########################
-###################################################################################################
-export CLICOLOR=1
-export LSCOLORS="gxfxcxdxbxegedabagacad"
-export HISTFILESIZE=20000                 # extend .bash_history size
-export HISTSIZE=10000                     # extend bash command list size
-export HISTCONTROL=erasedups              # erase duplicates from bash command history
-export HISTTIMEFORMAT='%F %T '            # display timestamp of commands in history
-#export PROMPT_COMMAND='history -a'
-#shopt -s histappend
-###################################################################################################
-########################## Command redefinitions/settings and shortcuts ###########################
-###################################################################################################
-# Combination command shortcuts
-alias lst="ls -alt --color"
-alias ls="ls --color -ah"
-alias cp="cp -apv"
-alias cpdir="cp -apRv"
-alias rm="rm -v"
 alias mv="mv -v"
+alias rm="rm -v"
 alias echo="echo -e"
-alias deldir="rm -rf"
-alias rld="echo -e \"Reload ~/.bash_profile ...\"; . ~/.bash_profile"
 alias scp="scp -rCp -c blowfish"
-alias back="cd -"
+alias cp="cp -apv"
+###################################################################################################
+################################# Define new bash functions #######################################
+###################################################################################################
+alias cpdir="cp -apRv"
+alias deldir="rm -rf"
 alias contents="tree -dluDC"
+alias lst="ls -alt --color"
 alias host=$(hostname)
-DEFAULT_IFS=' '
 ###################################################################################################
 ################################### Console output definitions ####################################
 ###################################################################################################
@@ -50,11 +31,11 @@ DEFAULT_IFS=' '
 #   [4] ecsn004 - tbaker     - 192.168.225.4 ${Brown}
 #   [5] ecsn005 - pdavison   - 192.168.225.5
 print_section_header "CLUSTER NODE SYSTEMS" 1,33  5,40
-echo "${LightRed}-> ${Brown}[1] ${Green}${tardis_head_node_ID} - ${LightBlue}${tardis_head_node_alias}  - ${LightPurple}${tardis_head_node_IP}"
-echo "${LightRed}-> ${Brown}[2] ${Green}${tardis_compute_node1_ID} - ${LightBlue}${tardis_compute_node1_alias}  - ${LightPurple}${tardis_compute_node1_IP}"
-echo "${LightRed}-> ${Brown}[3] ${Green}${tardis_compute_node2_ID} - ${LightBlue}${tardis_compute_node2_alias}  - ${LightPurple}${tardis_compute_node2_IP}"
-echo "${LightRed}-> ${Brown}[4] ${Green}${tardis_compute_node3_ID} - ${LightBlue}${tardis_compute_node3_alias}  - ${LightPurple}${tardis_compute_node3_IP}"
-echo "${LightRed}-> ${Brown}[5] ${Green}${tardis_compute_node4_ID} - ${LightBlue}${tardis_compute_node4_alias}  - ${LightPurple}${tardis_compute_node4_IP}"
+echo -e "${LightRed}-> ${Brown}[1] ${Green}${tardis_head_node_ID} - ${LightBlue}${tardis_head_node_alias}  - ${LightPurple}${tardis_head_node_IP}"
+echo -e "${LightRed}-> ${Brown}[2] ${Green}${tardis_compute_node1_ID} - ${LightBlue}${tardis_compute_node1_alias}  - ${LightPurple}${tardis_compute_node1_IP}"
+echo -e "${LightRed}-> ${Brown}[3] ${Green}${tardis_compute_node2_ID} - ${LightBlue}${tardis_compute_node2_alias}  - ${LightPurple}${tardis_compute_node2_IP}"
+echo -e "${LightRed}-> ${Brown}[4] ${Green}${tardis_compute_node3_ID} - ${LightBlue}${tardis_compute_node3_alias}  - ${LightPurple}${tardis_compute_node3_IP}"
+echo -e "${LightRed}-> ${Brown}[5] ${Green}${tardis_compute_node4_ID} - ${LightBlue}${tardis_compute_node4_alias}  - ${LightPurple}${tardis_compute_node4_IP}"
 ###################################################################################################
 ############################### Establish ssh connection shortcuts ################################
 ###################################################################################################
