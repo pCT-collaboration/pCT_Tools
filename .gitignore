@@ -1,43 +1,65 @@
-# Compiled Object files
+###################################################################################
+################ Default GitHub supplied file ignoring settings ##################
+###################################################################################
+#---- Compiled Object Files ----#
 *.slo
 *.lo
 *.o
 
-# Compiled Dynamic libraries
+#---- Compiled Dynamic Libraries ----#
 *.so
 *.dylib
 
-# Compiled Static libraries
+#---- Compiled Static Libraries ----#
 *.lai
 *.la
 *.a
 
 ###################################################################################
-################ User defined files/folders to ignore in commits ##################
+########### User Defined Exceptions to Default File/Folder Ignore List ############
 ###################################################################################
-#Exceptions
-!pct.bbl
-!pct.blg
+#---- Exceptions ----# 
+#!*.def
+!*.eps
+!*.ijm
+#!*.ist
+!*.m
+#!*.mst
+!*.pdf
+!*.ps
+#!*.tex
+###################################################################################
+########### User Defined Additions to Default File/Folder Ignore List #############
+###################################################################################
 
-# Folders
+###################################################################################
+######################## Default File/Folder Ignore List ##########################
+###################################################################################
+#---- Folders ----#
 \nppBackup
-\_minted-*
 
-# Text files
+#---- Text files ----#
 *.bak
-*.hidden
-*.notes
+*.cfg
 *.tmp
 *.txt.bak
 
-# Matlab files
-#*.m
+#---- User defined text file types ----#
+*.hidden
+*.notes
+
+#---- ImageJ files ----#
+*.ijm
+*.java
+
+#---- Matlab files ----#
+*.m
 *.mat
 *.asv
 *.m~
 *.mex*
 
-# Mac IDE files             
+#---- Mac IDE files ----#             
 *.swp               
 *~              
 *(Autosaved).rtfd/              
@@ -45,11 +67,13 @@ Backup[ ]of[ ]*.pages/
 Backup[ ]of[ ]*.key/                
 Backup[ ]of[ ]*.numbers/                
 
-# Mac finder files and hidden folders               
+#---- Mac finder files and hidden folders ----#               
 .DS_Store
 
-######################## Visual Studio Files/Folders ###########################
-# VS Folders and Specific Files
+###################################################################################
+######################## Visual Studio Files/Folders ##############################
+###################################################################################
+#---- VS Folders and Specific Files ----#     
 \ipch
 \Release
 \x64
@@ -58,12 +82,12 @@ Backup[ ]of[ ]*.numbers/
 16
 64
 #PLOP
-Project_VC++Directories_root.txt
+Project_VC++Directories_root.txt ----#     
 vc100.pdb
 vc110.pdb
 usertype.dat
 
-# VS File Types
+#---- VS File Types ----#     
 *.Build.CppClean.log
 *.command.1.tlog
 *.cpp1.ii
