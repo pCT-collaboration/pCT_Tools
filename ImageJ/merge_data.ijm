@@ -28,7 +28,7 @@ macro "merge_data"
 	print_directories_created											= true;		
 	print_input_data_path												= true;
 	print_input_CSV_path												= true;
-	print_input_TXT_path												= true;
+	print_input_TXT_path												= false;
 	print_input_PNG_paths												= false;
 	print_output_CSV_path												= true;
 	print_output_TXT_path												= true;
@@ -66,17 +66,29 @@ macro "merge_data"
 	//************************************************************************************ CSV file merging Booleans ************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//			
 	merge_ROI_analysis_CSVs												= true;
-	merge_ROI_analysis_RSP_Error_CSVs									= false;
+	merge_ROI_analysis_RSP_Error_CSVs									= true;
 	merge_ROI_analysis_RSP_CSVs											= true;
-	merge_ROI_analysis_Std_Dev_CSVs										= false;
+	merge_ROI_analysis_Std_Dev_CSVs										= true;
 	merge_TV_CSVs														= true;
 	merge_multiplot_CSVs												= true;
-	merge_multiplot_RSP_Error_CSVs										= false;
-	merge_multiplot_RSP_CSVs											= false;
-	merge_multiplot_Std_Dev_CSVs										= false;
-	merge_multiplot_TV_CSVs												= true;
-	overwrite_merged_CSV_data 											= true;
-	overwrite_merged_TXT_data 											= true;
+	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
+	merge_multiplot_RSP_CSVs											= true && merge_multiplot_CSVs;
+	merge_multiplot_Std_Dev_CSVs										= true && merge_multiplot_CSVs;
+	merge_multiplot_TV_CSVs												= true  && merge_multiplot_CSVs;
+	write_merged_data 													= true;
+	write_merged_CSV_data 												= true && write_merged_data;
+	write_merged_TXT_data 												= true && write_merged_data;
+	write_merged_RSP_CSV_data 											= true && write_merged_CSV_data;
+	write_merged_RSP_Error_CSV_data 									= true && write_merged_CSV_data;
+	write_merged_Std_Dev_CSV_data 										= true && write_merged_CSV_data;
+	write_merged_TV_CSV_data 											= true && write_merged_CSV_data;
+	write_merged_RSP_TXT_data 											= true && write_merged_TXT_data;
+	write_merged_RSP_Error_TXT_data 									= true && write_merged_TXT_data;
+	write_merged_Std_Dev_TXT_data 										= true && write_merged_TXT_data;
+	write_merged_TV_TXT_data 											= true && write_merged_TXT_data;
+	overwrite_merged_data 												= true;
+	overwrite_merged_CSV_data 											= true && overwrite_merged_data;
+	overwrite_merged_TXT_data 											= true && overwrite_merged_data;
 	overwrite_merged_RSP_CSV_data 										= true && overwrite_merged_CSV_data;
 	overwrite_merged_RSP_Error_CSV_data 								= true && overwrite_merged_CSV_data;
 	overwrite_merged_Std_Dev_CSV_data 									= true && overwrite_merged_CSV_data;
@@ -85,6 +97,28 @@ macro "merge_data"
 	overwrite_merged_RSP_Error_TXT_data 								= true && overwrite_merged_TXT_data;
 	overwrite_merged_Std_Dev_TXT_data 									= true && overwrite_merged_TXT_data;
 	overwrite_merged_TV_TXT_data 										= true && overwrite_merged_TXT_data;
+	write_merged_multiplot_data 										= true;
+	write_merged_multiplot_CSV_data 									= true && write_merged_multiplot_data;
+	write_merged_multiplot_TXT_data 									= true && write_merged_multiplot_data;
+	write_merged_multiplot_RSP_CSV_data 								= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_RSP_Error_CSV_data 							= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_Std_Dev_CSV_data 							= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_TV_CSV_data 									= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_RSP_TXT_data 								= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_RSP_Error_TXT_data 							= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_Std_Dev_TXT_data 							= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_TV_TXT_data 									= true && write_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_data 									= true;
+	overwrite_merged_multiplot_CSV_data 								= true && overwrite_merged_multiplot_data;
+	overwrite_merged_multiplot_TXT_data 								= true && overwrite_merged_multiplot_data;
+	overwrite_merged_multiplot_RSP_CSV_data 							= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_RSP_Error_CSV_data 						= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_Std_Dev_CSV_data 						= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_TV_CSV_data 								= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_RSP_TXT_data 							= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_RSP_Error_TXT_data 						= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_Std_Dev_TXT_data 						= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_TV_TXT_data 								= true && overwrite_merged_multiplot_TXT_data;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
@@ -92,16 +126,16 @@ macro "merge_data"
 	add_comparison_lines_2_plots										= true;
 	add_compared_data													= false;
 	add_compared_RSP_data 												= true;
-	add_compared_RSP_error_data 										= true;
-	add_compared_std_dev_data 											= true;
+	add_compared_RSP_Error_data 										= true;
+	add_compared_Std_Dev_data 											= true;
 	add_compared_TV_data 												= true;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
 	generate_parameter_value_test_comparison_data 						= true;
 	generate_parameter_value_test_RSP_comparison_data 					= false;
-	generate_parameter_value_test_RSP_error_comparison_data 			= true;
-	generate_parameter_value_test_std_dev_comparison_data 				= true;
+	generate_parameter_value_test_RSP_Error_comparison_data 			= true;
+	generate_parameter_value_test_Std_Dev_comparison_data 				= true;
 	generate_parameter_value_test_TV_comparison_data	 				= true;				
 		//***************************************************************************************************************************************************************************************************//
 	//************************* Boolean control *******************************************************************************************************************************//
@@ -131,18 +165,18 @@ macro "merge_data"
 			create_RSP_comparison_plots									= true;
 				write_RSP_comparison_plots								= true;
 					overwrite_RSP_comparison_plots						= true;
-		perform_RSP_error_comparisons 									= true;
-			write_RSP_error_comparison_data								= true;
-				overwrite_RSP_error_comparison_data						= true;
-			create_RSP_error_comparison_plots							= true;
-				write_RSP_error_comparison_plots						= true;
-					overwrite_RSP_error_comparison_plots				= true;
-		perform_std_dev_comparisons										= true;
-			write_std_dev_comparison_data								= true;
-				overwrite_std_dev_comparison_data						= true;
-			create_std_dev_comparison_plots								= true;
-				write_std_dev_comparison_plots							= true;
-					overwrite_std_dev_comparison_plots					= true;	
+		perform_RSP_Error_comparisons 									= true;
+			write_RSP_Error_comparison_data								= true;
+				overwrite_RSP_Error_comparison_data						= true;
+			create_RSP_Error_comparison_plots							= true;
+				write_RSP_Error_comparison_plots						= true;
+					overwrite_RSP_Error_comparison_plots				= true;
+		perform_Std_Dev_comparisons										= true;
+			write_Std_Dev_comparison_data								= true;
+				overwrite_Std_Dev_comparison_data						= true;
+			create_Std_Dev_comparison_plots								= true;
+				write_Std_Dev_comparison_plots							= true;
+					overwrite_Std_Dev_comparison_plots					= true;	
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************** Multiplotting Booleans *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
@@ -159,22 +193,22 @@ macro "merge_data"
 					overwrite_RSP_multiplot_animated_GIFs				= true;
 				write_RSP_multiplot_AVIs								= true;
 					overwrite_RSP_multiplot_AVIs						= true;
-		generate_RSP_error_multiplots 									= true;		
-			write_RSP_error_multiplots									= true;
-				overwrite_RSP_error_multiplots							= true;	
-			generate_RSP_error_multiplot_animations						= true;
-				write_RSP_error_multiplot_animated_GIFs					= true;
-					overwrite_RSP_error_multiplot_animated_GIFs			= true;
-				write_RSP_error_multiplot_AVIs							= true;
-					overwrite_RSP_error_multiplot_AVIs					= true;
-		generate_std_dev_multiplots 									= true;			
-			write_std_dev_multiplots									= true;
-				overwrite_std_dev_multiplots							= true;
-			generate_std_dev_multiplot_animations						= true;
-				write_std_dev_multiplot_animated_GIFs					= true;
-					overwrite_std_dev_multiplot_animated_GIFs			= true;
-				write_std_dev_multiplot_AVIs							= true;
-					overwrite_std_dev_multiplot_AVIs					= true;
+		generate_RSP_Error_multiplots 									= true;		
+			write_RSP_Error_multiplots									= true;
+				overwrite_RSP_Error_multiplots							= true;	
+			generate_RSP_Error_multiplot_animations						= true;
+				write_RSP_Error_multiplot_animated_GIFs					= true;
+					overwrite_RSP_Error_multiplot_animated_GIFs			= true;
+				write_RSP_Error_multiplot_AVIs							= true;
+					overwrite_RSP_Error_multiplot_AVIs					= true;
+		generate_Std_Dev_multiplots 									= true;			
+			write_Std_Dev_multiplots									= true;
+				overwrite_Std_Dev_multiplots							= true;
+			generate_Std_Dev_multiplot_animations						= true;
+				write_Std_Dev_multiplot_animated_GIFs					= true;
+					overwrite_Std_Dev_multiplot_animated_GIFs			= true;
+				write_Std_Dev_multiplot_AVIs							= true;
+					overwrite_Std_Dev_multiplot_AVIs					= true;
 		generate_TV_multiplots											= true;
 			plot_TV_multiplots 											= true;
 				write_TV_multiplots 									= true;
@@ -206,7 +240,7 @@ macro "merge_data"
 	//***********************************************************************************************************************************************************************************************//
 	RSP_Boolean_indices 										= 0;
 	RSP_error_Boolean_indices 									= 1;
-	std_dev_Boolean_indices 									= 2;
+	Std_Dev_Boolean_indices 									= 2;
 	TV_Boolean_indices 											= 3;
 	TV_step_Boolean_indices 									= 4;
 	generate_multiplots_Boolean_indices 						= 0;
@@ -216,18 +250,18 @@ macro "merge_data"
 	overwrite_multiplot_animated_GIFs_Boolean_indices 			= 4;
 	write_multiplot_AVIs_Boolean_indices  						= 5;
 	overwrite_multiplot_AVIs_Boolean_indices  					= 6;	
-	multiplot_Booleans 											= newArray(generate_RSP_multiplots, generate_RSP_error_multiplots, generate_std_dev_multiplots, plot_TV_multiplots, plot_TV_step_multiplots);
-	write_multiplot_Booleans 									= newArray(write_RSP_multiplots, write_RSP_error_multiplots, write_std_dev_multiplots, write_TV_multiplots, write_TV_step_multiplots);
-	overwrite_multiplot_Booleans 								= newArray(overwrite_RSP_multiplots, overwrite_RSP_error_multiplots, overwrite_std_dev_multiplots, overwrite_TV_multiplots, overwrite_TV_step_multiplots);
-	write_multiplot_animated_GIF_Booleans 						= newArray(write_RSP_multiplot_animated_GIFs, write_RSP_error_multiplot_animated_GIFs, write_std_dev_multiplot_animated_GIFs, write_TV_multiplot_animated_GIFs, write_TV_step_multiplot_animated_GIFs);
-	overwrite_multiplot_animated_GIF_Booleans					= newArray(overwrite_RSP_multiplot_animated_GIFs, overwrite_RSP_error_multiplot_animated_GIFs, overwrite_std_dev_multiplot_animated_GIFs, overwrite_TV_multiplot_animated_GIFs, overwrite_TV_step_multiplot_animated_GIFs);
-	write_multiplot_AVI_Booleans 								= newArray(write_RSP_multiplot_AVIs, write_RSP_error_multiplot_AVIs, write_std_dev_multiplot_AVIs, write_TV_multiplot_AVIs, write_TV_step_multiplot_AVIs);
-	overwrite_multiplot_AVI_Booleans 							= newArray(overwrite_RSP_multiplot_AVIs, overwrite_RSP_error_multiplot_AVIs, overwrite_std_dev_multiplot_AVIs, overwrite_TV_multiplot_AVIs, overwrite_TV_step_multiplot_AVIs);
+	multiplot_Booleans 											= newArray(generate_RSP_multiplots, generate_RSP_Error_multiplots, generate_Std_Dev_multiplots, plot_TV_multiplots, plot_TV_step_multiplots);
+	write_multiplot_Booleans 									= newArray(write_RSP_multiplots, write_RSP_Error_multiplots, write_Std_Dev_multiplots, write_TV_multiplots, write_TV_step_multiplots);
+	overwrite_multiplot_Booleans 								= newArray(overwrite_RSP_multiplots, overwrite_RSP_Error_multiplots, overwrite_Std_Dev_multiplots, overwrite_TV_multiplots, overwrite_TV_step_multiplots);
+	write_multiplot_animated_GIF_Booleans 						= newArray(write_RSP_multiplot_animated_GIFs, write_RSP_Error_multiplot_animated_GIFs, write_Std_Dev_multiplot_animated_GIFs, write_TV_multiplot_animated_GIFs, write_TV_step_multiplot_animated_GIFs);
+	overwrite_multiplot_animated_GIF_Booleans					= newArray(overwrite_RSP_multiplot_animated_GIFs, overwrite_RSP_Error_multiplot_animated_GIFs, overwrite_Std_Dev_multiplot_animated_GIFs, overwrite_TV_multiplot_animated_GIFs, overwrite_TV_step_multiplot_animated_GIFs);
+	write_multiplot_AVI_Booleans 								= newArray(write_RSP_multiplot_AVIs, write_RSP_Error_multiplot_AVIs, write_Std_Dev_multiplot_AVIs, write_TV_multiplot_AVIs, write_TV_step_multiplot_AVIs);
+	overwrite_multiplot_AVI_Booleans 							= newArray(overwrite_RSP_multiplot_AVIs, overwrite_RSP_Error_multiplot_AVIs, overwrite_Std_Dev_multiplot_AVIs, overwrite_TV_multiplot_AVIs, overwrite_TV_step_multiplot_AVIs);
 	PNG_image_Booleans											= newArray(print_input_PNG_paths, close_input_PNG_images);
 	animation_Booleans 											= newArray(close_multiplot_stack_images, print_multiplot_GIF_paths, print_multiplot_AVI_paths); 
 	RSP_Booleans												= newArray(generate_RSP_multiplots, write_RSP_multiplots, overwrite_RSP_multiplots, write_RSP_multiplot_animated_GIFs, overwrite_RSP_multiplot_animated_GIFs, write_RSP_multiplot_AVIs, overwrite_RSP_multiplot_AVIs);
-	RSP_error_Booleans 											= newArray(generate_RSP_error_multiplots, write_RSP_error_multiplots, overwrite_RSP_error_multiplots, write_RSP_error_multiplot_animated_GIFs, overwrite_RSP_error_multiplot_animated_GIFs, write_RSP_error_multiplot_AVIs, overwrite_RSP_multiplot_AVIs);
-	std_dev_Booleans 											= newArray(generate_std_dev_multiplots, write_std_dev_multiplots, overwrite_std_dev_multiplots, write_std_dev_multiplot_animated_GIFs, overwrite_std_dev_multiplot_animated_GIFs, write_std_dev_multiplot_AVIs, overwrite_std_dev_multiplot_AVIs);
+	RSP_error_Booleans 											= newArray(generate_RSP_Error_multiplots, write_RSP_Error_multiplots, overwrite_RSP_Error_multiplots, write_RSP_Error_multiplot_animated_GIFs, overwrite_RSP_Error_multiplot_animated_GIFs, write_RSP_Error_multiplot_AVIs, overwrite_RSP_multiplot_AVIs);
+	Std_Dev_Booleans 											= newArray(generate_Std_Dev_multiplots, write_Std_Dev_multiplots, overwrite_Std_Dev_multiplots, write_Std_Dev_multiplot_animated_GIFs, overwrite_Std_Dev_multiplot_animated_GIFs, write_Std_Dev_multiplot_AVIs, overwrite_Std_Dev_multiplot_AVIs);
 	TV_Booleans 												= newArray(plot_TV_multiplots, write_TV_multiplots, overwrite_TV_multiplots, write_TV_multiplot_animated_GIFs, overwrite_TV_multiplot_animated_GIFs, write_TV_multiplot_AVIs, overwrite_TV_multiplot_AVIs);
 	TV_step_Booleans											= newArray(plot_TV_step_multiplots, write_TV_step_multiplots, overwrite_TV_step_multiplots, write_TV_step_multiplot_animated_GIFs, overwrite_TV_step_multiplot_animated_GIFs, write_TV_step_multiplot_AVIs, overwrite_TV_step_multiplot_AVIs);
 	//***********************************************************************************************************************************************************************************************//
@@ -355,7 +389,8 @@ macro "merge_data"
 	gradient_data_file_basenames 					= "Gradient";	
 	RSP_data_file_basenames							= "RSP";
 	RSP_error_data_file_basenames					= "RSP_Error";
-	std_dev_data_file_basenames						= "Std_Dev";
+	RSP_Error_data_file_basenames					= "RSP_Error";
+	Std_Dev_data_file_basenames						= "Std_Dev";
 	TV_data_file_basenames							= "TV";
 	TV_measurements_basename						= "TV_measurements";
 	TV_step_data_file_basenames						= "TV_step";
@@ -363,7 +398,8 @@ macro "merge_data"
 	
 	RSP_data_file_base_nicknames					= "RSP";
 	RSP_error_data_file_base_nicknames				= "RSPe";
-	std_dev_data_file_base_nicknames				= "SD";
+	RSP_Error_data_file_base_nicknames				= "RSPe";
+	Std_Dev_data_file_base_nicknames				= "SD";
 	TV_data_file_base_nicknames						= "TV";
 	TV_measurements_base_nickname					= "TV";
 	TV_step_data_file_base_nicknames				= "TVs";
@@ -371,29 +407,29 @@ macro "merge_data"
 	
 	RSP_output_basenames							= "RSP";
 	RSP_error_output_basenames						= "RSP_Error";
-	std_dev_output_basenames						= "Std_Dev";
+	Std_Dev_output_basenames						= "Std_Dev";
 	TV_output_basenames								= "TV";
 	TV_step_output_basenames						= "TV_step";
 	TV_difference_output_basenames					= "TV_difference";	
 	
 	RSP_output_short_basenames						= "RSP";
 	RSP_error_output_short_basenames				= "RSPe";
-	std_dev_output_short_basenames					= "SD";
+	Std_Dev_output_short_basenames					= "SD";
 	TV_output_short_basenames						= "TV";
 	TV_step_output_short_basenames					= "TVs";
 	TV_difference_output_short_basenames			= "TVd";	
 	
 	ROI_analysis_RSP_output_basename 				= "RSP";
-	ROI_analysis_RSP_error_output_basename 			= "RSP_Error";
-	ROI_analysis_std_dev_output_basename 			= "Std_Dev";
+	ROI_analysis_RSP_Error_output_basename 			= "RSP_Error";
+	ROI_analysis_Std_Dev_output_basename 			= "Std_Dev";
 	ROI_analysis_TV_output_basename 				= "TV_measurements";
 	parameter_value_test_RSP_output_basename 		= "RSP";
-	parameter_value_test_RSP_error_output_basename 	= "RSP_error";
-	parameter_value_test_std_dev_output_basename 	= "Std_Dev";
+	parameter_value_test_RSP_Error_output_basename 	= "RSP_error";
+	parameter_value_test_Std_Dev_output_basename 	= "Std_Dev";
 	parameter_value_test_TV_output_basename 		= "TV_measurements";
 	multiplot_RSP_output_basename					= "RSP";
-	multiplot_RSP_error_output_basename				= "RSP_Error";
-	multiplot_std_dev_output_basename				= "Std_Dev";
+	multiplot_RSP_Error_output_basename				= "RSP_Error";
+	multiplot_Std_Dev_output_basename				= "Std_Dev";
 	multiplot_TV_output_basename					= "RSP";
 	//***********************************************************************************************************************************************************************************************//
 	//************************************************** Import ROI definitions for current phantom and set corresponding internal variables/arrays *************************************************//
@@ -744,8 +780,8 @@ macro "merge_data"
 	RSPs_by_iteration										= newArray(ROIs_per_reconstruction);
 	RSP_errors_by_ROI										= newArray(ROIs_per_reconstruction);
 	RSP_errors_by_iteration									= newArray(ROIs_per_reconstruction);
-	std_devs_by_ROI											= newArray(ROIs_per_reconstruction);
-	std_devs_by_iteration									= newArray(ROIs_per_reconstruction);			
+	Std_Devs_by_ROI											= newArray(ROIs_per_reconstruction);
+	Std_Devs_by_iteration									= newArray(ROIs_per_reconstruction);			
 	TV_measurements_by_iteration							= newArray(ROIs_per_reconstruction);
 	indices_4_ordering_data 								= generate_ordering_indices(num_recon_iterations, num_ROIs_2_analyze, images_per_reconstruction, num_target_test_parameter_values);
 	//*******************************************************************************************************************************************************************************************//
@@ -753,43 +789,43 @@ macro "merge_data"
 	//*******************************************************************************************************************************************************************************************//	
 	ROI_analysis_TV_input_filename							= TV_measurements_basename 		+ TXT;	
 	ROI_analysis_RSP_output_filename						= RSP_data_file_basenames 		+ CSV;
-	ROI_analysis_RSP_error_output_filename					= RSP_error_data_file_basenames	+ CSV;
-	ROI_analysis_std_dev_output_filename					= std_dev_data_file_basenames  	+ CSV;
+	ROI_analysis_RSP_Error_output_filename					= RSP_error_data_file_basenames	+ CSV;
+	ROI_analysis_Std_Dev_output_filename					= Std_Dev_data_file_basenames  	+ CSV;
 	ROI_analysis_TV_output_filename							= TV_data_file_basenames		+ TXT;
 	
 	parameter_value_test_RSP_input_filename					= ROI_analysis_RSP_output_filename;
-	parameter_value_test_RSP_error_input_filename			= ROI_analysis_RSP_error_output_filename;
-	parameter_value_test_std_dev_input_filename				= ROI_analysis_std_dev_output_filename;
+	parameter_value_test_RSP_Error_input_filename			= ROI_analysis_RSP_Error_output_filename;
+	parameter_value_test_Std_Dev_input_filename				= ROI_analysis_Std_Dev_output_filename;
 	parameter_value_test_TV_input_filename					= ROI_analysis_TV_output_filename;	
 	parameter_value_test_RSP_output_filename				= RSP_data_file_basenames 			+ "_" + target_test_parameter_range_suffix + TXT;
-	parameter_value_test_RSP_error_output_filename			= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_suffix + TXT;
-	parameter_value_test_std_dev_output_filename			= std_dev_data_file_basenames 		+ "_" + target_test_parameter_range_suffix + TXT;
+	parameter_value_test_RSP_Error_output_filename			= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_suffix + TXT;
+	parameter_value_test_Std_Dev_output_filename			= Std_Dev_data_file_basenames 		+ "_" + target_test_parameter_range_suffix + TXT;
 	parameter_value_test_TV_output_filename					= TV_data_file_basenames 			+ "_" + target_test_parameter_range_suffix + TXT;
 	parameter_value_test_RSP_output_filename2				= RSP_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + TXT;
-	parameter_value_test_RSP_error_output_filename2			= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + TXT;
-	parameter_value_test_std_dev_output_filename2			= std_dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + TXT;
+	parameter_value_test_RSP_Error_output_filename2			= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + TXT;
+	parameter_value_test_Std_Dev_output_filename2			= Std_Dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + TXT;
 	parameter_value_test_TV_output_filename2				= TV_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + TXT;
 	
 	multiplot_RSP_input_filename							= parameter_value_test_RSP_output_filename;
-	multiplot_RSP_error_input_filename						= parameter_value_test_RSP_error_output_filename;
-	multiplot_std_dev_input_filename						= parameter_value_test_std_dev_output_filename;
+	multiplot_RSP_Error_input_filename						= parameter_value_test_RSP_Error_output_filename;
+	multiplot_Std_Dev_input_filename						= parameter_value_test_Std_Dev_output_filename;
 	multiplot_TV_input_filename								= parameter_value_test_TV_output_filename;	
 	//multiplot_RSP_output_basename							= RSP_data_file_basenames			+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
-	//multiplot_RSP_error_output_basename					= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
-	//multiplot_std_dev_output_basename						= std_dev_data_file_basenames		+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
+	//multiplot_RSP_Error_output_basename					= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
+	//multiplot_Std_Dev_output_basename						= Std_Dev_data_file_basenames		+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
 	//multiplot_TV_output_basename							= TV_data_file_basenames			+ "_" + target_test_parameter_range_suffix + "_" + multiplot_parameter_range_filenaming;
 	multiplot_RSP_output_basename							= RSP_data_file_basenames			+ "_" + target_test_parameter_range_filenaming;
-	multiplot_RSP_error_output_basename						= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_filenaming;
-	multiplot_std_dev_output_basename						= std_dev_data_file_basenames		+ "_" + target_test_parameter_range_filenaming;
+	multiplot_RSP_Error_output_basename						= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_filenaming;
+	multiplot_Std_Dev_output_basename						= Std_Dev_data_file_basenames		+ "_" + target_test_parameter_range_filenaming;
 	multiplot_TV_output_basename							= TV_data_file_basenames			+ "_" + target_test_parameter_range_filenaming;
 	multiplot_RSP_output_basename2							= RSP_data_file_basenames			+ "_" + target_test_parameter_range_filenaming + "_";
-	multiplot_RSP_error_output_basename2					= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_filenaming + "_";
-	multiplot_std_dev_output_basename2						= std_dev_data_file_basenames		+ "_" + target_test_parameter_range_filenaming + "_";
+	multiplot_RSP_Error_output_basename2					= RSP_error_data_file_basenames		+ "_" + target_test_parameter_range_filenaming + "_";
+	multiplot_Std_Dev_output_basename2						= Std_Dev_data_file_basenames		+ "_" + target_test_parameter_range_filenaming + "_";
 	multiplot_TV_output_basename2							= TV_data_file_basenames			+ "_" + target_test_parameter_range_filenaming + "_";
 	
 	test_multiplot_RSP_output_basename						= RSP_data_file_base_nicknames				+ "_" + target_test_parameter_range_filenaming;
-	test_multiplot_RSP_error_output_basename				= RSP_error_data_file_base_nicknames		+ "_" + target_test_parameter_range_filenaming;
-	test_multiplot_std_dev_output_basename					= std_dev_data_file_base_nicknames			+ "_" + target_test_parameter_range_filenaming;
+	test_multiplot_RSP_Error_output_basename				= RSP_error_data_file_base_nicknames		+ "_" + target_test_parameter_range_filenaming;
+	test_multiplot_Std_Dev_output_basename					= Std_Dev_data_file_base_nicknames			+ "_" + target_test_parameter_range_filenaming;
 	test_multiplot_TV_output_basename						= TV_data_file_base_nicknames				+ "_" + target_test_parameter_range_filenaming;
 	test_multiplot_TV_step_output_basename					= TV_step_data_file_base_nicknames			+ "_" + target_test_parameter_range_filenaming;
 	test_multiplot_TV_difference_output_basename			= TV_difference_data_file_base_nicknames	+ "_" + target_test_parameter_range_filenaming;
@@ -800,6 +836,7 @@ macro "merge_data"
 	//***********************************************************************************************************************************************************************************************//	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////							
 	num_input_data_sets = 0;
+	num_loops = 0;
 	if(perform_test_comparisons)     
 	{
 		for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < num_ROI_selection_diameters; ROI_selection_diameter_index++)
@@ -832,22 +869,22 @@ macro "merge_data"
 				
 				current_analysis_ROI_analysis_TV_input_filename						= ROI_analysis_TV_input_filename;				
 				current_analysis_ROI_analysis_RSP_output_filename					= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + ROI_analysis_RSP_output_filename;
-				current_analysis_ROI_analysis_RSP_error_output_filename				= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + ROI_analysis_RSP_error_output_filename;
-				current_analysis_ROI_analysis_std_dev_output_filename				= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + ROI_analysis_std_dev_output_filename;
+				current_analysis_ROI_analysis_RSP_Error_output_filename				= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + ROI_analysis_RSP_Error_output_filename;
+				current_analysis_ROI_analysis_Std_Dev_output_filename				= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + ROI_analysis_Std_Dev_output_filename;
 				current_analysis_ROI_analysis_TV_output_filename					= current_TV_analysis_subdirectory 		+ FOLDER_SEPARATOR + ROI_analysis_TV_output_filename;				
 				
 				current_analysis_parameter_value_test_RSP_output_filename			= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_output_filename2;
-				current_analysis_parameter_value_test_RSP_error_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_error_output_filename2;
-				current_analysis_parameter_value_test_std_dev_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_std_dev_output_filename2;
+				current_analysis_parameter_value_test_RSP_Error_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_Error_output_filename2;
+				current_analysis_parameter_value_test_Std_Dev_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_Std_Dev_output_filename2;
 				current_analysis_parameter_value_test_TV_output_filename			= current_TV_analysis_subdirectory 		+ FOLDER_SEPARATOR + parameter_value_test_TV_output_filename2;				
 				//current_analysis_parameter_value_test_RSP_output_filename			= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_output_filename;
-				//current_analysis_parameter_value_test_RSP_error_output_filename	= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_error_output_filename;
-				//current_analysis_parameter_value_test_std_dev_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_std_dev_output_filename;
+				//current_analysis_parameter_value_test_RSP_Error_output_filename	= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_RSP_Error_output_filename;
+				//current_analysis_parameter_value_test_Std_Dev_output_filename		= current_ROI_analysis_subdirectory 	+ FOLDER_SEPARATOR + parameter_value_test_Std_Dev_output_filename;
 				//current_analysis_parameter_value_test_TV_output_filename			= current_TV_analysis_subdirectory 		+ FOLDER_SEPARATOR + parameter_value_test_TV_output_filename;				
 				
 				current_analysis_multiplot_RSP_input_filename						= current_analysis_parameter_value_test_RSP_output_filename;
-				current_analysis_multiplot_RSP_error_input_filename					= current_analysis_parameter_value_test_RSP_error_output_filename;
-				current_analysis_multiplot_std_dev_input_filename					= current_analysis_parameter_value_test_std_dev_output_filename;
+				current_analysis_multiplot_RSP_Error_input_filename					= current_analysis_parameter_value_test_RSP_Error_output_filename;
+				current_analysis_multiplot_Std_Dev_input_filename					= current_analysis_parameter_value_test_Std_Dev_output_filename;
 				current_analysis_multiplot_TV_input_filename						= current_analysis_parameter_value_test_TV_output_filename;				
 				//exit();			
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -856,8 +893,8 @@ macro "merge_data"
 				//***************************************************************************************************************************************************************************************//	
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////																	
 				all_RSP_multiplot_data 					= newArray();
-				all_RSP_error_multiplot_data 			= newArray();				
-				all_std_dev_multiplot_data 				= newArray();
+				all_RSP_Error_multiplot_data 			= newArray();				
+				all_Std_Dev_multiplot_data 				= newArray();
 				all_TV_multiplot_data 					= newArray();
 				//*******************************************************************************************************************************************************************************//
 				//************************* User defined function definitions *******************************************************************************************************************//
@@ -966,39 +1003,96 @@ macro "merge_data"
 //********************************************************* Merge ROI Analysis CSV Files from Each Target Test Parameter Value **********************************************************//
 //***************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////																	
-					// INPUT: 	test_batch_directory//current_test_folders[i]//current_ROI_analysis_subdirectory//ROI_analysis_RSP_error_output_filename 
+					// INPUT: 	test_batch_directory//current_test_folders[i]//current_ROI_analysis_subdirectory//ROI_analysis_RSP_Error_output_filename 
 					//		  	= D://...//B_3200_..._L0_Nk_#//Slice_10//d7//RSP_Error.csv
-					// OUTPUT: 	test_batch_directory//current_parameter_value_test_output_directory_parent//current_ROI_analysis_subdirectory//parameter_value_test_merged_RSP_error_CSV_filename  
+					// OUTPUT: 	test_batch_directory//current_parameter_value_test_output_directory_parent//current_ROI_analysis_subdirectory//parameter_value_test_merged_RSP_Error_CSV_filename  
 					parameter_value_test_merged_RSP_CSV_filename						= RSP_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + CSV;
-					parameter_value_test_merged_RSP_error_CSV_filename					= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + CSV;
-					parameter_value_test_merged_Std_Dev_CSV_filename					= std_dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + CSV;
+					parameter_value_test_merged_RSP_Error_CSV_filename					= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + CSV;
+					parameter_value_test_merged_Std_Dev_CSV_filename					= Std_Dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + CSV;
 					parameter_value_test_merged_TV_CSV_filename							= TV_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + CSV;
 					parameter_value_test_merged_RSP_TXT_filename						= RSP_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + TXT;
-					parameter_value_test_merged_RSP_error_TXT_filename					= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + TXT;
-					parameter_value_test_merged_Std_Dev_TXT_filename					= std_dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + TXT;
+					parameter_value_test_merged_RSP_Error_TXT_filename					= RSP_error_data_file_basenames 	+ "_" + target_test_parameter_range_filenaming + TXT;
+					parameter_value_test_merged_Std_Dev_TXT_filename					= Std_Dev_data_file_basenames 		+ "_" + target_test_parameter_range_filenaming + TXT;
 					parameter_value_test_merged_TV_TXT_filename							= TV_data_file_basenames 			+ "_" + target_test_parameter_range_filenaming + TXT;
 					
-					merge_multiplot_CSV_folder		= current_parameter_value_test_TV_analysis_path;
-					merge_multiplot_CSV_filename	= TV_data_file_basenames 	+ "_" + multiplot_parameter_range_filenaming + "_" + target_test_parameter_range_filenaming + CSV;
-					merge_multiplot_TXT_filename	= TV_data_file_basenames 	+ "_" + multiplot_parameter_range_filenaming + "_" + target_test_parameter_range_filenaming + TXT;
-					
-					MERGED_RSP_FILENAME_LIST							= newArray();
-					MERGED_RSP_ERROR_FILENAME_LIST						= newArray();
-					MERGED_STD_DEV_FILENAME_LIST						= newArray();
-					MERGED_TV_FILENAME_LIST								= newArray();
-				    MERGED_RSP_FILE_PATH_LIST							= newArray();
+					//merge_multiplot_CSV_folder			= current_parameter_value_test_TV_analysis_path;
+					//merge_multiplot_CSV_filename			= TV_data_file_basenames 	+ "_" + multiplot_parameter_range_filenaming + "_" + target_test_parameter_range_filenaming + CSV;
+					//merge_multiplot_TXT_filename			= TV_data_file_basenames 	+ "_" + multiplot_parameter_range_filenaming + "_" + target_test_parameter_range_filenaming + TXT;
+					//RSP_data_file_base_nicknames					= "RSP";
+					//RSP_error_data_file_base_nicknames				= "RSPe";
+					//RSP_Error_data_file_base_nicknames				= "RSPe";
+					//Std_Dev_data_file_base_nicknames				= "SD";
+					//TV_data_file_base_nicknames						= "TV";
+					merge_multiplot_CSV_folder							= current_parameter_value_test_TV_analysis_path;
+					merge_multiplot_CSV_file_suffix						= "_" + current_test_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
+					merge_multiplot_TXT_file_suffix						= "_" + current_test_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
+					merge_multiplot_CSV_filename						= TV_data_file_basenames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_TXT_filename						= TV_data_file_basenames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_RSP_CSV_filename					= RSP_data_file_basenames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_RSP_TXT_filename					= RSP_data_file_basenames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_RSP_CSV_short_filename				= RSP_data_file_base_nicknames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_RSP_TXT_short_filename				= RSP_data_file_base_nicknames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_RSP_Error_CSV_filename				= RSP_Error_data_file_basenames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_RSP_Error_TXT_filename				= RSP_Error_data_file_basenames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_RSP_Error_CSV_short_filename		= RSP_Error_data_file_base_nicknames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_RSP_Error_TXT_short_filename		= RSP_Error_data_file_base_nicknames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_Std_Dev_CSV_filename				= Std_Dev_data_file_basenames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_Std_Dev_TXT_filename				= Std_Dev_data_file_basenames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_Std_Dev_CSV_short_filename			= Std_Dev_data_file_base_nicknames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_Std_Dev_TXT_short_filename			= Std_Dev_data_file_base_nicknames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_TV_CSV_filename						= TV_data_file_basenames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_TV_TXT_filename						= TV_data_file_basenames 	+ merge_multiplot_TXT_file_suffix;
+					merge_multiplot_TV_CSV_short_filename				= TV_data_file_base_nicknames 	+ merge_multiplot_CSV_file_suffix;
+					merge_multiplot_TV_TXT_short_filename				= TV_data_file_base_nicknames 	+ merge_multiplot_TXT_file_suffix;
+					MERGED_RSP_FILE_PATH_LIST							= newArray();
+					MERGED_RSP_CSV_FOLDER_LIST							= newArray();
+					MERGED_RSP_CSV_FILENAME_LIST						= newArray();
+					MERGED_RSP_TXT_FILENAME_LIST						= newArray();
 					MERGED_RSP_ERROR_FILE_PATH_LIST						= newArray();
+					MERGED_RSP_ERROR_CSV_FOLDER_LIST					= newArray();
+					MERGED_RSP_ERROR_CSV_FILENAME_LIST					= newArray();
+					MERGED_RSP_ERROR_TXT_FILENAME_LIST					= newArray();
 					MERGED_STD_DEV_FILE_PATH_LIST						= newArray();
-				    MERGED_TV_FILE_PATH_LIST							= newArray();
+				    MERGED_STD_DEV_CSV_FOLDER_LIST						= newArray();
+					MERGED_STD_DEV_CSV_FILENAME_LIST					= newArray();
+					MERGED_STD_DEV_TXT_FILENAME_LIST					= newArray();
+					MERGED_TV_FILE_PATH_LIST							= newArray();
 				    MERGED_TV_CSV_FOLDER_LIST							= newArray();
 				    MERGED_TV_CSV_FILENAME_LIST							= newArray();
 				    MERGED_TV_TXT_FILENAME_LIST							= newArray();
-				    			
-				    MERGED_TOTAL_TV_FILE_PATH_LIST						= newArray();
+				    						    			
+					MERGED_TOTAL_RSP_ERROR_FILE_PATH_LIST				= newArray();
+				    MERGED_TOTAL_RSP_ERROR_CSV_FOLDER_LIST				= newArray();
+				    MERGED_TOTAL_RSP_ERROR_CSV_FILENAME_LIST			= newArray();
+				    MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST			= newArray();
+				   	MERGED_TOTAL_STD_DEV_FILE_PATH_LIST					= newArray();
+				    MERGED_TOTAL_STD_DEV_CSV_FOLDER_LIST				= newArray();
+				    MERGED_TOTAL_STD_DEV_CSV_FILENAME_LIST				= newArray();
+				    MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST				= newArray();
+				   	MERGED_TOTAL_RSP_FILE_PATH_LIST						= newArray();
+				    MERGED_TOTAL_RSP_CSV_FOLDER_LIST					= newArray();
+				    MERGED_TOTAL_RSP_CSV_FILENAME_LIST					= newArray();
+				    MERGED_TOTAL_RSP_TXT_FILENAME_LIST					= newArray();
+				   	MERGED_TOTAL_TV_FILE_PATH_LIST						= newArray();
 				    MERGED_TOTAL_TV_CSV_FOLDER_LIST						= newArray();
 				    MERGED_TOTAL_TV_CSV_FILENAME_LIST					= newArray();
 				    MERGED_TOTAL_TV_TXT_FILENAME_LIST					= newArray();
 				    
+				    MERGED_MULTIPLOT_RSP_ERROR_CSV_FILE_PATH_LIST		= newArray();
+				    MERGED_MULTIPLOT_RSP_ERROR_TXT_FILE_PATH_LIST		= newArray();
+				    MERGED_MULTIPLOT_RSP_ERROR_FOLDER_LIST				= newArray();
+				    MERGED_MULTIPLOT_RSP_ERROR_CSV_FILENAME_LIST		= newArray();
+				    MERGED_MULTIPLOT_RSP_ERROR_TXT_FILENAME_LIST		= newArray();
+				    MERGED_MULTIPLOT_STD_DEV_CSV_FILE_PATH_LIST			= newArray();
+				    MERGED_MULTIPLOT_STD_DEV_TXT_FILE_PATH_LIST			= newArray();
+				    MERGED_MULTIPLOT_STD_DEV_FOLDER_LIST				= newArray();
+				    MERGED_MULTIPLOT_STD_DEV_CSV_FILENAME_LIST			= newArray();
+				    MERGED_MULTIPLOT_STD_DEV_TXT_FILENAME_LIST			= newArray();
+				    MERGED_MULTIPLOT_RSP_CSV_FILE_PATH_LIST				= newArray();
+				    MERGED_MULTIPLOT_RSP_TXT_FILE_PATH_LIST				= newArray();
+				    MERGED_MULTIPLOT_RSP_FOLDER_LIST					= newArray();
+				    MERGED_MULTIPLOT_RSP_CSV_FILENAME_LIST				= newArray();
+				    MERGED_MULTIPLOT_RSP_TXT_FILENAME_LIST				= newArray();
 				    MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST				= newArray();
 				    MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST				= newArray();
 				    MERGED_MULTIPLOT_TV_FOLDER_LIST						= newArray();
@@ -1007,22 +1101,26 @@ macro "merge_data"
 				    
 				    if(merge_ROI_analysis_CSVs)
 					{
-						print_section_separator("Merging the CSV files from the ROI analyses for each target test parameter value", true);
+						print_section_separator											("Merging the CSV files from the ROI analyses for each target test parameter value", true);
+						merged_multiplot_RSP_data_by_ROI 								= newArray();
+						merged_multiplot_RSP_Error_data_by_ROI 							= newArray();
+						merged_multiplot_Std_Dev_data_by_ROI 							= newArray();
 						for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
 						//for(multiplot = 0; multiplot < 1; multiplot++)
 						{ 
+							print_section_separator										("Reading input CSV files from the ROI analyses for each target test parameter value for: multiplot = " + multiplot, false);
 							current_test_CSV_merge_file_suffix 							= generate_merged_parameter_equals_suffix(current_test_multiplot_value_strings, parameter_string_short_prefixes, num_parameter_values, parameter_string_precisions, multiplot_parameter_index, multiplot_parameter_values[multiplot]);
 							parameter_value_total_test_merged_RSP_CSV_filename			= RSP_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
-							parameter_value_total_test_merged_RSP_error_CSV_filename	= RSP_error_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
-							parameter_value_total_test_merged_Std_Dev_CSV_filename		= std_dev_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
+							parameter_value_total_test_merged_RSP_Error_CSV_filename	= RSP_error_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
+							parameter_value_total_test_merged_Std_Dev_CSV_filename		= Std_Dev_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
 							parameter_value_total_test_merged_TV_CSV_filename			= TV_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + CSV;
 							parameter_value_total_test_merged_RSP_TXT_filename			= RSP_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
-							parameter_value_total_test_merged_RSP_error_TXT_filename	= RSP_error_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
-							parameter_value_total_test_merged_Std_Dev_TXT_filename		= std_dev_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
+							parameter_value_total_test_merged_RSP_Error_TXT_filename	= RSP_error_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
+							parameter_value_total_test_merged_Std_Dev_TXT_filename		= Std_Dev_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
 							parameter_value_total_test_merged_TV_TXT_filename			= TV_output_short_basenames 	+ "_" + current_test_CSV_merge_file_suffix + "_" + target_test_parameter_range_filenaming + TXT;
 							current_test_multiplot_folder_basename						= parameter_value_test_folder_name_2_base(current_test_multiplot_folders[multiplot], target_test_parameter_prefix);
 							merged_RSP_data 				= newArray();						
-							merged_RSP_error_data 			= newArray();						
+							merged_RSP_Error_data 			= newArray();						
 							merged_Std_Dev_data 			= newArray();						
 							merged_TV_data 					= newArray();						
 							merged_before_TVS_TV_data 		= newArray();						
@@ -1033,38 +1131,47 @@ macro "merge_data"
 							export_CSV_folder				= current_parameter_value_test_output_directory_parent;
 							export_ROI_analysis_CSV_folder	= current_parameter_value_test_output_directory_parent + FOLDER_SEPARATOR + current_analysis_shortest_subdirectory;
 							export_RSP_CSV_path				= export_ROI_analysis_CSV_folder + FOLDER_SEPARATOR + parameter_value_total_test_merged_RSP_CSV_filename;
-							export_RSP_error_CSV_path		= export_ROI_analysis_CSV_folder + FOLDER_SEPARATOR + parameter_value_total_test_merged_RSP_error_CSV_filename;
+							export_RSP_Error_CSV_path		= export_ROI_analysis_CSV_folder + FOLDER_SEPARATOR + parameter_value_total_test_merged_RSP_Error_CSV_filename;
 							export_Std_Dev_CSV_path			= export_ROI_analysis_CSV_folder + FOLDER_SEPARATOR + parameter_value_total_test_merged_Std_Dev_CSV_filename;
 							export_TV_CSV_path				= export_CSV_folder + FOLDER_SEPARATOR + parameter_value_total_test_merged_TV_CSV_filename;
 							merged_CSV_folder				= test_batch_directory + current_test_multiplot_folder_basename + target_test_parameter_range_suffix;
 							merged_RSP_CSV_folder			= merged_CSV_folder + current_ROI_analysis_subdirectory;
-							merged_RSP_error_CSV_folder		= merged_CSV_folder + current_ROI_analysis_subdirectory;
+							merged_RSP_Error_CSV_folder		= merged_CSV_folder + current_ROI_analysis_subdirectory;
 							merged_Std_Dev_CSV_folder		= merged_CSV_folder + current_ROI_analysis_subdirectory;
 							merged_TV_CSV_folder			= merged_CSV_folder;
 							merged_RSP_CSV_path				= merged_RSP_CSV_folder 		+ FOLDER_SEPARATOR + parameter_value_test_merged_RSP_CSV_filename;										 			
-							merged_RSP_error_CSV_path		= merged_RSP_error_CSV_folder 	+ FOLDER_SEPARATOR + parameter_value_test_merged_RSP_error_CSV_filename;										 			
+							merged_RSP_Error_CSV_path		= merged_RSP_Error_CSV_folder 	+ FOLDER_SEPARATOR + parameter_value_test_merged_RSP_Error_CSV_filename;										 			
 							merged_Std_Dev_CSV_path			= merged_Std_Dev_CSV_folder 	+ FOLDER_SEPARATOR + parameter_value_test_merged_Std_Dev_CSV_filename;										 			
 							merged_TV_CSV_path				= merged_TV_CSV_folder 			+ FOLDER_SEPARATOR + parameter_value_test_merged_TV_CSV_filename;										 			
 							append_2_log					(merged_CSV_folder);
+							append_2_log					(export_CSV_folder);
 							File.makeDirectory				(merged_CSV_folder);
 							File.makeDirectory				(export_ROI_analysis_CSV_folder);
 							for(N = 0; N < num_target_test_parameter_values; N++)
 							{
 								import_CSV_folder				= test_batch_directory +  current_test_multiplot_folder_basename + "_" + d2s(N+1,0);
 								import_RSP_CSV_folder			= import_CSV_folder + current_ROI_analysis_subdirectory;
-								import_RSP_error_CSV_folder		= import_CSV_folder + current_ROI_analysis_subdirectory;
+								import_RSP_Error_CSV_folder		= import_CSV_folder + current_ROI_analysis_subdirectory;
 								import_Std_Dev_CSV_folder		= import_CSV_folder + current_ROI_analysis_subdirectory;
 								import_TV_CSV_folder			= import_CSV_folder;
 								import_RSP_CSV_path				= import_RSP_CSV_folder 		+ FOLDER_SEPARATOR + ROI_analysis_RSP_output_filename;
-								import_RSP_error_CSV_path		= import_RSP_error_CSV_folder 	+ FOLDER_SEPARATOR + ROI_analysis_RSP_error_output_filename;
-								import_Std_Dev_CSV_path			= import_Std_Dev_CSV_folder 	+ FOLDER_SEPARATOR + ROI_analysis_std_dev_output_filename;
+								import_RSP_Error_CSV_path		= import_RSP_Error_CSV_folder 	+ FOLDER_SEPARATOR + ROI_analysis_RSP_Error_output_filename;
+								import_Std_Dev_CSV_path			= import_Std_Dev_CSV_folder 	+ FOLDER_SEPARATOR + ROI_analysis_Std_Dev_output_filename;
 								import_TV_CSV_path				= import_TV_CSV_folder 			+ FOLDER_SEPARATOR + ROI_analysis_TV_input_filename;								
 								RSP_data 						= csv_2_array(import_RSP_CSV_folder, 		ROI_analysis_RSP_output_filename, 		iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, print_input_CSV_path);
-								RSP_error_data 					= csv_2_array(import_RSP_error_CSV_folder, 	ROI_analysis_RSP_error_output_filename, iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, print_input_CSV_path);
-								Std_Dev_data 					= csv_2_array(import_Std_Dev_CSV_folder, 	ROI_analysis_std_dev_output_filename, 	iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, print_input_CSV_path);
+								RSP_error_data 					= csv_2_array(import_RSP_Error_CSV_folder, 	ROI_analysis_RSP_Error_output_filename, iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, print_input_CSV_path);
+								Std_Dev_data 					= csv_2_array(import_Std_Dev_CSV_folder, 	ROI_analysis_Std_Dev_output_filename, 	iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, print_input_CSV_path);
 								TV_data 						= file_2_float_array(import_TV_CSV_folder, 	ROI_analysis_TV_input_filename, print_input_TXT_path);
+								ROI_analysis_RSP_copied_input_filename			= RSP_data_file_basenames 		+  "_" + parameter_string_prefixes[target_test_parameter_index] + "_" + d2s(N+1,0) + CSV;
+								ROI_analysis_RSP_Error_copied_input_filename	= RSP_error_data_file_basenames	+  "_" + parameter_string_prefixes[target_test_parameter_index] + "_" + d2s(N+1,0) + CSV;
+								ROI_analysis_Std_Dev_copied_input_filename		= Std_Dev_data_file_basenames  	+  "_" + parameter_string_prefixes[target_test_parameter_index] + "_" + d2s(N+1,0) + CSV;
+								ROI_analysis_TV_copied_input_filename			= TV_data_file_basenames		+  "_" + parameter_string_prefixes[target_test_parameter_index] + "_" + d2s(N+1,0) + CSV;
+								copy_distributed_file			(import_RSP_CSV_folder, 		ROI_analysis_RSP_output_filename, 		merged_RSP_CSV_folder, 			ROI_analysis_RSP_copied_input_filename, 		print_input_CSV_path);
+								copy_distributed_file			(import_RSP_Error_CSV_folder, 	ROI_analysis_RSP_Error_output_filename, merged_RSP_Error_CSV_folder, 	ROI_analysis_RSP_Error_copied_input_filename, print_input_CSV_path);
+								copy_distributed_file			(import_Std_Dev_CSV_folder, 	ROI_analysis_Std_Dev_output_filename, 	merged_Std_Dev_CSV_folder, 		ROI_analysis_Std_Dev_copied_input_filename, 	print_input_CSV_path);
+								//exit();
 								merged_RSP_data 				= Array.concat(merged_RSP_data, 		RSP_data);																							
-								merged_RSP_error_data 			= Array.concat(merged_RSP_error_data, 	RSP_error_data);																							
+								merged_RSP_Error_data 			= Array.concat(merged_RSP_Error_data, 	RSP_error_data);																							
 								merged_Std_Dev_data 			= Array.concat(merged_Std_Dev_data, 	Std_Dev_data);		
 								merged_TV_data 					= Array.concat(merged_TV_data, 			TV_data);		
 								before_TVS_TV_data 				= newArray();						
@@ -1072,25 +1179,25 @@ macro "merge_data"
 								TV_reduction_data 				= newArray();						
 								for(iteration = 0; iteration < num_recon_iterations; iteration++)
 								{	
-									TV_index						= iteration * TV_step_measurements_per_iteration;
-									before_TVS_data_value			= TV_data[TV_index + before_TVS_index];
-									after_TVS_data_value			= TV_data[TV_index + after_TVS_index];
-									before_TVS_TV_data 				= Array.concat(before_TVS_TV_data, 	before_TVS_data_value);						
-									after_TVS_TV_data 				= Array.concat(after_TVS_TV_data,	after_TVS_data_value);
-									TV_reduction_data 				= Array.concat(TV_reduction_data, 	before_TVS_data_value - after_TVS_data_value);				
+									TV_index					= iteration * TV_step_measurements_per_iteration;
+									before_TVS_data_value		= TV_data[TV_index + before_TVS_index];
+									after_TVS_data_value		= TV_data[TV_index + after_TVS_index];
+									before_TVS_TV_data 			= Array.concat(before_TVS_TV_data, 	before_TVS_data_value);						
+									after_TVS_TV_data 			= Array.concat(after_TVS_TV_data,	after_TVS_data_value);
+									TV_reduction_data 			= Array.concat(TV_reduction_data, 	before_TVS_data_value - after_TVS_data_value);				
 								}				
-								merged_before_TVS_TV_data 			= Array.concat(merged_before_TVS_TV_data, 	before_TVS_TV_data);						
-								merged_after_TVS_TV_data 			= Array.concat(merged_after_TVS_TV_data,	after_TVS_TV_data);
-								merged_TV_reduction_data 			= Array.concat(merged_TV_reduction_data, 	TV_reduction_data);	
-								merged_interleaved_TV_data			= Array.concat(merged_interleaved_TV_data,	before_TVS_TV_data);
-								merged_interleaved_TV_data			= Array.concat(merged_interleaved_TV_data,	after_TVS_TV_data);
-								merged_interleaved_TV_data			= Array.concat(merged_interleaved_TV_data,	TV_reduction_data);
+								merged_before_TVS_TV_data 		= Array.concat(merged_before_TVS_TV_data, 	before_TVS_TV_data);						
+								merged_after_TVS_TV_data 		= Array.concat(merged_after_TVS_TV_data,	after_TVS_TV_data);
+								merged_TV_reduction_data 		= Array.concat(merged_TV_reduction_data, 	TV_reduction_data);	
+								merged_interleaved_TV_data		= Array.concat(merged_interleaved_TV_data,	before_TVS_TV_data);
+								merged_interleaved_TV_data		= Array.concat(merged_interleaved_TV_data,	after_TVS_TV_data);
+								merged_interleaved_TV_data		= Array.concat(merged_interleaved_TV_data,	TV_reduction_data);
 								//exit();
 								num_input_data_sets++;
 							}
-							merged_RSP_data_by_ROI = newArray(merged_RSP_data.length);
-							merged_RSP_error_data_by_ROI = newArray(merged_RSP_error_data.length);
-							merged_Std_Dev_by_ROI = newArray(merged_Std_Dev_data.length);
+							merged_RSP_data_by_ROI 				= newArray(merged_RSP_data.length);
+							merged_RSP_Error_data_by_ROI 		= newArray(merged_RSP_Error_data.length);
+							merged_Std_Dev_data_by_ROI 			= newArray(merged_Std_Dev_data.length);
 							by_ROI_index = 0;
 							for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 							{	
@@ -1098,149 +1205,158 @@ macro "merge_data"
 									{		
 										for(iteration = 0; iteration <= num_recon_iterations; iteration++)
 										{
-											index 		= ROI + iteration * num_ROIs_2_analyze + N * (num_recon_iterations + 1) * num_ROIs_2_analyze;
-											//setResult	(iteration + first_column,  current_row, merged_RSP_error_data[index]);	
-											merged_RSP_data_by_ROI[by_ROI_index]	= merged_RSP_data[index];
-											merged_RSP_error_data_by_ROI[by_ROI_index]	= merged_RSP_error_data[index];
-											merged_Std_Dev_by_ROI[by_ROI_index]	= merged_Std_Dev_data[index];
+											index 										= ROI + iteration * num_ROIs_2_analyze + N * (num_recon_iterations + 1) * num_ROIs_2_analyze;
+											merged_RSP_data_by_ROI[by_ROI_index]		= merged_RSP_data[index];
+											merged_RSP_Error_data_by_ROI[by_ROI_index]	= merged_RSP_Error_data[index];
+											merged_Std_Dev_data_by_ROI[by_ROI_index]	= merged_Std_Dev_data[index];
 											by_ROI_index++;
 										}
 									}			
 							}	
-							App("merged_RSP_data", merged_RSP_data);
-							App("merged_RSP_data_by_ROI", merged_RSP_data_by_ROI);
-							//exit();
-							merged_concat_TV_data			= Array.concat(merged_concat_TV_data, merged_before_TVS_TV_data);
-							merged_concat_TV_data			= Array.concat(merged_concat_TV_data, merged_after_TVS_TV_data);
-							merged_concat_TV_data			= Array.concat(merged_concat_TV_data, merged_TV_reduction_data);
-							//exit();
-							run										("Clear Results");
-							run										("Input/Output...", "jpeg=85 gif=-1 file=.csv");
-							run										("Set Measurements...", "area mean standard min redirect=None decimal=6");
-							title_line_num		 					= 0;
-							title_column_num		 				= 0;
-							title_line_separation 					= 2;
-							tables_start_line		 				= title_line_num + title_line_separation;
-							column_labels_line_separation 			= 1;
-							table_line_separation 					= 2;
-							first_column 							= 1;
-							current_row 							= 0;
-							ROI_table_row_separation 				= num_target_test_parameter_values + column_labels_line_separation + table_line_separation  + 1; 
-							ROI_table_column_separation				= 1;
-							ROI_table_elements						= (num_recon_iterations + 1) * num_target_test_parameter_values;
-							current_row								= table_add_empty_rows( first_column + num_recon_iterations + 1, title_line_num, title_line_separation);
-							setResult								(0,  current_row - title_line_separation + 1, current_test_multiplot_parameter_values_string);										
+							merged_multiplot_RSP_data_by_ROI 		= Array.concat(merged_multiplot_RSP_data_by_ROI, merged_RSP_data_by_ROI);
+							merged_multiplot_RSP_Error_data_by_ROI 	= Array.concat(merged_multiplot_RSP_Error_data_by_ROI, merged_RSP_Error_data_by_ROI);
+							merged_multiplot_Std_Dev_data_by_ROI 	= Array.concat(merged_multiplot_Std_Dev_data_by_ROI, merged_Std_Dev_data_by_ROI);
+							merged_concat_TV_data					= Array.concat(merged_concat_TV_data, merged_before_TVS_TV_data);
+							merged_concat_TV_data					= Array.concat(merged_concat_TV_data, merged_after_TVS_TV_data);
+							merged_concat_TV_data					= Array.concat(merged_concat_TV_data, merged_TV_reduction_data);
+							run								("Clear Results");
+							run								("Input/Output...", "jpeg=85 gif=-1 file=.csv");
+							run								("Set Measurements...", "area mean standard min redirect=None decimal=6");
+							title_line_num		 			= 0;
+							title_column_num		 		= 0;
+							title_line_separation 			= 2;
+							tables_start_line		 		= title_line_num + title_line_separation;
+							column_labels_line_separation 	= 1;
+							table_line_separation 			= 2;
+							first_column 					= 1;
+							current_row 					= 0;
+							ROI_table_row_separation 		= num_target_test_parameter_values + column_labels_line_separation + table_line_separation  + 1; 
+							ROI_table_column_separation		= 1;
+							ROI_table_elements				= (num_recon_iterations + 1) * num_target_test_parameter_values;
+							ROI_table_columns				= first_column + num_recon_iterations + 1;
+							//current_row					= table_add_empty_rows( first_column + num_recon_iterations + 1, title_line_num, title_line_separation);
+							//setResult						(0,  current_row - title_line_separation + 1, current_test_multiplot_parameter_values_string);										
+							print_section_separator			("Writing merged CSV files from the ROI analyses for each target test parameter value for: multiplot = " + multiplot, false);
 							//-------------------------------------------------------------------------//
 							//---------------------- Merge RSP Error CSV Data Files -------------------//
 							//-------------------------------------------------------------------------//
 							if(merge_ROI_analysis_RSP_Error_CSVs)
 							{
-								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-								{
-									setResult			(0,  current_row++, ROI_labels[ROI]);		
-									for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-										setResult		(iteration + first_column,  current_row - 1, d2s(iteration, 0) );
-									for(N = 0; N < num_target_test_parameter_values; N++)
-									{		
-										for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-										{	
-											index 		= ROI + iteration * num_ROIs_2_analyze + N * (num_recon_iterations + 1) * num_ROIs_2_analyze;
-											setResult	(iteration + first_column,  current_row, merged_RSP_error_data[index]);	
-										}
-										setResult		(0,  current_row++, N + 1);
-									}
-									current_row			= 1 + table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
-								}
-								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-									table_add_colsum_row(title_line_separation + ROI  * ROI_table_row_separation, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
-								results_table_2_CSV			(merged_RSP_error_CSV_folder, 	parameter_value_test_merged_RSP_error_CSV_filename, 		overwrite_merged_RSP_Error_CSV_data, print_output_CSV_path, false);
-								results_table_2_CSV			(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_RSP_error_CSV_filename, 	overwrite_merged_RSP_Error_CSV_data, print_output_CSV_path, false);
-								MERGED_RSP_ERROR_FILE_PATH_LIST		= Array.concat(MERGED_RSP_ERROR_FILE_PATH_LIST, merged_RSP_error_CSV_path);
-							}
-							//----------------------------------------------------------------------------------------//
-							//------------------- Repeat for the Standard Deviation CSV Data Files -------------------//
-							//----------------------------------------------------------------------------------------//
-							if(merge_ROI_analysis_Std_Dev_CSVs)
-							{
-								current_row 			= title_line_separation;
-								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-								{
-									setResult			(0,  current_row++, ROI_labels[ROI]);		
-									for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-										setResult		(iteration + first_column,  current_row - 1, d2s(iteration, 0) );
-									for(N = 0; N < num_target_test_parameter_values; N++)
-									{		
-										for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-										{	
-											index 		= ROI + iteration * num_ROIs_2_analyze + N * (num_recon_iterations + 1) * num_ROIs_2_analyze;
-											setResult	(iteration + first_column,  current_row, merged_Std_Dev_data[index]);	
-										}
-										setResult		(0,  current_row++, N + 1);
-									}
-									current_row			= 1 + table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
-								}	
-								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-									table_add_colsum_row(title_line_separation + ROI  * ROI_table_row_separation, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
-								results_table_2_CSV			(merged_Std_Dev_CSV_folder, 	parameter_value_test_merged_Std_Dev_CSV_filename, 		overwrite_merged_Std_Dev_CSV_data, print_output_CSV_path, false);
-								results_table_2_CSV			(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_Std_Dev_CSV_filename, 	overwrite_merged_Std_DevP_CSV_data, print_output_CSV_path, false);
-								MERGED_STD_DEV_FILE_PATH_LIST		= Array.concat(MERGED_STD_DEV_FILE_PATH_LIST, merged_Std_Dev_CSV_path);
-							}
-							//-------------------------------------------------------------------------//
-							//------------------- Repeat for the RSP CSV Data Files -------------------//
-							//-------------------------------------------------------------------------//
-							if(merge_ROI_analysis_RSP_CSVs)
-							{
-								current_row 			= title_line_separation;
+								run							("Clear Results");
+								table_add_title_line		(title_column_num, title_line_num, title_line_separation, ROI_table_columns, current_test_multiplot_parameter_values_string);
 								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 								{
 									ROI_header_array 		= Array.concat( ROI_labels[ROI], iterations_2_analyze_strings);
 									table_add_col_headers 	(0, tables_start_line, ROI_header_array);
-									start_index				= ROI * ROI_table_elements;
-									ROI_RSP_data			= Array.slice( merged_RSP_data_by_ROI, start_index, start_index + ROI_table_elements);
-									current_row 			= table_add(tables_start_line + 1, first_column, 0, ROI_RSP_data, num_recon_iterations + 1, num_target_test_parameter_values );
+									current_row 			= table_add_subarray(tables_start_line + 1, first_column, 0, merged_RSP_Error_data_by_ROI, ROI * ROI_table_elements, num_recon_iterations + 1, num_target_test_parameter_values );																		
 									if(ROI != num_ROIs_2_analyze - 1)
 										current_row			= table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
 									table_add_colsum_row	(tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
 									tables_start_line 		= current_row;
 								}	
-								//exit();
-								results_table_2_CSV			(merged_RSP_CSV_folder, 	parameter_value_test_merged_RSP_CSV_filename, 		overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
-								results_table_2_CSV			(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_RSP_CSV_filename, 	overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
-								MERGED_RSP_FILE_PATH_LIST	= Array.concat(MERGED_RSP_FILE_PATH_LIST, merged_RSP_CSV_path);
+								results_table_2_CSV			(merged_RSP_Error_CSV_folder, 	parameter_value_test_merged_RSP_Error_CSV_filename, 		overwrite_merged_RSP_Error_CSV_data, print_output_CSV_path, false);
+								results_table_2_CSV			(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_RSP_Error_CSV_filename, 	overwrite_merged_RSP_Error_CSV_data, print_output_CSV_path, false);
+								float_array_2_TXT			(merged_RSP_Error_CSV_folder, parameter_value_test_merged_RSP_Error_TXT_filename, merged_RSP_Error_data_by_ROI, print_output_TXT_path, overwrite_merged_TV_TXT_data);
+								//MERGED_RSP_ERROR_FILE_PATH_LIST				= Array.concat(MERGED_RSP_ERROR_FILE_PATH_LIST, merged_RSP_Error_CSV_path);
+								MERGED_RSP_ERROR_CSV_FOLDER_LIST			= Array.concat(MERGED_RSP_ERROR_CSV_FOLDER_LIST, merged_RSP_Error_CSV_folder);
+								//MERGED_RSP_ERROR_CSV_FILENAME_LIST			= Array.concat(MERGED_RSP_ERROR_CSV_FILENAME_LIST, parameter_value_test_merged_RSP_Error_CSV_filename);
+								MERGED_RSP_ERROR_TXT_FILENAME_LIST			= Array.concat(MERGED_RSP_ERROR_TXT_FILENAME_LIST, parameter_value_test_merged_RSP_Error_TXT_filename);
+								//MERGED_TOTAL_RSP_ERROR_FILE_PATH_LIST		= Array.concat(MERGED_TOTAL_RSP_ERROR_FILE_PATH_LIST, export_RSP_Error_CSV_path);
+								//MERGED_TOTAL_RSP_ERROR_CSV_FOLDER_LIST		= Array.concat(MERGED_TOTAL_RSP_ERROR_CSV_FOLDER_LIST, export_ROI_analysis_CSV_folder);
+								//MERGED_TOTAL_RSP_ERROR_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_RSP_ERROR_CSV_FILENAME_LIST, parameter_value_total_test_merged_RSP_Error_CSV_filename);
+								//MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST, parameter_value_total_test_merged_RSP_Error_TXT_filename);
 							}
-							exit();
+							//exit();
+							//----------------------------------------------------------------------------------------//
+							//------------------- Repeat for the Standard Deviation CSV Data Files -------------------//
+							//----------------------------------------------------------------------------------------//
+							if(merge_ROI_analysis_Std_Dev_CSVs)
+							{
+								run								("Clear Results");
+								tables_start_line		 		= title_line_num + title_line_separation;
+								table_add_title_line			(title_column_num, title_line_num, title_line_separation, ROI_table_columns, current_test_multiplot_parameter_values_string);
+								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+								{
+									ROI_header_array 			= Array.concat( ROI_labels[ROI], iterations_2_analyze_strings);
+									table_add_col_headers 		(0, tables_start_line, ROI_header_array);
+									current_row 				= table_add_subarray(tables_start_line + 1, first_column, 0, merged_Std_Dev_data_by_ROI, ROI * ROI_table_elements, num_recon_iterations + 1, num_target_test_parameter_values );																		
+									if(ROI != num_ROIs_2_analyze - 1)
+										current_row				= table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
+									table_add_colsum_row		(tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
+									tables_start_line 			= current_row;
+								}	
+								results_table_2_CSV				(merged_Std_Dev_CSV_folder, 	parameter_value_test_merged_Std_Dev_CSV_filename, 		overwrite_merged_Std_Dev_CSV_data, print_output_CSV_path, false);
+								results_table_2_CSV				(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_Std_Dev_CSV_filename, 	overwrite_merged_Std_Dev_CSV_data, print_output_CSV_path, false);
+								float_array_2_TXT				(merged_Std_Dev_CSV_folder, parameter_value_test_merged_Std_Dev_TXT_filename, merged_Std_Dev_data_by_ROI, print_output_TXT_path, overwrite_merged_TV_TXT_data);
+								//MERGED_STD_DEV_FILE_PATH_LIST			= Array.concat(MERGED_STD_DEV_FILE_PATH_LIST, merged_Std_Dev_CSV_path);
+								MERGED_STD_DEV_CSV_FOLDER_LIST			= Array.concat(MERGED_STD_DEV_CSV_FOLDER_LIST, merged_Std_Dev_CSV_folder);
+								//MERGED_STD_DEV_CSV_FILENAME_LIST		= Array.concat(MERGED_STD_DEV_CSV_FILENAME_LIST, parameter_value_test_merged_Std_Dev_CSV_filename);
+								MERGED_STD_DEV_TXT_FILENAME_LIST		= Array.concat(MERGED_STD_DEV_TXT_FILENAME_LIST, parameter_value_test_merged_Std_Dev_TXT_filename);
+								//MERGED_TOTAL_STD_DEV_FILE_PATH_LIST		= Array.concat(MERGED_TOTAL_STD_DEV_FILE_PATH_LIST, export_Std_Dev_CSV_path);
+								//MERGED_TOTAL_STD_DEV_CSV_FOLDER_LIST	= Array.concat(MERGED_TOTAL_STD_DEV_CSV_FOLDER_LIST, export_ROI_analysis_CSV_folder);
+								//MERGED_TOTAL_STD_DEV_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_STD_DEV_CSV_FILENAME_LIST, parameter_value_total_test_merged_Std_Dev_CSV_filename);
+								//MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST, parameter_value_total_test_merged_Std_Dev_TXT_filename);
+							}
+							//exit();
+							//-------------------------------------------------------------------------//
+							//------------------- Repeat for the RSP CSV Data Files -------------------//
+							//-------------------------------------------------------------------------//
+							if(merge_ROI_analysis_RSP_CSVs)
+							{
+								run								("Clear Results");
+								tables_start_line		 		= title_line_num + title_line_separation;
+								table_add_title_line			(title_column_num, title_line_num, title_line_separation, ROI_table_columns, current_test_multiplot_parameter_values_string);
+								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+								{
+									ROI_header_array 			= Array.concat( ROI_labels[ROI], iterations_2_analyze_strings);
+									table_add_col_headers 		(0, tables_start_line, ROI_header_array);
+									current_row 				= table_add_subarray(tables_start_line + 1, first_column, 0, merged_RSP_data_by_ROI, ROI * ROI_table_elements, num_recon_iterations + 1, num_target_test_parameter_values );																		
+									if(ROI != num_ROIs_2_analyze - 1)
+										current_row				= table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
+									table_add_colsum_row		(tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
+									tables_start_line 			= current_row;
+								}	
+								results_table_2_CSV				(merged_RSP_CSV_folder, 	parameter_value_test_merged_RSP_CSV_filename, 		overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
+								results_table_2_CSV				(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_RSP_CSV_filename, 	overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
+								float_array_2_TXT				(merged_RSP_CSV_folder, parameter_value_test_merged_RSP_TXT_filename, merged_RSP_data_by_ROI, print_output_TXT_path, overwrite_merged_TV_TXT_data);
+								//MERGED_RSP_FILE_PATH_LIST			= Array.concat(MERGED_RSP_FILE_PATH_LIST, merged_RSP_CSV_path);
+								MERGED_RSP_CSV_FOLDER_LIST			= Array.concat(MERGED_RSP_CSV_FOLDER_LIST, merged_RSP_CSV_folder);
+								//MERGED_RSP_CSV_FILENAME_LIST		= Array.concat(MERGED_RSP_CSV_FILENAME_LIST, parameter_value_test_merged_RSP_CSV_filename);
+								MERGED_RSP_TXT_FILENAME_LIST		= Array.concat(MERGED_RSP_TXT_FILENAME_LIST, parameter_value_test_merged_RSP_TXT_filename);
+								//MERGED_TOTAL_RSP_FILE_PATH_LIST		= Array.concat(MERGED_TOTAL_RSP_FILE_PATH_LIST, export_RSP_CSV_path);
+								//MERGED_TOTAL_RSP_CSV_FOLDER_LIST	= Array.concat(MERGED_TOTAL_RSP_CSV_FOLDER_LIST, export_ROI_analysis_CSV_folder);
+								//MERGED_TOTAL_RSP_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_RSP_CSV_FILENAME_LIST, parameter_value_total_test_merged_RSP_CSV_filename);
+								//MERGED_TOTAL_RSP_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_RSP_TXT_FILENAME_LIST, parameter_value_total_test_merged_RSP_TXT_filename);
+							}
+							//exit();
 							//----------------------------------------------------------------------------------//
 							//------------------- Create TV CSV Data Files from TV TXT files -------------------//
 							//----------------------------------------------------------------------------------//
 							if(merge_TV_CSVs)
-							{
-								run							("Clear Results");
-								table_column_headers		= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
-								num_TV_tables				= table_column_headers.length;
-								TV_table_indices			= Array.slice(sequential_values, 0, num_TV_tables);
-								TV_table_width				= num_recon_iterations + 1;
-								TV_total_columns			= tables_total_columns(num_TV_tables, TV_table_width, ROI_table_column_separation);
-								table_colnums				= table_indexed_colnums(num_TV_tables, first_column, TV_table_width + ROI_table_column_separation);
-								//------------------ Add TV table labels and iteration # column labels ----------------------//
-								table_add_title_line		(title_column_num, title_line_num, title_line_separation, TV_total_columns, current_test_multiplot_parameter_values_string);
-								table_add_col_header_line	( 0, tables_start_line, num_TV_tables, table_column_headers, recon_iterations_2_analyze_strings, ROI_table_column_separation);
-								//------------------ Add before/after TVS TV data and TV reduction tables  ----------------------//
-								current_row 				= table_fill(tables_start_line + 1, num_TV_tables, table_colnums, ROI_table_column_separation + 1, merged_concat_TV_data, num_recon_iterations, num_target_test_parameter_values );
-								//------------------ Calculate sum of each column and add these below each column ----------------------//
-								table_add_colsum_rows		(current_row, tables_start_line + 1, first_column, num_recon_iterations, num_target_test_parameter_values, 3, ROI_table_column_separation + 1);
-								//------------------ Write results table to CSV, merged data array to TXT, and record output file paths/folders/filenames ----------------------//
-								results_table_2_CSV			(merged_TV_CSV_folder, 	parameter_value_test_merged_TV_CSV_filename, 		overwrite_merged_TV_CSV_data, print_output_CSV_path, false);
-								results_table_2_CSV			(export_CSV_folder, 	parameter_value_total_test_merged_TV_CSV_filename, 	overwrite_merged_TV_CSV_data, print_output_CSV_path, false);
-								float_array_2_TXT			(merged_TV_CSV_folder, parameter_value_test_merged_TV_TXT_filename, merged_concat_TV_data, print_output_TXT_path, overwrite_merged_TV_TXT_data);
-								//parameter_value_total_test_merged_TV_TXT_filename merged_concat_TV_data
-								MERGED_TV_FILE_PATH_LIST			= Array.concat(MERGED_TV_FILE_PATH_LIST, merged_TV_CSV_path);
+							{	
+								run									("Clear Results");
+								tables_start_line		 			= title_line_num + title_line_separation;
+								table_column_headers				= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
+								num_TV_tables						= table_column_headers.length;
+								TV_table_indices					= Array.slice(sequential_values, 0, num_TV_tables);
+								TV_table_width						= num_recon_iterations + 1;
+								TV_total_columns					= tables_total_columns(num_TV_tables, TV_table_width, ROI_table_column_separation);
+								table_colnums						= table_indexed_colnums(num_TV_tables, first_column, TV_table_width + ROI_table_column_separation);
+								table_add_title_line				(title_column_num, title_line_num, title_line_separation, TV_total_columns, current_test_multiplot_parameter_values_string);
+								table_add_col_header_line			( 0, tables_start_line, num_TV_tables, table_column_headers, recon_iterations_2_analyze_strings, ROI_table_column_separation);
+								current_row 						= table_fill(tables_start_line + 1, num_TV_tables, table_colnums, ROI_table_column_separation + 1, merged_concat_TV_data, num_recon_iterations, num_target_test_parameter_values );
+								table_add_colsum_rows				(current_row, tables_start_line + 1, first_column, num_recon_iterations, num_target_test_parameter_values, num_TV_tables, ROI_table_column_separation + 1);
+								results_table_2_CSV					(merged_TV_CSV_folder, 	parameter_value_test_merged_TV_CSV_filename, 		overwrite_merged_TV_CSV_data, print_output_CSV_path, false);
+								results_table_2_CSV					(export_CSV_folder, 	parameter_value_total_test_merged_TV_CSV_filename, 	overwrite_merged_TV_CSV_data, print_output_CSV_path, false);
+								float_array_2_TXT					(merged_TV_CSV_folder, parameter_value_test_merged_TV_TXT_filename, merged_concat_TV_data, print_output_TXT_path, overwrite_merged_TV_TXT_data);
+								//MERGED_TV_FILE_PATH_LIST			= Array.concat(MERGED_TV_FILE_PATH_LIST, merged_TV_CSV_path);
 								MERGED_TV_CSV_FOLDER_LIST			= Array.concat(MERGED_TV_CSV_FOLDER_LIST, merged_TV_CSV_folder);
-								MERGED_TV_CSV_FILENAME_LIST			= Array.concat(MERGED_TV_CSV_FILENAME_LIST, parameter_value_test_merged_TV_CSV_filename);
+								//MERGED_TV_CSV_FILENAME_LIST			= Array.concat(MERGED_TV_CSV_FILENAME_LIST, parameter_value_test_merged_TV_CSV_filename);
 								MERGED_TV_TXT_FILENAME_LIST			= Array.concat(MERGED_TV_TXT_FILENAME_LIST, parameter_value_test_merged_TV_TXT_filename);
-								MERGED_TOTAL_TV_FILE_PATH_LIST		= Array.concat(MERGED_TOTAL_TV_FILE_PATH_LIST, export_TV_CSV_path);
-								MERGED_TOTAL_TV_CSV_FOLDER_LIST		= Array.concat(MERGED_TOTAL_TV_CSV_FOLDER_LIST, export_CSV_folder);
-								MERGED_TOTAL_TV_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_CSV_FILENAME_LIST, parameter_value_total_test_merged_TV_CSV_filename);
-								MERGED_TOTAL_TV_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_TXT_FILENAME_LIST, parameter_value_total_test_merged_TV_TXT_filename);
+								//MERGED_TOTAL_TV_FILE_PATH_LIST		= Array.concat(MERGED_TOTAL_TV_FILE_PATH_LIST, export_TV_CSV_path);
+								//MERGED_TOTAL_TV_CSV_FOLDER_LIST		= Array.concat(MERGED_TOTAL_TV_CSV_FOLDER_LIST, export_CSV_folder);
+								//MERGED_TOTAL_TV_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_CSV_FILENAME_LIST, parameter_value_total_test_merged_TV_CSV_filename);
+								//MERGED_TOTAL_TV_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_TXT_FILENAME_LIST, parameter_value_total_test_merged_TV_TXT_filename);
 				    			//exit();
 							}
 							//App("MERGED_TV_FILE_PATH_LIST", MERGED_TV_FILE_PATH_LIST);
@@ -1254,50 +1370,122 @@ macro "merge_data"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
 					print_section_separator("Merging the CSV files for each multiplot parameter value and target test parameter value", true);
 					if(merge_multiplot_CSVs)
-					{					
-						merge_multiplot_TV_data 		= newArray();						
-						run								("Clear Results");
-						table_column_headers			= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
-						num_TV_tables					= table_column_headers.length;
-						TV_table_indices				= Array.slice(sequential_values, 0, num_TV_tables);
-						TV_table_width					= num_recon_iterations + 1;
-						TV_total_columns				= tables_total_columns(num_TV_tables, TV_table_width, ROI_table_column_separation);
-						table_colnums					= table_indexed_colnums(num_TV_tables, first_column, TV_table_width + ROI_table_column_separation);
-						//------------------ Add TV table labels and iteration # column labels ----------------------//
-						tables_start_line 				= table_add_title_lines(title_column_num, title_line_num, title_line_separation, TV_total_columns, MERGED_TOTAL_TV_TXT_FILENAME_LIST);	
-						for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
-						{ 
-							TV_data 					= file_2_float_array(MERGED_TV_CSV_FOLDER_LIST[multiplot], MERGED_TV_TXT_FILENAME_LIST[multiplot], true);
-							table_add_col_header_line	( 0, tables_start_line, num_TV_tables, table_column_headers, recon_iterations_2_analyze_strings, ROI_table_column_separation);
-							//------------------ Add before/after TVS TV data and TV reduction tables  ----------------------//
-							current_row 				= table_fill(tables_start_line + 1, num_TV_tables, table_colnums, ROI_table_column_separation + 1, TV_data, num_recon_iterations, num_target_test_parameter_values );
-							//------------------ Calculate sum of each column and add these below each column ----------------------//
-							table_add_colsum_rows		(current_row, tables_start_line + 1, first_column, num_recon_iterations, num_target_test_parameter_values, 3, ROI_table_column_separation + 1);	
-							if(multiplot != num_multiplot_parameter_values - 1)		
-								tables_start_line		= table_add_empty_rows( TV_total_columns, current_row + 1, table_line_separation);
-							merge_multiplot_TV_data 	= Array.concat(merge_multiplot_TV_data, TV_data);					
+					{	
+						//merged_multiplot_RSP_data_by_ROI
+						merge_multiplot_RSP_Error_data 				= newArray();						
+						merge_multiplot_Std_Dev_data 				= newArray();						
+						merge_multiplot_RSP_data 					= newArray();						
+						merge_multiplot_TV_data 					= newArray();						
+						ROI_table_width								= iterations_2_analyze_strings.length + 1;
+						ROI_table_column_headers					= Array.copy(ROI_labels);
+						ROI_total_columns							= tables_total_columns(num_ROIs_2_analyze, ROI_table_width, ROI_table_column_separation);
+						ROI_tables_start_columns					= table_indexed_colnums(num_ROIs_2_analyze, first_column, ROI_table_width + ROI_table_column_separation);
+						if(merge_multiplot_RSP_Error_CSVs)
+						{
+							run										("Clear Results");
+							tables_start_line 						= table_add_title_lines(title_column_num, title_line_num, title_line_separation, ROI_total_columns, MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST);	
+							for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
+							{ 
+								RSP_Error_data 						= file_2_float_array(MERGED_RSP_ERROR_CSV_FOLDER_LIST[multiplot], MERGED_RSP_ERROR_TXT_FILENAME_LIST[multiplot], print_input_TXT_path);
+								table_add_col_header_line			( 0, tables_start_line, num_ROIs_2_analyze, ROI_table_column_headers, iterations_2_analyze_strings, ROI_table_column_separation);
+								current_row 						= table_fill(tables_start_line + 1, num_ROIs_2_analyze, ROI_tables_start_columns, ROI_table_column_separation + 1, RSP_Error_data, num_recon_iterations + 1, num_target_test_parameter_values );
+								table_add_colsum_rows				(current_row, tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values, num_ROIs_2_analyze, ROI_table_column_separation + 1);	
+								if(multiplot != num_multiplot_parameter_values - 1)		
+									tables_start_line				= table_add_empty_rows( ROI_total_columns, current_row + 1, table_line_separation);
+								merge_multiplot_RSP_Error_data 		= Array.concat(merge_multiplot_RSP_Error_data, RSP_Error_data);
+								//exit();							
+							}	
+							if(write_merged_multiplot_RSP_Error_CSV_data)
+								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_CSV_short_filename, overwrite_merged_RSP_Error_CSV_data, 	print_output_CSV_path, false);
+							if(write_merged_multiplot_RSP_Error_TXT_data)
+								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_TXT_short_filename, merge_multiplot_RSP_Error_data, 		print_output_TXT_path, overwrite_merged_RSP_Error_TXT_data);					
+							//exit();															
+						}
+						if(merge_multiplot_RSP_CSVs)
+						{
+							run										("Clear Results");
+							tables_start_line 						= table_add_title_lines(title_column_num, title_line_num, title_line_separation, ROI_total_columns, MERGED_TOTAL_RSP_TXT_FILENAME_LIST);	
+							for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
+							{ 
+								RSP_data 							= file_2_float_array(MERGED_RSP_CSV_FOLDER_LIST[multiplot], MERGED_RSP_TXT_FILENAME_LIST[multiplot], print_input_TXT_path);
+								table_add_col_header_line			( 0, tables_start_line, num_ROIs_2_analyze, ROI_table_column_headers, iterations_2_analyze_strings, ROI_table_column_separation);
+								current_row 						= table_fill(tables_start_line + 1, num_ROIs_2_analyze, ROI_tables_start_columns, ROI_table_column_separation + 1, RSP_data, num_recon_iterations + 1, num_target_test_parameter_values );
+								table_add_colsum_rows				(current_row, tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values, num_ROIs_2_analyze, ROI_table_column_separation + 1);	
+								if(multiplot != num_multiplot_parameter_values - 1)		
+									tables_start_line				= table_add_empty_rows( ROI_total_columns, current_row + 1, table_line_separation);
+								merge_multiplot_RSP_data 			= Array.concat(merge_multiplot_RSP_data, RSP_data);
+								//exit();							
+							}
+							if(write_merged_multiplot_RSP_CSV_data)
+								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_RSP_CSV_short_filename, overwrite_merged_RSP_CSV_data, 	print_output_CSV_path, false);
+							if(write_merged_multiplot_RSP_TXT_data)
+								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_RSP_TXT_short_filename, merge_multiplot_RSP_data, 		print_output_TXT_path, overwrite_merged_RSP_TXT_data);					
+							//exit();															
+						}
+						if(merge_multiplot_Std_Dev_CSVs)
+						{
+							run										("Clear Results");
+							tables_start_line 						= table_add_title_lines(title_column_num, title_line_num, title_line_separation, ROI_total_columns, MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST);	
+							for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
+							{ 
+								Std_Dev_data 						= file_2_float_array(MERGED_STD_DEV_CSV_FOLDER_LIST[multiplot], MERGED_STD_DEV_TXT_FILENAME_LIST[multiplot], print_input_TXT_path);
+								table_add_col_header_line			( 0, tables_start_line, num_ROIs_2_analyze, ROI_table_column_headers, iterations_2_analyze_strings, ROI_table_column_separation);
+								current_row 						= table_fill(tables_start_line + 1, num_ROIs_2_analyze, ROI_tables_start_columns, ROI_table_column_separation + 1, Std_Dev_data, num_recon_iterations + 1, num_target_test_parameter_values );
+								table_add_colsum_rows				(current_row, tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values, num_ROIs_2_analyze, ROI_table_column_separation + 1);	
+								if(multiplot != num_multiplot_parameter_values - 1)		
+									tables_start_line				= table_add_empty_rows( ROI_total_columns, current_row + 1, table_line_separation);
+								merge_multiplot_Std_Dev_data 		= Array.concat(merge_multiplot_Std_Dev_data, Std_Dev_data);
+								//exit();							
+							}	
+							if(write_merged_multiplot_Std_Dev_CSV_data)
+								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_CSV_short_filename, overwrite_merged_Std_Dev_CSV_data, 	print_output_CSV_path, false);
+							if(write_merged_multiplot_Std_Dev_TXT_data)
+								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_TXT_short_filename, merge_multiplot_Std_Dev_data, 		print_output_TXT_path, overwrite_merged_Std_Dev_TXT_data);												
+							//exit();															
+						}
+						if(merge_multiplot_TV_CSVs)
+						{
+							run										("Clear Results");
+							table_column_headers					= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
+							num_TV_tables							= table_column_headers.length;
+							TV_table_indices						= Array.slice(sequential_values, 0, num_TV_tables);
+							TV_table_width							= num_recon_iterations + 1;
+							TV_total_columns						= tables_total_columns(num_TV_tables, TV_table_width, ROI_table_column_separation);
+							table_colnums							= table_indexed_colnums(num_TV_tables, first_column, TV_table_width + ROI_table_column_separation);
+							tables_start_line 						= table_add_title_lines(title_column_num, title_line_num, title_line_separation, TV_total_columns, MERGED_TOTAL_TV_TXT_FILENAME_LIST);	
+							for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
+							{ 
+								TV_data 							= file_2_float_array(MERGED_TV_CSV_FOLDER_LIST[multiplot], MERGED_TV_TXT_FILENAME_LIST[multiplot], print_input_TXT_path);
+								table_add_col_header_line			( 0, tables_start_line, num_TV_tables, table_column_headers, recon_iterations_2_analyze_strings, ROI_table_column_separation);
+								current_row 						= table_fill(tables_start_line + 1, num_TV_tables, table_colnums, ROI_table_column_separation + 1, TV_data, num_recon_iterations, num_target_test_parameter_values );
+								table_add_colsum_rows				(current_row, tables_start_line + 1, first_column, num_recon_iterations, num_target_test_parameter_values, num_TV_tables, ROI_table_column_separation + 1);	
+								if(multiplot != num_multiplot_parameter_values - 1)		
+									tables_start_line				= table_add_empty_rows( TV_total_columns, current_row + 1, table_line_separation);
+								merge_multiplot_TV_data 			= Array.concat(merge_multiplot_TV_data, TV_data);					
+							}				
+							if(write_merged_multiplot_TV_CSV_data)
+								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_TV_CSV_short_filename, overwrite_merged_TV_CSV_data, 	print_output_CSV_path, false);
+							if(write_merged_multiplot_TV_TXT_data)
+								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_TV_TXT_short_filename, merge_multiplot_TV_data, 		print_output_TXT_path, overwrite_merged_TV_TXT_data);					
+							//MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST	= Array.concat(MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST, merge_multiplot_CSV_folder + FOLDER_SEPARATOR + merge_multiplot_TV_CSV_filename);
+					    	//MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST	= Array.concat(MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST, merge_multiplot_CSV_folder + FOLDER_SEPARATOR + merge_multiplot_TV_TXT_filename);
+					    	MERGED_MULTIPLOT_TV_FOLDER_LIST			= Array.concat(MERGED_MULTIPLOT_TV_FOLDER_LIST, 		merge_multiplot_CSV_folder);
+					    	MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST	= Array.concat(MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST,	merge_multiplot_TV_CSV_filename);
+					    	MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST	= Array.concat(MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST, 	merge_multiplot_TV_TXT_filename);
+					    	//exit();		
 						}				
-						//------------------ Write results table to CSV, merged data array to TXT, and record output file paths/folders/filenames ----------------------//
-						results_table_2_CSV							(merge_multiplot_CSV_folder, merge_multiplot_CSV_filename, overwrite_merged_TV_CSV_data, 	print_output_CSV_path, false);
-						float_array_2_TXT							(merge_multiplot_CSV_folder, merge_multiplot_TXT_filename, merge_multiplot_TV_data, 		print_output_TXT_path, overwrite_merged_TV_TXT_data);					
-						MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST		= Array.concat(MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST, merge_multiplot_CSV_folder + FOLDER_SEPARATOR + merge_multiplot_CSV_filename);
-				    	MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST		= Array.concat(MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST, merge_multiplot_CSV_folder + FOLDER_SEPARATOR + merge_multiplot_TXT_filename);
-				    	MERGED_MULTIPLOT_TV_FOLDER_LIST				= Array.concat(MERGED_MULTIPLOT_TV_FOLDER_LIST, merge_multiplot_CSV_folder);
-				    	MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST		= Array.concat(MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST, merge_multiplot_CSV_filename);
-				    	MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST		= Array.concat(MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST, merge_multiplot_TXT_filename);
-				    	//exit();						
 					}
-					App("MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST", 	MERGED_MULTIPLOT_TV_CSV_FILE_PATH_LIST	);
-					App("MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST", 	MERGED_MULTIPLOT_TV_TXT_FILE_PATH_LIST	);
-					App("MERGED_MULTIPLOT_TV_FOLDER_LIST", 			MERGED_MULTIPLOT_TV_FOLDER_LIST			);
-					App("MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST", 	MERGED_MULTIPLOT_TV_CSV_FILENAME_LIST	);
-					App("MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST", 	MERGED_MULTIPLOT_TV_TXT_FILENAME_LIST	);
-					dexit();						
-					print_section_separator("FINISHED MERGING DATA", true);
+					//exit();
+					//dexit();						
+					//print_section_separator("FINISHED MERGING DATA", true);
+					num_loops++;
+					//if(num_loops == 2){exit();}
 				}// END for( i = 0; i < lengthOf(all_reduced_path_strings); i+=num_input_directories_per_multiplot)											
 				//exit();			
 			}// END for(slice_2_analyze_index = 0; slice_2_analyze_index < num_slices_2_analyze; slice_2_analyze_index++)		
 		}// END for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < num_ROI_selection_diameters; ROI_selection_diameter_index++)
+		dexit();						
+		print_section_separator("FINISHED MERGING DATA", true);
 	}// END if(perform_test_comparisons)
 	//close_all_windows(true, false);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1343,7 +1531,7 @@ function array_2_CSV(_rows, _columns, _array, _directory, _filename, _print_path
 			setResult		(_column, _row, _array[_row * _columns + _column]);	
 	_CSV_filename 			= construct_valid_file_path(_directory, _filename);		
 	if(_print_path)
-		print				("------->Writing to CSV at\n" + _CSV_filename);
+		print				("Writing to CSV at\n------->" + _CSV_filename);
 	if(!File.exists(_CSV_filename) || _overwrite_existing_CSV)						
 	{
 		saveAs				("Measurements", _CSV_filename);			
@@ -1363,7 +1551,7 @@ function array_2_string(array, precisions)
 	}
 	return string;
 }
-//array_2_tables( merged_RSP_error_data, current_row, first_column, num_ROIs_2_analyze, num_recon_iterations + 1, num_target_test_parameter_values);
+//array_2_tables( merged_RSP_Error_data, current_row, first_column, num_ROIs_2_analyze, num_recon_iterations + 1, num_target_test_parameter_values);
 function array_2_tables( array, row, column, I, J, K)
 {																
 	index 		= i + j * I + k * J * I;
@@ -1379,7 +1567,7 @@ function array_2_TXT(path, filename, data_array, print_path, overwrite_existing_
 {
 	TXT_filename 			= construct_valid_file_path(path, filename);		
 	if(print_path)
-		print				("------->Writing to TXT at:\n" + TXT_filename);
+		print				("Writing to TXT at:\n------->" + TXT_filename);
 	if(!File.exists(TXT_filename) || overwrite_existing_TXT)
 	{
 		filehandle 			= File.open(TXT_filename);		
@@ -1519,7 +1707,7 @@ function copy_distributed_file(_from_directory, _from_filename, _to_directory, _
 	_to_path = construct_valid_file_path(_to_directory, _to_filename);
 	File.copy(_from_path, _to_path);
 	if(_print_to_path)
-		print("File copied to :\n" + _to_path);
+		print("File copied to :\n------->" + _to_path);
 	return _to_path;
 }
 function copy_input_data_file(_input_directory, _input_filename, _output_directory, _output_basename, _output_suffix, _file_extension, _copied_from_log, _copied_to_log, _print_paths)
@@ -1529,8 +1717,8 @@ function copy_input_data_file(_input_directory, _input_filename, _output_directo
 	_copy_input_data_file_to				= construct_valid_file_path(_output_directory, _copied_input_data_file_output_filename);		
 	if(_print_paths)
 	{
-		print								("-------> copy_input_data_file_from 	=\n " +  _copy_input_data_file_from);
-		print								("-------> copy_input_data_file_to 		=\n " +  _copy_input_data_file_to);
+		print								("copy_input_data_file_from 	=\n------->  " +  _copy_input_data_file_from);
+		print								("copy_input_data_file_to 		=\n------->  " +  _copy_input_data_file_to);
 	}
 	File.copy								(_copy_input_data_file_from, _copy_input_data_file_to);	
 	_copied_from_log						= Array.concat(_copied_from_log, _copy_input_data_file_from);				
@@ -1577,7 +1765,7 @@ function csv_2_array(path, filename, column_headings, rows, element_order, print
 {
 	file 				= construct_valid_file_path(path, filename);			
 	if(print_path)
-		print			("------->Reading CSV at:\n" + file);
+		print			("Reading CSV at:\n------->" + file);
 	data_array			= newArray(rows * column_headings.length);
 	open				(file);
 	for(column = 0; column < column_headings.length; column++)
@@ -1597,7 +1785,7 @@ function csv_2_array(path, filename, column_headings, rows, element_order, print
 function csv_path_2_array(path, column_headings, rows, element_order, print_path)
 {
 	if(print_path)
-		print			("------->Reading CSV at:\n" + path);
+		print			("Reading CSV at:\n------->" + path);
 	data_array			= newArray(rows * column_headings.length);
 	open				(path);
 	for(column = 0; column < column_headings.length; column++)
@@ -1622,7 +1810,7 @@ function csv_merge(paths, filename, column_headings, rows, element_order, print_
 		path				= paths[CSV_file];
 		file 				= construct_valid_file_path(path, filename);			
 		if(print_path)
-			print			("------->Reading CSV at:\n" + file);
+			print			("Reading CSV at:\n------->" + file);
 		data_array			= newArray(rows * column_headings.length);
 		open				(file);
 		for(column = 0; column < column_headings.length; column++)
@@ -1751,7 +1939,7 @@ function file_2_array(path, filename, print_path)
 {
 	file_path 		= construct_valid_file_path(path, filename);		
 	if(print_path)
-		print		("------->Importing array from:\n" + file_path);
+		print		("Importing array from:\n------->" + file_path);
 	str 			= File.openAsString(file_path); 
 	lines 			= split(str,"\n");
 	array 			= newArray(lines.length);
@@ -1764,7 +1952,7 @@ function file_2_float_array(path, filename, print_path)
 {
 	file_path 		= construct_valid_file_path(path, filename);		
 	if(print_path)
-		print		("------->Importing array from:\n" + file_path);
+		print		("Importing array from:\n------->" + file_path);
 	str 			= File.openAsString(file_path); 
 	lines 			= split(str,"\n");
 	array 			= newArray(lines.length);
@@ -1827,7 +2015,7 @@ function float_array_2_TXT(path, filename, data_array, print_path, overwrite_exi
 {
 	TXT_filename 			= construct_valid_file_path(path, filename);		
 	if(print_path)
-		print				("------->Writing to TXT at:\n" + TXT_filename);
+		print				("Writing to TXT at:\n------->" + TXT_filename);
 	if(!File.exists(TXT_filename) || overwrite_existing_TXT)
 	{
 		filehandle 			= File.open(TXT_filename);		
@@ -2074,17 +2262,17 @@ function generate_missing_input_data(common_directory, current_parameter_value_t
 	data_verified 		= true;
 	if(!File.exists(directory + RSP_path))
 	{	
-		print			("------->Missing RSP input file:\n" + directory + RSP_path);
+		print			("Missing RSP input file:\n------->" + directory + RSP_path);
 		data_verified 	= false;
 	}
 	if(!File.exists(directory + RSP_Error_path))
 	{	
-		print			("------->Missing RSP error input file:\n" + directory + RSP_Error_path);
+		print			("Missing RSP error input file:\n------->" + directory + RSP_Error_path);
 		data_verified 	= false;
 	}
 	if(!File.exists(directory + Std_Dev_path))
 	{	
-		print			("------->Missing std dev input file:\n" + directory + Std_Dev_path);
+		print			("Missing std dev input file:\n------->" + directory + Std_Dev_path);
 		data_verified 	= false;
 	}
 	if(!data_verified)
@@ -2102,22 +2290,22 @@ function generate_missing_test_input_data(common_directory, current_parameter_va
 	{
 		directory 			= construct_valid_directory_path(common_directory, current_parameter_value_test_folders[i]);		
 		data_verified 		= true;
-		print				("------->Path to RSP input file:\n" + directory + RSP_path);
-		print				("------->Path to RSP error input file:\n" + directory + RSP_Error_path);
-		print				("------->Path to standard deviation input file:\n" + directory + Std_Dev_path);
+		print				("Path to RSP input file:\n------->" + directory + RSP_path);
+		print				("Path to RSP error input file:\n------->" + directory + RSP_Error_path);
+		print				("Path to standard deviation input file:\n------->" + directory + Std_Dev_path);
 		if(!File.exists(directory + RSP_path))
 		{	
-			print			("------->Missing RSP input file:\n" + directory + RSP_path);
+			print			("Missing RSP input file:\n------->" + directory + RSP_path);
 			data_verified 	= false;
 		}
 		if(!File.exists(directory + RSP_Error_path))
 		{	
-			print			("------->Missing RSP error input file:\n" + directory + RSP_Error_path);
+			print			("Missing RSP error input file:\n------->" + directory + RSP_Error_path);
 			data_verified 	= false;
 		}
 		if(!File.exists(directory + Std_Dev_path))
 		{	
-			print			("------->Missing standard deviation input file:\n" + directory + Std_Dev_path);
+			print			("Missing standard deviation input file:\n------->" + directory + Std_Dev_path);
 			data_verified 	= false;
 		}
 		if(!data_verified)
@@ -2421,17 +2609,17 @@ function identify_missing_input_data(common_directory, current_parameter_value_t
 	data_verified 		= true;
 	if(!File.exists(directory + RSP_path))
 	{	
-		print			("------->Missing RSP input file:\n" + directory + RSP_path);
+		print			("Missing RSP input file:\n------->" + directory + RSP_path);
 		data_verified 	= false;
 	}
 	if(!File.exists(directory + RSP_Error_path))
 	{	
-		print			("------->Missing RSP error input file:\n" + directory + RSP_Error_path);
+		print			("Missing RSP error input file:\n------->" + directory + RSP_Error_path);
 		data_verified 	= false;
 	}
 	if(!File.exists(directory + Std_Dev_path))
 	{	
-		print			("------->Missing standard deviation input file:\n" + directory + Std_Dev_path);
+		print			("Missing standard deviation input file:\n------->" + directory + Std_Dev_path);
 		data_verified 	= false;
 	}
 	return data_verified;			
@@ -2943,21 +3131,21 @@ function print_by_iteration_data()
 {
 	print("-------> RSPs_by_iteration  		="	); 	Array.print(RSPs_by_iteration);
 	print("-------> RSP_errors_by_iteration	="	); 	Array.print(RSP_errors_by_iteration);
-	print("-------> std_devs_by_iteration  	="	); 	Array.print(std_devs_by_iteration);
+	print("-------> Std_Devs_by_iteration  	="	); 	Array.print(Std_Devs_by_iteration);
 }
 function print_by_ROI_data()
 {
 	print("-------> RSPs_by_ROI  		="	); 	Array.print(RSPs_by_ROI);
 	print("-------> RSP_errors_by_ROI  	="	); 	Array.print(RSP_errors_by_ROI);
-	print("-------> std_devs_by_ROI  	="	); 	Array.print(std_devs_by_ROI);
+	print("-------> Std_Devs_by_ROI  	="	); 	Array.print(Std_Devs_by_ROI);
 }		
 function print_compared_data_subdirectory_info()
 {
 	print_section_separator("Printing compared data subdirectory info", PRINT_MAJOR_SECTION													);
 	print("-------> multiplot_compared_data_subdirectory 						=\n " 	+ multiplot_compared_data_subdirectory				);	
 	print("-------> multiplot_compared_RSP_data_subdirectory 					=\n " 	+ multiplot_compared_RSP_data_subdirectory			);		
-	print("-------> multiplot_compared_RSP_error_data_subdirectory 				=\n " 	+ multiplot_compared_RSP_error_data_subdirectory	);	
-	print("-------> multiplot_compared_std_dev_data_subdirectory 				=\n " 	+ multiplot_compared_std_dev_data_subdirectory		);	
+	print("-------> multiplot_compared_RSP_Error_data_subdirectory 				=\n " 	+ multiplot_compared_RSP_Error_data_subdirectory	);	
+	print("-------> multiplot_compared_Std_Dev_data_subdirectory 				=\n " 	+ multiplot_compared_Std_Dev_data_subdirectory		);	
 	print("-------> multiplot_compared_TV_data_subdirectory 					=\n " 	+ multiplot_compared_TV_data_subdirectory			);		
 }
 function print_section_separator(section_heading, print_major_section)
@@ -3160,28 +3348,28 @@ function print_input_output_filenames()
 	print		("\n*ROI analysis input/output filenames----------------------------> "															);	
 	print		("-------> ROI_analysis_TV_input_filename 							=\n " 	+ ROI_analysis_TV_input_filename					);									// 
 	print		("-------> ROI_analysis_RSP_output_filename 						=\n " 	+ ROI_analysis_RSP_output_filename					);									// 
-	print		("-------> ROI_analysis_RSP_error_output_filename 					=\n " 	+ ROI_analysis_RSP_error_output_filename			);									// 
-	print		("-------> ROI_analysis_std_dev_output_filename 					=\n " 	+ ROI_analysis_std_dev_output_filename				);									// 
+	print		("-------> ROI_analysis_RSP_Error_output_filename 					=\n " 	+ ROI_analysis_RSP_Error_output_filename			);									// 
+	print		("-------> ROI_analysis_Std_Dev_output_filename 					=\n " 	+ ROI_analysis_Std_Dev_output_filename				);									// 
 	print		("-------> ROI_analysis_TV_output_filename 							=\n " 	+ ROI_analysis_TV_output_filename					);									// 
 	
 	print		("\n*Parameter value test input/output filenames--------------------> "															);	
 	print		("-------> parameter_value_test_RSP_input_filename 					=\n " 	+ parameter_value_test_RSP_input_filename			);									// 
-	print		("-------> parameter_value_test_RSP_error_input_filename 			=\n " 	+ parameter_value_test_RSP_error_input_filename		);									// 
-	print		("-------> parameter_value_test_std_dev_input_filename 				=\n " 	+ parameter_value_test_std_dev_input_filename		);									// 
+	print		("-------> parameter_value_test_RSP_Error_input_filename 			=\n " 	+ parameter_value_test_RSP_Error_input_filename		);									// 
+	print		("-------> parameter_value_test_Std_Dev_input_filename 				=\n " 	+ parameter_value_test_Std_Dev_input_filename		);									// 
 	print		("-------> parameter_value_test_TV_input_filename 					=\n " 	+ parameter_value_test_TV_input_filename			);									// 
 	print		("-------> parameter_value_test_RSP_output_filename 				=\n " 	+ parameter_value_test_RSP_output_filename			);									// 
-	print		("-------> parameter_value_test_RSP_error_output_filename 			=\n " 	+ parameter_value_test_RSP_error_output_filename	);									// 
-	print		("-------> parameter_value_test_std_dev_output_filename 			=\n " 	+ parameter_value_test_std_dev_output_filename		);									// 
+	print		("-------> parameter_value_test_RSP_Error_output_filename 			=\n " 	+ parameter_value_test_RSP_Error_output_filename	);									// 
+	print		("-------> parameter_value_test_Std_Dev_output_filename 			=\n " 	+ parameter_value_test_Std_Dev_output_filename		);									// 
 	print		("-------> parameter_value_test_TV_output_filename 					=\n " 	+ parameter_value_test_TV_output_filename			);									// 
 	
 	print		("\n*Multiplot input/output filenames-------------------------------> "															);	
 	print		("-------> multiplot_RSP_input_filename 							=\n " 	+ multiplot_RSP_input_filename						);									// 
-	print		("-------> multiplot_RSP_error_input_filename 						=\n " 	+ multiplot_RSP_error_input_filename				);									// 
-	print		("-------> multiplot_std_dev_input_filename 						=\n " 	+ multiplot_std_dev_input_filename					);									// 
+	print		("-------> multiplot_RSP_Error_input_filename 						=\n " 	+ multiplot_RSP_Error_input_filename				);									// 
+	print		("-------> multiplot_Std_Dev_input_filename 						=\n " 	+ multiplot_Std_Dev_input_filename					);									// 
 	print		("-------> multiplot_TV_input_filename 								=\n " 	+ multiplot_TV_input_filename						);									// 
 	print		("-------> multiplot_RSP_output_basename 							=\n " 	+ multiplot_RSP_output_basename						);									// 
-	print		("-------> multiplot_RSP_error_output_basename 						=\n " 	+ multiplot_RSP_error_output_basename				);									// 
-	print		("-------> multiplot_std_dev_output_basename 						=\n " 	+ multiplot_std_dev_output_basename					);									// 
+	print		("-------> multiplot_RSP_Error_output_basename 						=\n " 	+ multiplot_RSP_Error_output_basename				);									// 
+	print		("-------> multiplot_Std_Dev_output_basename 						=\n " 	+ multiplot_Std_Dev_output_basename					);									// 
 	print		("-------> multiplot_TV_output_basename 							=\n " 	+ multiplot_TV_output_basename						);									// 		
 }
 function print_test_parameter_file_info()
@@ -3400,7 +3588,7 @@ function results_table_2_CSV(directory, filename, overwrite_existing, print_path
 {
 	filepath 			= construct_valid_file_path(directory, filename);	
 	if(print_path)
-		print			("------->Writing contents of results table to CSV at:\n" + filepath);
+		print			("Writing contents of results table to CSV at:\n------->" + filepath);
 	if(!File.exists(filepath) || overwrite_existing)
 	{
 		saveAs			("Measurements", filepath);	
@@ -3702,6 +3890,21 @@ function table_add(_current_row, _start_column, _columns_2_skip, _data, _num_col
 	return _current_row;
 	//return _current_column;
 }
+function table_add_subarray(_current_row, _start_column, _columns_2_skip, _data, _start_index, _num_columns, _num_rows)
+{							
+	_current_column 		= _start_column;
+	_subarray				= Array.slice(_data, _start_index, _start_index + _num_columns * _num_rows);
+	for(N = 0; N < _num_rows; N++)
+	{		
+		_current_column 	= _start_column;
+		_start_row 			= N * (_num_columns);
+		setResult			(_current_column-1,  _current_row, N + 1);
+		_current_column 	= table_fill_columns(_current_row, _current_column, _columns_2_skip, _subarray, _start_row, _num_columns);								
+		_current_row++;
+	}
+	return _current_row;
+	//return _current_column;
+}
 function table_add_colsum_row( _start_row, _start_column, _num_columns, _num_rows)
 {									
 	for(_column = 0; _column < _num_columns; _column++)
@@ -3865,20 +4068,20 @@ function verify_file_set(common_directory, common_basename, filename_suffixes, f
 	}
 	return true;
 }
-function verify_input_data(_common_directory, _current_parameter_value_test_folders, _current_analysis_RSP_input_data_filenames, _current_analysis_RSP_error_input_data_filenames, _current_analysis_std_dev_input_data_filenames, _current_analysis_TV_input_data_filenames)
+function verify_input_data(_common_directory, _current_parameter_value_test_folders, _current_analysis_RSP_input_data_filenames, _current_analysis_RSP_Error_input_data_filenames, _current_analysis_Std_Dev_input_data_filenames, _current_analysis_TV_input_data_filenames)
 {
 	for( i = 0; i < _current_parameter_value_test_folders.length; i++)
 	{
 		directory 	= _common_directory + _current_parameter_value_test_folders[i];
 		print		("------->Verifying RSP input data file exists at:\n" + directory + _current_analysis_RSP_input_data_filenames);
-		print		("------->Verifying RSP error input data file exists at:\n" + directory + _current_analysis_RSP_error_input_data_filenames);
-		print		("------->Verifying standard deviation input data file exists at:\n" + directory + _current_analysis_std_dev_input_data_filenames);
+		print		("------->Verifying RSP error input data file exists at:\n" + directory + _current_analysis_RSP_Error_input_data_filenames);
+		print		("------->Verifying standard deviation input data file exists at:\n" + directory + _current_analysis_Std_Dev_input_data_filenames);
 		print		("------->Verifying total variation (TV) input data file exists at:\n" + directory + _current_analysis_TV_input_data_filenames);
 		if(!File.exists(directory + _current_analysis_RSP_input_data_filenames))
 			return false;
-		if(!File.exists(directory + _current_analysis_RSP_error_input_data_filenames));
+		if(!File.exists(directory + _current_analysis_RSP_Error_input_data_filenames));
 			return false;
-		if(!File.exists(directory + _current_analysis_std_dev_input_data_filenames));
+		if(!File.exists(directory + _current_analysis_Std_Dev_input_data_filenames));
 			return false;
 		if(!File.exists(directory + _current_analysis_TV_input_data_filenames));
 			return false;
@@ -3966,7 +4169,7 @@ function verify_reconstruction_output_set(_reconstruction_data_directory, _recon
 		print		("=======> RECONSTRUCTION OUTPUT DATA NOT FOUND\n" + _current_parameter_value_test_folder);
 	return data_verified;			
 }
-function verify_ROI_analysis_output_files(_common_directory, _current_parameter_value_test_folder, _ROI_analysis_RSP_output_filename, _ROI_analysis_RSP_error_output_filename, _ROI_analysis_std_dev_output_filename, _ROI_analysis_TV_input_filename, _slices_2_analyze_folders, _ROI_selection_diameter_folders, _print_path)
+function verify_ROI_analysis_output_files(_common_directory, _current_parameter_value_test_folder, _ROI_analysis_RSP_output_filename, _ROI_analysis_RSP_Error_output_filename, _ROI_analysis_Std_Dev_output_filename, _ROI_analysis_TV_input_filename, _slices_2_analyze_folders, _ROI_selection_diameter_folders, _print_path)
 {
 	_missing_data 		= false;
 	if(_print_path)
@@ -3984,25 +4187,25 @@ function verify_ROI_analysis_output_files(_common_directory, _current_parameter_
 			_current_TV_analysis_subdirectory	= "";					
 				
 			_current_analysis_ROI_analysis_RSP_output_filename			= _current_ROI_analysis_subdirectory 	+ File.separator 	+ _ROI_analysis_RSP_output_filename;
-			_current_analysis_ROI_analysis_RSP_error_output_filename	= _current_ROI_analysis_subdirectory 	+ File.separator 	+ _ROI_analysis_RSP_error_output_filename;
-			_current_analysis_ROI_analysis_std_dev_output_filename		= _current_ROI_analysis_subdirectory 	+ File.separator 	+ _ROI_analysis_std_dev_output_filename;
+			_current_analysis_ROI_analysis_RSP_Error_output_filename	= _current_ROI_analysis_subdirectory 	+ File.separator 	+ _ROI_analysis_RSP_Error_output_filename;
+			_current_analysis_ROI_analysis_Std_Dev_output_filename		= _current_ROI_analysis_subdirectory 	+ File.separator 	+ _ROI_analysis_Std_Dev_output_filename;
 			_current_analysis_ROI_analysis_TV_input_filename			= _current_TV_analysis_subdirectory 	+ File.separator	+ _ROI_analysis_TV_input_filename;				
 			
 			_source_folder		= construct_valid_directory_path(_common_directory, _current_parameter_value_test_folder				);
 			_RSP_file_path		= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_RSP_output_filename			);
-			_RSP_error_file_path= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_RSP_error_output_filename	);
-			_std_dev_file_path	= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_std_dev_output_filename		);
+			_RSP_Error_file_path= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_RSP_Error_output_filename	);
+			_Std_Dev_file_path	= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_Std_Dev_output_filename		);
 			_TV_file_path		= construct_valid_file_path(_source_folder, _current_analysis_ROI_analysis_TV_input_filename			);
 
 			//print("RSP file path = " + _RSP_file_path);
-			//print("RSP error file path = " + _RSP_error_file_path);
-			//print("RSP std dev file path = " + _std_dev_file_path);
+			//print("RSP error file path = " + _RSP_Error_file_path);
+			//print("RSP std dev file path = " + _Std_Dev_file_path);
 			//print("TV file path = " + _TV_file_path);
 			if(!File.exists(_RSP_file_path))
 				_missing_data = true;
-			if(!File.exists(_RSP_error_file_path))
+			if(!File.exists(_RSP_Error_file_path))
 				_missing_data = true;
-			if(!File.exists(_std_dev_file_path))
+			if(!File.exists(_Std_Dev_file_path))
 				_missing_data = true;
 			if(!File.exists(_TV_file_path))
 				_missing_data = true;				
@@ -4014,7 +4217,7 @@ function verify_ROI_analysis_output_files(_common_directory, _current_parameter_
 		print		("=======> ROI ANALYSIS HAS BEEN COMPLETED\n" + _current_parameter_value_test_folder);
 	return _missing_data;						
 }
-function verify_ROI_analysis_output_file_set(_common_directory, _current_parameter_value_test_folders, _current_analysis_RSP_input_data_filenames, _current_analysis_RSP_error_input_data_filenames, _current_analysis_std_dev_input_data_filenames, _current_analysis_TV_input_data_filenames)
+function verify_ROI_analysis_output_file_set(_common_directory, _current_parameter_value_test_folders, _current_analysis_RSP_input_data_filenames, _current_analysis_RSP_Error_input_data_filenames, _current_analysis_Std_Dev_input_data_filenames, _current_analysis_TV_input_data_filenames)
 {
 	missing_data_directories = newArray();
 	print_section_separator		("------->Verifying ROI analysis output data files exist for specified set of reconstructions:\n", PRINT_MAJOR_SECTION);
@@ -4024,9 +4227,9 @@ function verify_ROI_analysis_output_file_set(_common_directory, _current_paramet
 		directory 	= _common_directory + _current_parameter_value_test_folders[i];
 		if(!File.exists(directory + _current_analysis_RSP_input_data_filenames))
 			missing_data = true;
-		if(!File.exists(directory + _current_analysis_RSP_error_input_data_filenames))
+		if(!File.exists(directory + _current_analysis_RSP_Error_input_data_filenames))
 			missing_data = true;
-		if(!File.exists(directory + _current_analysis_std_dev_input_data_filenames))
+		if(!File.exists(directory + _current_analysis_Std_Dev_input_data_filenames))
 			missing_data = true;
 		if(!File.exists(directory + _current_analysis_TV_input_data_filenames))
 			missing_data = true;
