@@ -433,6 +433,7 @@ macro "merge_data"
 	iterations_2_analyze								= Array.slice(sequential_values, first_iteration_2_analyze, last_iteration_2_analyze + 1);
 	num_iterations_2_analyze							= iterations_2_analyze.length;				// # of iterations of feasibility seeking image results to analyze
 	iterations_2_analyze_string_precision 				= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
+	//iterations_2_analyze_strings 						= getStringSequence(0, recon_iterations_2_analyze.length, 0);
 	recon_iterations_2_analyze							= Array.slice(sequential_values, 1, last_iteration_2_analyze + 1);
 	recon_iterations_2_analyze_strings 					= getStringSequence(1, recon_iterations_2_analyze.length, 0);
 	//first_slice_2_analyze 							= x_slices/2;								// first slice analyzed by pCT_Analysis macro
@@ -1126,6 +1127,7 @@ macro "merge_data"
 							current_row 							= 0;
 							ROI_table_row_separation 				= num_target_test_parameter_values + column_labels_line_separation + table_line_separation  + 1; 
 							ROI_table_column_separation				= 1;
+							ROI_table_elements						= (num_recon_iterations + 1) * num_target_test_parameter_values;
 							current_row								= table_add_empty_rows( first_column + num_recon_iterations + 1, title_line_num, title_line_separation);
 							setResult								(0,  current_row - title_line_separation + 1, current_test_multiplot_parameter_values_string);										
 							//-------------------------------------------------------------------------//
@@ -1191,45 +1193,20 @@ macro "merge_data"
 								current_row 			= title_line_separation;
 								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 								{
-									setResult			(0,  current_row++, ROI_labels[ROI]);		
-									for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-										setResult		(iteration + first_column,  current_row - 1, d2s(iteration, 0) );
-									//current_row 				= table_fill(tables_start_line + 1, 1, first_column, ROI_table_column_separation + 1, merged_RSP_data, num_recon_iterations + 1, num_target_test_parameter_values );
-									start_index					= ROI * (num_recon_iterations + 1) * num_target_test_parameter_values;
-									ROI_RSP_data				= Array.slice( merged_RSP_data_by_ROI, start_index, start_index + (num_recon_iterations + 1) * num_target_test_parameter_values);
-									current_row 				= table_add(tables_start_line + 1, first_column, 0, ROI_RSP_data, num_recon_iterations + 1, num_target_test_parameter_values );
-									
-									//if(ROI == 0)
-									//	exit();
-										//exit();
-									//for(N = 0; N < num_target_test_parameter_values; N++)
-									//{		
-									//	for(iteration = 0; iteration <= num_recon_iterations; iteration++)
-									//	{	
-									//		index 		= ROI + iteration * num_ROIs_2_analyze + N * (num_recon_iterations + 1) * num_ROIs_2_analyze;
-									//		setResult	(iteration + first_column,  current_row, merged_RSP_data[index]);	
-									//	}
-									//	setResult		(0,  current_row++, N + 1);
-									//}
+									ROI_header_array 		= Array.concat( ROI_labels[ROI], iterations_2_analyze_strings);
+									table_add_col_headers 	(0, tables_start_line, ROI_header_array);
+									start_index				= ROI * ROI_table_elements;
+									ROI_RSP_data			= Array.slice( merged_RSP_data_by_ROI, start_index, start_index + ROI_table_elements);
+									current_row 			= table_add(tables_start_line + 1, first_column, 0, ROI_RSP_data, num_recon_iterations + 1, num_target_test_parameter_values );
 									if(ROI != num_ROIs_2_analyze - 1)
 										current_row			= table_add_empty_rows( first_column + num_recon_iterations + 1, current_row, column_labels_line_separation + table_line_separation);
-									print("current_row" + current_row);
-									//current_row -= 2;
-									table_add_colsum_row(tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
-									//current_row -= 2;
-									tables_start_line = current_row;
-									print("current_row" + current_row);
-									print("tables_start_line" + tables_start_line);
-									//if(ROI == 2)
-										//exit();
+									table_add_colsum_row	(tables_start_line + 1, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
+									tables_start_line 		= current_row;
 								}	
-								exit();
-								for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-									table_add_colsum_row(title_line_separation + ROI  * ROI_table_row_separation, first_column, num_recon_iterations + 1, num_target_test_parameter_values);
-								exit();
+								//exit();
 								results_table_2_CSV			(merged_RSP_CSV_folder, 	parameter_value_test_merged_RSP_CSV_filename, 		overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
 								results_table_2_CSV			(export_ROI_analysis_CSV_folder, 	parameter_value_total_test_merged_RSP_CSV_filename, 	overwrite_merged_RSP_CSV_data, print_output_CSV_path, false);
-								MERGED_RSP_FILE_PATH_LIST		= Array.concat(MERGED_RSP_FILE_PATH_LIST, merged_RSP_CSV_path);
+								MERGED_RSP_FILE_PATH_LIST	= Array.concat(MERGED_RSP_FILE_PATH_LIST, merged_RSP_CSV_path);
 							}
 							exit();
 							//----------------------------------------------------------------------------------//
