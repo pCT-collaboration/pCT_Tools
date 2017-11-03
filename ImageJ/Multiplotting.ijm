@@ -1715,23 +1715,23 @@ macro "multiplotting"
 							for(MVP = 0; MVP < num_MVP_PVs; MVP++)
 							{
 								folder 								= all_reduced_folder_strings[i + MVP];
-								current_PVs 			= folder_name_2_PVs (folder, parameter_string_prefixes);
+								current_PVs 						= folder_name_2_PVs (folder, parameter_string_prefixes);
 								parameter_string 					= folder_2_MVP_string	(folder, parameter_string_prefixes, MVP_parameter, PVs, num_PVs, PV_offsets, parameter_string_precisions);
-								current_parameter_test_dir 	= TEST_BATCH_DIR + substring(folder, 0, lengthOf(folder) - lengthOf(current_PVs[TTP_index]) - 1) + TTP_range_suffix;
+								current_parameter_test_dir 			= TEST_BATCH_DIR + substring(folder, 0, lengthOf(folder) - lengthOf(current_PVs[TTP_index]) - 1) + TTP_range_suffix;
 								TV_data 							= file_2_array				(current_parameter_test_dir, current_analysis_MVP_TV_ifname, print_input_data_path);	
-								all_TV_MVP_data 				= Array.concat				(all_TV_MVP_data, TV_data);
+								all_TV_MVP_data 					= Array.concat				(all_TV_MVP_data, TV_data);
 							}
 							num_source_index_values 					= newArray(TV_step_measurements_per_iteration, num_recon_iterations, num_TTP_values, num_MVP_PVs);
 							num_destination_index_values 				= newArray(TV_step_measurements_per_iteration, num_TTP_values, num_MVP_PVs);					
 							for(iteration = 1; iteration <= num_recon_iterations; iteration++)
 							{
 								TV_step_MVP_data									= newArray(TV_step_measurements_per_MVP);			
-								before_TVS_MVP_data								= newArray(TV_measurements_per_MVP);			
-								after_TVS_MVP_data								= newArray(TV_measurements_per_MVP);			
-								TV_diff_MVP_data							= newArray(TV_diff_measurements_per_MVP);			
-								current_iteration_TV_MVP_dir 				= current_PVT_MVP_parent_dir;
-								current_iteration_TV_step_MVP_dir 			= current_PVT_MVP_parent_dir;
-								current_iteration_TV_diff_MVP_dir 	= current_PVT_MVP_parent_dir;
+								before_TVS_MVP_data									= newArray(TV_measurements_per_MVP);			
+								after_TVS_MVP_data									= newArray(TV_measurements_per_MVP);			
+								TV_diff_MVP_data									= newArray(TV_diff_measurements_per_MVP);			
+								current_iteration_TV_MVP_dir 						= current_PVT_MVP_parent_dir;
+								current_iteration_TV_step_MVP_dir 					= current_PVT_MVP_parent_dir;
+								current_iteration_TV_diff_MVP_dir 					= current_PVT_MVP_parent_dir;
 								dir_created_successfully							= make_dir_recorded(current_iteration_TV_MVP_dir, DIRECTORIES_CREATED, print_directories_created);
 								dir_created_successfully							= make_dir_recorded(current_iteration_TV_step_MVP_dir, DIRECTORIES_CREATED, print_directories_created);
 								dir_created_successfully							= make_dir_recorded(current_iteration_TV_diff_MVP_dir, DIRECTORIES_CREATED, print_directories_created);									
@@ -1739,17 +1739,17 @@ macro "multiplotting"
 								{
 									for(N = 0; N < num_TTP_values; N++)
 									{
-										source_indices 											= newArray(before_TVS_index, iteration - 1, N, MVP);
-										destination_indices 									= newArray(before_TVS_index, N, MVP);
-										source_index 											= parameter_indices_2_index(num_source_index_values, source_indices);
-										TV_step_destination_index 								= parameter_indices_2_index(num_destination_index_values, destination_indices);
-										TV_destination_index									= TV_step_destination_index / TV_step_measurements_per_iteration;
+										source_indices 										= newArray(before_TVS_index, iteration - 1, N, MVP);
+										destination_indices 								= newArray(before_TVS_index, N, MVP);
+										source_index 										= parameter_indices_2_index(num_source_index_values, source_indices);
+										TV_step_destination_index 							= parameter_indices_2_index(num_destination_index_values, destination_indices);
+										TV_destination_index								= TV_step_destination_index / TV_step_measurements_per_iteration;
 										before_TVS_MVP_data_value							= parseFloat(all_TV_MVP_data[source_index]);
 										after_TVS_MVP_data_value							= parseFloat(all_TV_MVP_data[source_index + 1]);
 										before_TVS_MVP_data[TV_destination_index]			= before_TVS_MVP_data_value;
 										after_TVS_MVP_data[TV_destination_index]			= after_TVS_MVP_data_value;
-										TV_diff_MVP_data[TV_destination_index]		= after_TVS_MVP_data_value - before_TVS_MVP_data_value;								
-										TV_diff_MVP_data[TV_destination_index]		= parseFloat(after_TVS_MVP_data[TV_destination_index]) - parseFloat(before_TVS_MVP_data[TV_destination_index]);
+										TV_diff_MVP_data[TV_destination_index]				= after_TVS_MVP_data_value - before_TVS_MVP_data_value;								
+										TV_diff_MVP_data[TV_destination_index]				= parseFloat(after_TVS_MVP_data[TV_destination_index]) - parseFloat(before_TVS_MVP_data[TV_destination_index]);
 										TV_step_MVP_data[TV_step_destination_index] 		= all_TV_MVP_data[source_index];
 										TV_step_MVP_data[TV_step_destination_index + 1] 	= all_TV_MVP_data[source_index + 1];																										
 									}
