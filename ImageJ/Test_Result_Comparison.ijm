@@ -190,7 +190,11 @@ macro "test_result_comparison"
  	reconstruction_data_directory_C					= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	reconstruction_data_directory_D					= "D:\\pCT\\pCT_data\\reconstruction_data";
 	ROI_analysis_macro_filename 					= "ROI_Analysis.ijm";
-	ROI_analysis_macro_path 						= github_macro_directory + File.separator + ROI_analysis_macro_filename;
+	ROI_analysis_macro_path 						= github_macro_directory + folder_separator + ROI_analysis_macro_filename;
+	multiplotting_macro_filename 					= "Multiplotting.ijm";
+	multiplotting_macro_path 						= github_macro_directory + folder_separator + multiplotting_macro_filename;
+	test_result_comparison_macro_filename 			= "Test_Result_Comparison.ijm";
+	test_result_comparison_macro_path 				= github_macro_directory + folder_separator + test_result_comparison_macro_filename;
 	reconstruction_data_folder						= folder_separator + "reconstruction_data";
 	simulated_data_folder							= folder_separator + "Simulated";
 	experimental_data_folder						= folder_separator + "Experimental";
@@ -205,7 +209,6 @@ macro "test_result_comparison"
 	run_number_folder								= folder_separator + "0001";
 	preprocess_date_folder							= folder_separator + "15-05-24";
 	//preprocess_date								= folder_separator + "14-12-11";
-	print("hello");
 	
 	// Options controlling construction of reconstruction_data_directory/test_batch_directory
 	simulated_data									= "Simulated";
@@ -744,6 +747,8 @@ macro "test_result_comparison"
 		for(i = 0; i < specific_data_folders.length; i++)
 			runMacro		(ROI_analysis_macro_path, test_batch_directory + specific_data_folders[i]  + folder_separator);
 		//	runMacro		(ROI_analysis_macro_path, test_batch_directory+ compared_folders[0]  + folder_separator );	
+		if(exit_after_specific_data_analysis)
+			exit();
 	}
 	//exit();
 	if(analyze_compared_data)
@@ -1175,6 +1180,8 @@ macro "test_result_comparison"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////								
 					if(perform_RSP_comparisons)
 					{
+						print_major_log_section_separator("Performing RSP analysis as a function of TVS repetitions (Nk) and writing images to disk as PNG..." );
+						print("Current parameter value test\n" + current_test_parameter_values_string);						
 						RSP_comparison_data = newArray();						
 						for(N = 0; N < num_target_test_parameter_values; N++)
 						{
@@ -1233,7 +1240,7 @@ macro "test_result_comparison"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////								
 					if(perform_RSP_error_comparisons)
 					{
-						print_major_log_section_separator("Performing TV analysis as a function of TVS repetitions (Nk) and writing images to disk as PNG..." );
+						print_major_log_section_separator("Performing RSP Error analysis as a function of TVS repetitions (Nk) and writing images to disk as PNG..." );
 						print("Current parameter value test\n" + current_test_parameter_values_string);						
 						RSP_error_comparison_data = newArray();						
 						for(N = 0; N < num_target_test_parameter_values; N++)
@@ -1290,6 +1297,8 @@ macro "test_result_comparison"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////								
 					if(perform_std_dev_comparisons)
 					{
+						print_major_log_section_separator("Performing standard deviation analysis as a function of TVS repetitions (Nk) and writing images to disk as PNG..." );
+						print("Current parameter value test\n" + current_test_parameter_values_string);						
 						std_dev_comparison_data = newArray();						
 						for(N = 0; N < num_target_test_parameter_values; N++)
 						{

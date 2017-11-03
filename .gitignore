@@ -49,7 +49,7 @@
 *.notes
 
 #---- ImageJ files ----#
-*.ijm
+#*.ijm
 *.java
 
 #---- Matlab files ----#
