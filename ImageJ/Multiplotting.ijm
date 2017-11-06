@@ -29,116 +29,116 @@ macro "multiplotting"
 	//***************************************************************************************************************************************************************************************************//
 	//************* Execution control Booleans and general parameter value test and MVP behavior Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
-	simulated_scan 														= true;
-	experimental_scan 													= !simulated_scan;
-	log_printing														= true;			
-	exporting_log														= false;		
-	debug_path_printing													= true;
-	printing_ROI_definitions											= true;		
-	printing_reconstructed_image_analysis_info							= true;
-	printing_PVT_info													= true;
+	simulated_scan 												= true;
+	experimental_scan 											= !simulated_scan;
+	log_printing												= true;			
+	exporting_log												= false;		
+	debug_path_printing											= true;
+	printing_ROI_definitions									= true;		
+	printing_reconstructed_image_analysis_info					= true;
+	printing_PVT_info											= true;
 	printing_MVP_parameter_info									= true;	
-	printing_input_output_filenames										= true;	
-	print_ROI_definitions_path											= false;		
+	printing_input_output_filenames								= true;	
+	print_ROI_definitions_path									= false;		
 	
-	print_missing_paths													= true;
-	print_directories_created											= true;		
-	print_input_data_path												= true;
-	print_input_CSV_path												= true;
-	print_input_TXT_path												= false;
-	print_input_PNG_paths												= false;
-	print_output_CSV_path												= true;
-	print_output_TXT_path												= true;
-	print_output_PNG_paths												= false;
+	print_missing_paths											= true;
+	print_directories_created									= true;		
+	print_input_data_path										= true;
+	print_input_CSV_path										= true;
+	print_input_TXT_path										= false;
+	print_input_PNG_paths										= false;
+	print_output_CSV_path										= true;
+	print_output_TXT_path										= true;
+	print_output_PNG_paths										= false;
 	print_MVP_animation_paths 									= false;		
-	print_MVP_GIF_paths 											= true;		
-	print_MVP_AVI_paths 											= true;		
-	print_copied_file_paths												= false;
-	close_input_PNG_images												= true;
-	close_output_PNG_images												= true;
-	close_stack_images													= true;		
+	print_MVP_GIF_paths 										= true;		
+	print_MVP_AVI_paths 										= true;		
+	print_copied_file_paths										= false;
+	close_input_PNG_images										= true;
+	close_output_PNG_images										= true;
+	close_stack_images											= true;		
 	close_MVP_stack_images 										= true;									
-	specify_MVP_parameter_prefix									= true;
-	specify_MVP_parameter_number									= true && !specify_MVP_parameter_prefix;
+	specify_MVP_parameter_prefix								= true;
+	specify_MVP_parameter_number								= true && !specify_MVP_parameter_prefix;
 	specify_MVP_parameter_index									= true && !specify_MVP_parameter_prefix && !specify_MVP_parameter_number;
-	write_folder_strings 												= false;
-	write_path_strings 													= false;		
+	write_folder_strings 										= false;
+	write_path_strings 											= false;		
 	//***************************************************************************************************************************************************************************************************//
 	//************* Parameter value test Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
-	check_all_paths_existence 											= false;
-	analyze_specific_data 												= true;
-	only_perform_missing_analyses 										= false;
-	generate_averaged_data												= false;
-	generate_specific_averaged_data										= false;
+	check_all_paths_existence 									= false;
+	analyze_specific_data 										= true;
+	only_perform_missing_analyses 								= false;
+	generate_averaged_data										= false;
+	generate_specific_averaged_data								= false;
 	generate_averaged_MVP_data									= false;
-	perform_all_missing_analyses										= false;
-	perform_MVP_analyses											= false;
-	exit_after_analyzing_specific_data									= true;
-	exit_after_performing_all_missing_analyses							= true;
-	exit_after_performing_all_parameter_test_analyses					= false;
+	perform_all_missing_analyses								= false;
+	perform_MVP_analyses										= false;
+	exit_after_analyzing_specific_data							= true;
+	exit_after_performing_all_missing_analyses					= true;
+	exit_after_performing_all_parameter_test_analyses			= false;
 	exit_after_performing_MVP_ROI_analyses						= false;
-	exit_after_averaging_specific_data									= false;
+	exit_after_averaging_specific_data							= false;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
-	analyze_compared_data 												= false;
-	add_comparison_lines_2_plots										= true;
-	add_compared_data													= false;
-	add_compared_RSP_data 												= true;
-	add_compared_RSP_error_data 										= true;
-	add_compared_std_dev_data 											= true;
-	add_compared_TV_data 												= true;
+	analyze_compared_data 										= false;
+	add_comparison_lines_2_plots								= true;
+	add_compared_data											= false;
+	add_compared_RSP_data 										= true;
+	add_compared_RSP_error_data 								= true;
+	add_compared_std_dev_data 									= true;
+	add_compared_TV_data 										= true;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
-	generate_PVT_comparison_data 						= true;
-	generate_PVT_RSP_comparison_data 					= false;
-	generate_PVT_RSP_error_comparison_data 			= true;
-	generate_PVT_std_dev_comparison_data 				= true;
-	generate_PVT_TV_comparison_data	 				= true;				
+	generate_PVT_comparison_data 								= true;
+	generate_PVT_RSP_comparison_data 							= false;
+	generate_PVT_RSP_error_comparison_data 						= true;
+	generate_PVT_std_dev_comparison_data 						= true;
+	generate_PVT_TV_comparison_data	 							= true;				
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
-	perform_test_comparisons											= true;	
-		perform_missing_analyses										= true;
-		perform_TV_comparisons											= true;		
-			write_TV_comparison_data 									= true;	
-				overwrite_TV_comparison_data 							= true;	
-			perform_TV_vs_iteration_analysis							= true;					
-				create_TV_vs_iteration_plots							= true;		
-					write_TV_vs_iteration_plots							= true;
-						overwrite_TV_vs_iteration_plots					= true;
-			perform_TV_vs_target_parameter_analysis						= true;	
-				create_TV_vs_target_parameter_plots						= true;				
-					write_TV_vs_target_parameter_plots					= true;
-						overwrite_TV_vs_target_parameter_plots			= true;						
-		perform_RSP_comparisons											= true;
-			write_RSP_comparison_data									= true;
-				overwrite_RSP_comparison_data							= true;
-			create_RSP_comparison_plots									= true;
-				write_RSP_comparison_plots								= true;
-					overwrite_RSP_comparison_plots						= true;
-		perform_RSP_error_comparisons 									= true;
-			write_RSP_error_comparison_data								= true;
-				overwrite_RSP_error_comparison_data						= true;
-			create_RSP_error_comparison_plots							= true;
-				write_RSP_error_comparison_plots						= true;
-					overwrite_RSP_error_comparison_plots				= true;
-		perform_std_dev_comparisons										= true;
-			write_std_dev_comparison_data								= true;
-				overwrite_std_dev_comparison_data						= true;
-			create_std_dev_comparison_plots								= true;
-				write_std_dev_comparison_plots							= true;
-					overwrite_std_dev_comparison_plots					= true;	
+	perform_test_comparisons									= true;	
+		perform_missing_analyses								= true;
+		perform_TV_comparisons									= true;		
+			write_TV_comparison_data 							= true;	
+				overwrite_TV_comparison_data 					= true;	
+			perform_TV_vs_iteration_analysis					= true;					
+				create_TV_vs_iteration_plots					= true;		
+					write_TV_vs_iteration_plots					= true;
+						overwrite_TV_vs_iteration_plots			= true;
+			perform_TV_vs_target_parameter_analysis				= true;	
+				create_TV_vs_target_parameter_plots				= true;				
+					write_TV_vs_target_parameter_plots			= true;
+						overwrite_TV_vs_target_parameter_plots	= true;						
+		perform_RSP_comparisons									= true;
+			write_RSP_comparison_data							= true;
+				overwrite_RSP_comparison_data					= true;
+			create_RSP_comparison_plots							= true;
+				write_RSP_comparison_plots						= true;
+					overwrite_RSP_comparison_plots				= true;
+		perform_RSP_error_comparisons 							= true;
+			write_RSP_error_comparison_data						= true;
+				overwrite_RSP_error_comparison_data				= true;
+			create_RSP_error_comparison_plots					= true;
+				write_RSP_error_comparison_plots				= true;
+					overwrite_RSP_error_comparison_plots		= true;
+		perform_std_dev_comparisons								= true;
+			write_std_dev_comparison_data						= true;
+				overwrite_std_dev_comparison_data				= true;
+			create_std_dev_comparison_plots						= true;
+				write_std_dev_comparison_plots					= true;
+					overwrite_std_dev_comparison_plots			= true;	
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************** Multiplotting Booleans *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
-	perform_test_comparisons											= true;	
-	perform_test_comparisons_by_MVP_parameter_combination			= true;	
-	perform_test_comparisons_by_quality_measure							= false;	
-		analyze_all_parameter_test_images								= false;
-		perform_missing_analyses										= false;
+	perform_test_comparisons									= true;	
+	perform_test_comparisons_by_MVP_parameter_combination		= true;	
+	perform_test_comparisons_by_quality_measure					= false;	
+		analyze_all_parameter_test_images						= false;
+		perform_missing_analyses								= false;
 		generate_RSP_MVPs 										= true;			
 			write_RSP_MVPs										= true;
 				overwrite_RSP_MVPs								= true;
@@ -147,14 +147,14 @@ macro "multiplotting"
 					overwrite_RSP_MVP_animated_GIFs				= true;
 				write_RSP_MVP_AVIs								= true;
 					overwrite_RSP_MVP_AVIs						= true;
-		generate_RSP_error_MVPs 									= true;		
-			write_RSP_error_MVPs									= true;
-				overwrite_RSP_error_MVPs							= true;	
-			generate_RSP_error_MVP_animations						= true;
-				write_RSP_error_MVP_animated_GIFs					= true;
-					overwrite_RSP_error_MVP_animated_GIFs			= true;
-				write_RSP_error_MVP_AVIs							= true;
-					overwrite_RSP_error_MVP_AVIs					= true;
+		generate_RSP_error_MVPs 								= true;		
+			write_RSP_error_MVPs								= true;
+				overwrite_RSP_error_MVPs						= true;	
+			generate_RSP_error_MVP_animations					= true;
+				write_RSP_error_MVP_animated_GIFs				= true;
+					overwrite_RSP_error_MVP_animated_GIFs		= true;
+				write_RSP_error_MVP_AVIs						= true;
+					overwrite_RSP_error_MVP_AVIs				= true;
 		generate_std_dev_MVPs 									= true;			
 			write_std_dev_MVPs									= true;
 				overwrite_std_dev_MVPs							= true;
@@ -163,56 +163,57 @@ macro "multiplotting"
 					overwrite_std_dev_MVP_animated_GIFs			= true;
 				write_std_dev_MVP_AVIs							= true;
 					overwrite_std_dev_MVP_AVIs					= true;
-		generate_TV_MVPs											= true;
-			plot_TV_MVPs 											= true;
+		generate_TV_MVPs										= true;
+			plot_TV_MVPs 										= true;
 				write_TV_MVPs 									= true;
-					overwrite_TV_MVPs								= true;				
+					overwrite_TV_MVPs							= true;				
 			plot_TV_step_MVPs 									= true;
 				write_TV_step_MVPs								= true;
 					overwrite_TV_step_MVPs						= true;				
-			plot_TV_diff_MVPs 								= false;
-				write_TV_diff_MVPs							= false;
-					overwrite_TV_diff_MVPs					= false;				
-		generate_TV_animations											= true;
+			plot_TV_diff_MVPs 									= false;
+				write_TV_diff_MVPs								= false;
+					overwrite_TV_diff_MVPs						= false;				
+		generate_TV_animations									= true;
 			generate_TV_MVP_animations							= true;
 				write_TV_MVP_animated_GIFs						= true;
 					overwrite_TV_MVP_animated_GIFs				= true;
-				write_TV_MVP_AVIs									= true;
-					overwrite_TV_MVP_AVIs							= true;
+				write_TV_MVP_AVIs								= true;
+					overwrite_TV_MVP_AVIs						= true;
 			generate_TV_step_MVP_animations						= true;
 				write_TV_step_MVP_animated_GIFs					= true;
 					overwrite_TV_step_MVP_animated_GIFs			= true;
 				write_TV_step_MVP_AVIs							= false;
 					overwrite_TV_step_MVP_AVIs					= false;
-			generate_TV_diff_MVP_animations					= false;
-				write_TV_diff_MVP_animated_GIFs				= false;
-					overwrite_TV_diff_MVP_animated_GIFs		= false;
-				write_TV_diff_MVP_AVIs						= false;
-					overwrite_TV_diff_MVP_AVIs				= false;
-	//***********************************************************************************************************************************************************************************************//
-	//***************************************************************************** Set reconstruction data dir/file info *********************************************************************//
-	//***********************************************************************************************************************************************************************************************//
-	RSP_Boolean_indices 							= 0;
-	RSP_error_Boolean_indices 						= 1;
-	std_dev_Boolean_indices 						= 2;
-	TV_Boolean_indices 								= 3;
-	TV_step_Boolean_indices 						= 4;
-	generate_MVPs_Boolean_indices 					= 0;
-	write_MVPs_Boolean_indices 						= 1;
-	overwrite_MVPs_indices 							= 2;
-	write_MVP_animated_GIFs_Boolean_indices 		= 3;
-	overwrite_MVP_animated_GIFs_Boolean_indices 	= 4;
-	write_MVP_AVIs_Boolean_indices  				= 5;
-	overwrite_MVP_AVIs_Boolean_indices  			= 6;	
-	MVP_Booleans 									= newArray(generate_RSP_MVPs, generate_RSP_error_MVPs, generate_std_dev_MVPs, plot_TV_MVPs, plot_TV_step_MVPs);
-	write_MVP_Booleans 								= newArray(write_RSP_MVPs, write_RSP_error_MVPs, write_std_dev_MVPs, write_TV_MVPs, write_TV_step_MVPs);
-	overwrite_MVP_Booleans 							= newArray(overwrite_RSP_MVPs, overwrite_RSP_error_MVPs, overwrite_std_dev_MVPs, overwrite_TV_MVPs, overwrite_TV_step_MVPs);
-	write_MVP_animated_GIF_Booleans 				= newArray(write_RSP_MVP_animated_GIFs, write_RSP_error_MVP_animated_GIFs, write_std_dev_MVP_animated_GIFs, write_TV_MVP_animated_GIFs, write_TV_step_MVP_animated_GIFs);
-	overwrite_MVP_animated_GIF_Booleans				= newArray(overwrite_RSP_MVP_animated_GIFs, overwrite_RSP_error_MVP_animated_GIFs, overwrite_std_dev_MVP_animated_GIFs, overwrite_TV_MVP_animated_GIFs, overwrite_TV_step_MVP_animated_GIFs);
-	write_MVP_AVI_Booleans 							= newArray(write_RSP_MVP_AVIs, write_RSP_error_MVP_AVIs, write_std_dev_MVP_AVIs, write_TV_MVP_AVIs, write_TV_step_MVP_AVIs);
-	overwrite_MVP_AVI_Booleans 						= newArray(overwrite_RSP_MVP_AVIs, overwrite_RSP_error_MVP_AVIs, overwrite_std_dev_MVP_AVIs, overwrite_TV_MVP_AVIs, overwrite_TV_step_MVP_AVIs);
+			generate_TV_diff_MVP_animations						= false;
+				write_TV_diff_MVP_animated_GIFs					= false;
+					overwrite_TV_diff_MVP_animated_GIFs			= false;
+				write_TV_diff_MVP_AVIs							= false;
+					overwrite_TV_diff_MVP_AVIs					= false;
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ Define Boolean constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
+	ALL_BOOL 										= false;
+	NONE_BOOL 										= true;
+	COLUMN_MAJOR									= true;
+	ROW_MAJOR										= false;
+	CLOSE_PNG										= true;
+	DONT_CLOSE_PNG									= false;
+	SHORTEN_STRINGS									= true;
+	DONT_SHORTEN_STRINGS							= false;	
+	PRINT_PATH										= true;
+	DONT_PRINT_PATH									= false;	
+	PRINTING_ON										= true;
+	PRINTING_OFF									= false;	
+	PRINT_MAJOR_SECTION								= true;
+	PRINT_MINOR_SECTION								= false;	
+	CLOSE_WINDOW									= true;
+	DONT_CLOSE_WINDOW								= false;	
+	MAKE_TOP_DIR									= true;
+	DONT_MAKE_TOP_DIR								= false;
+	//**************************************************************************************************************************************************************************************************//
+	//***************************************************************************** Set reconstruction data dir/file info ******************************************************************************//
+	//**************************************************************************************************************************************************************************************************//
 	PNG_image_Booleans								= newArray(print_input_PNG_paths, close_input_PNG_images);
-	animation_Booleans 								= newArray(close_MVP_stack_images, print_MVP_GIF_paths, print_MVP_AVI_paths); 
 	RSP_Booleans									= newArray(generate_RSP_MVPs, write_RSP_MVPs, overwrite_RSP_MVPs, write_RSP_MVP_animated_GIFs, overwrite_RSP_MVP_animated_GIFs, write_RSP_MVP_AVIs, overwrite_RSP_MVP_AVIs);
 	RSP_error_Booleans 								= newArray(generate_RSP_error_MVPs, write_RSP_error_MVPs, overwrite_RSP_error_MVPs, write_RSP_error_MVP_animated_GIFs, overwrite_RSP_error_MVP_animated_GIFs, write_RSP_error_MVP_AVIs, overwrite_RSP_MVP_AVIs);
 	std_dev_Booleans 								= newArray(generate_std_dev_MVPs, write_std_dev_MVPs, overwrite_std_dev_MVPs, write_std_dev_MVP_animated_GIFs, overwrite_std_dev_MVP_animated_GIFs, write_std_dev_MVP_AVIs, overwrite_std_dev_MVP_AVIs);
@@ -274,20 +275,6 @@ macro "multiplotting"
 	IJM 											= ".ijm";
 	TRUE											= "true";
 	FALSE											= "false";
-	COLUMN_MAJOR									= true;
-	ROW_MAJOR										= false;
-	CLOSE_PNG										= true;
-	DONT_CLOSE_PNG									= false;
-	SHORTEN_STRINGS									= true;
-	DONT_SHORTEN_STRINGS							= false;	
-	PRINT_PATH										= true;
-	DONT_PRINT_PATH									= false;	
-	PRINTING_ON										= true;
-	PRINTING_OFF									= false;	
-	PRINT_MAJOR_SECTION								= true;
-	PRINT_MINOR_SECTION								= false;	
-	CLOSE_WINDOW									= true;
-	DONT_CLOSE_WINDOW								= false;	
 	ADD_OPERATION									= "add";
 	MULTIPLY_OPERATION								= "multiply";
 	X_DIRECTION										= "x";
@@ -536,8 +523,6 @@ macro "multiplotting"
 	AVI_compression_format						= PNG_COMPRESSION;							// Specify image compression format used in constructing AVI  video from image stack
 	AVI_frame_rate								= 5;										// Specify AVI video frame rate in frames per second (fps)	
 	AVI_info									= newArray(print_MVP_AVI_paths, close_stack_images, close_MVP_stack_images, AVI_frame_rate, AVI_compression_format );	
-	MAKE_TOP_DIR								= true;
-	DONT_MAKE_TOP_DIR							= false;
 	INPUT_FILE_LIST 							= newArray();   		
 	OUTPUT_FILE_LIST							= newArray();
 	COPIED_FILE_LIST							= newArray();
@@ -3072,6 +3057,13 @@ function import_MVP_comparison_data_TXT(_TEST_BATCH_DIR, _TXT_source_subdir, _TX
 		print("****ERROR****: Compared data not found at:\n" + _file_path);				
 		return newArray();		
 	}
+}					
+function isMember(_match, _array)
+{
+	for(i = 0; i < _array.length; i++)							
+		if( _array[i] ==  _match)			
+			return true;				
+	return false;		
 }					
 function line_profile(_ROI_number, _ROI_x, _ROI_y, _ROI_radius, _profile_radius, _profile_direction, _base_value, _ref_value, _voxel_dimensions, _title, _text, _text_size, _xlabel, _ylabel, _legend_entries, _legend_text_size, _plot_parameters, _is_gradient_analysis)
 {
