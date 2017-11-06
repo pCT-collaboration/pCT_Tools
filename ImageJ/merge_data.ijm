@@ -1246,7 +1246,38 @@ macro "merge_data"
 							//-------------------------------------------------------------------------//
 							//---------------------- Merge RSP Error CSV Data Files -------------------//
 							//-------------------------------------------------------------------------//
-							if(merge_ROI_analysis_RSP_Error_CSVs)
+//		_current_column++;
+//	}
+//	_current_column = table_skip_columns(_current_row, _current_column, _columns_2_skip);
+//	return _current_column;
+//}
+function table_add_by_row(_current_row, _start_column, _table_colskip, _data, _num_columns, _num_rows, _table_grid_columns, _COLUMN_ORDER)
+{
+	_current_column = _start_column;
+	_table_elements	= _num_columns * _num_rows;
+	_num_tables = _data.length / _table_elements;
+	_table_grid_rows = _num_tables / _table_grid_columns;
+	for(_table_grid_row = 0; _table_grid_row < _table_grid_rows; _table_grid_row++)
+	{
+		for(N=0; N < _num_rows;N++)
+		{
+			_current_column = _start_column;
+			for(i=0; i < _num_tables;i++)
+			{
+				_start_index = table_data_index(_num_columns, _num_rows, _num_tables, 0, N, i, _COLUMN_ORDER);
+				setResult(_current_column - 1, _current_row, N + 1);
+				if( i== _num_tables - 1)
+					_columns_2_skip = 0;
+				else
+					_columns_2_skip = _table_colskip + 1;
+				_current_column = table_fill_columns(_current_row, _current_column, _columns_2_skip, _data, _start_index, _num_columns);
+			}
+		_current_row++;
+		}
+		_current_row += _table_grid_rows;
+	}
+	return _current_row;
+}							if(merge_ROI_analysis_RSP_Error_CSVs)
 							{
 								run							("Clear Results");
 								table_add_title_line		(title_column_num, title_line_num, title_line_separation, ROI_table_columns, current_test_multiplot_parameter_values_string);
