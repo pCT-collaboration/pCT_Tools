@@ -37,8 +37,8 @@ macro "merge_data"
 	perform_data_merging												= true;	
 	merge_ROI_analysis_CSVs												= true;
 	merge_ROI_analysis_RSP_Error_CSVs									= true;
-	merge_ROI_analysis_RSP_CSVs											= false;
-	merge_ROI_analysis_Std_Dev_CSVs										= false;
+	merge_ROI_analysis_RSP_CSVs											= true;
+	merge_ROI_analysis_Std_Dev_CSVs										= true;
 	merge_TV_CSVs														= true;
 	merge_multiplot_CSVs												= true;
 	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
@@ -1026,6 +1026,36 @@ macro "merge_data"
 							run								("Clear Results");
 							run								("Input/Output...", "jpeg=85 gif=-1 file=.csv");
 							run								("Set Measurements...", "area mean standard min redirect=None decimal=6");
+function table_grid_add_row(_tables_start_row, _start_column, _table_colskip, _table_rowskip, _table_titles, _column_headers, _row_headers, _column_labels_row_separation, _data, _num_columns, _num_rows, _table_grid_columns, _table_grid_row, _data_order)
+{
+	_current_row						= _tables_start_row;
+	_num_tables 						= _table_titles.length;
+	_table_grid_columns					= minOf(_num_tables, _table_grid_columns);
+	_table_grid_rows 					= _num_tables / _table_grid_columns;
+	_total_grid_columns					= _start_column + _table_grid_columns * (_num_columns + _table_colskip + 1) - _table_colskip - 1;
+	_table_num							= _table_grid_row * _table_grid_columns;
+	_table_grid_row_table_titles		= Array.slice(_table_titles, _table_num, _table_num + _table_grid_columns);
+	table_add_col_header_line			( _start_column - 1, _tables_start_row, _table_grid_columns, _table_grid_row_table_titles, _column_headers, _table_colskip);
+	for(N = 0; N < _num_rows; N++)
+	{
+		_current_column 				= _start_column;
+		_table_num						= _table_grid_row * _table_grid_columns;
+		for(i = 0; i < _table_grid_columns; i++)
+		{
+			_data_start_index 			= table_data_index(_num_columns, _num_rows, _num_tables, 0, N, _table_num, _data_order);
+			_current_column 			= table_add_row(_current_row + 1, _current_column - 1, _row_headers[N], _table_colskip + 1, _data, _data_start_index, _num_columns, (i == 0), (i == _table_grid_columns - 1));
+			_table_num++;
+		}
+		_current_row++;
+	}
+	if(_table_grid_row != _table_grid_rows - 1)
+		_current_row					= table_add_empty_rows( _total_grid_columns, _current_row + 1, _table_rowskip + _column_labels_row_separation);
+	else
+		_current_row					= table_add_empty_rows( _total_grid_columns, _current_row + 1, 1);
+	for( i = 0; i < _table_grid_columns; i++)
+		table_add_colsum_row				(_tables_start_row + 1, _start_column + i * (_num_columns + _table_colskip + 1), _num_columns, _num_rows);
+	return 								_current_row;
+}
 function table_multiplot_fill(_MERGED_FOLDER_LIST, _MERGED_FILENAME_LIST, _table_titles, _table_column_headers, _table_row_headers, _tables_start_row, _first_column, _table_rowskip, _table_colskip)
 {
 	_merged_multiplot_data 					= newArray();
@@ -1050,47 +1080,48 @@ function table_multiplot_fill(_MERGED_FOLDER_LIST, _MERGED_FILENAME_LIST, _table
 		//exit();							
 	}		
 	return _merged_multiplot_data;						
-}
-function table_grid_add_row(_tables_start_row, _start_column, _table_colskip, _table_rowskip, _table_titles, _column_headers, _row_headers, _column_labels_row_separation, _data, _num_columns, _num_rows, _table_grid_columns, _table_grid_row, _data_order)
+}							
+function table_multiplot_fill(_MERGED_FOLDER_LIST, _MERGED_FILENAME_LIST, _table_titles, _table_column_headers, _table_row_headers, _tables_start_row, _first_column, _table_rowskip, _table_colskip)
 {
-	_current_row						= _tables_start_row;
-	_num_tables 						= _table_titles.length;
-	_table_grid_columns					= minOf(_num_tables, _table_grid_columns);
-	_table_grid_rows 					= _num_tables / _table_grid_columns;
-	_total_grid_columns					= _start_column + _table_grid_columns * (_num_columns + _table_colskip + 1) - _table_colskip - 1;
-	_table_num							= _table_grid_row * _table_grid_columns;
-	_table_grid_row_table_titles		= Array.slice(_table_titles, _table_num, _table_num + _table_grid_columns);
-	table_add_col_header_line			( _start_column - 1, _tables_start_row, _table_grid_columns, _table_grid_row_table_titles, _column_headers, _table_colskip);
-	for(N = 0; N < _num_rows; N++)
-	{
-		_current_column 				= _start_column;
-		_table_num						= _table_grid_row * _table_grid_columns;
-		for(i = 0; i < _table_grid_columns; i++)
-		{
-			_data_start_index 			= table_data_index(_num_columns, _num_rows, _num_tables, 0, N, _table_num, _data_order);
-			//if( i == 0 )
-			//	for( j = 1; j < _current_column; j++)			
-			//		setResult					(_current_column - j - 1, _current_row + 1, "" );//N + 1);
-			//if( i == _table_grid_columns - 1)
-			//	_columns_2_skip 		= 0;
-			//else
-			//	_columns_2_skip 		= _table_colskip + 1;
-			_current_column 			= table_add_row(_current_row + 1, _current_column - 1, _row_headers[N], _table_colskip + 1, _data, _data_start_index, _num_columns, (i == 0), (i == _table_grid_columns - 1));
-			_table_num++;
-		}
-		_current_row++;
-	}
-	if(_table_grid_row != _table_grid_rows - 1)
-		_current_row					= table_add_empty_rows( _total_grid_columns, _current_row + 1, _table_rowskip + _column_labels_row_separation);
-	else
-		_current_row					= table_add_empty_rows( _total_grid_columns, _current_row + 1, 1);
-	for( i = 0; i < _table_grid_columns; i++)
-		table_add_colsum_row				(_tables_start_row + 1, _start_column + i * (_num_columns + _table_colskip + 1), _num_columns, _num_rows);
-	return 								_current_row;
+	//_merged_multiplot_data 					= newArray();
+	_merged_multiplot_data 					= file_list_2_float_array(_MERGED_FOLDER_LIST, _MERGED_FILENAME_LIST, print_input_TXT_path);
+	_num_tables								= _table_titles.length;
+	_table_grid_columns						= _table_titles.length;
+	_table_grid_rows 						= _num_tables / _table_grid_columns;
+	_multiplots								= _MERGED_FILENAME_LIST.length;
+	_num_columns							= _table_column_headers.length;
+	_table_width							= _table_column_headers.length + 1;
+	//_total_columns							= tables_total_columns(_num_tables, _table_width, _table_colskip);
+	_total_columns							= tables_total_columns(_first_column, _num_tables, _num_columns, _table_colskip);
+	//(_first_column, _table_grid_columns, _table_columns, _table_column_separation)
+	_tables_start_columns					= table_indexed_colnums(_num_tables, _first_column, _table_width + _table_colskip);
+	table_grid_fill(_tables_start_row, _start_column, _table_colskip, _table_rowskip, _table_titles, _column_headers, _row_headers, _column_labels_row_separation, _data, _num_columns, _num_rows, _table_grid_columns, _data_order);
+	//exit();
+	for(multiplot = 0; multiplot < _multiplots; multiplot++)		
+	{ 
+		_data 								= file_2_float_array(_MERGED_FOLDER_LIST[multiplot], _MERGED_FILENAME_LIST[multiplot], print_input_TXT_path);
+		_num_rows							= _data.length / ( _num_columns * _num_tables);
+		table_add_col_header_line			( 0, _tables_start_row, _num_tables, _table_titles, _table_column_headers, _table_colskip);
+		_current_row 						= table_fill(_tables_start_row + 1, _num_tables, _tables_start_columns, _table_colskip + 1, _data, _num_columns, _num_rows, _table_row_headers );
+		table_add_colsum_rows				(_current_row, _tables_start_row + 1, _first_column, _num_columns, _num_rows, _num_tables, _table_colskip + 1);	
+		if(multiplot != _multiplots - 1)		
+			_tables_start_row				= table_add_empty_rows( _total_columns, _current_row + 1, _table_rowskip);
+		_merged_multiplot_data 				= Array.concat(_merged_multiplot_data, _data);
+		//exit();							
+	}		
+	return _merged_multiplot_data;						
 }							
 function table_grid_fill(_tables_start_row, _start_column, _table_colskip, _table_rowskip, _table_titles, _column_headers, _row_headers, _column_labels_row_separation, _data, _num_columns, _num_rows, _table_grid_columns, _data_order)
 {
-	_num_tables 						= _table_titles.length;
+	_table_elements 					= _num_columns * _num_rows;
+	_num_tables 						= _data.length / _table_elements;
+	if( _num_tables > _table_titles.length)
+	{
+		_table_title_copies = _num_tables / _table_titles.length;
+		for( i = 0; i < _table_title_copies; i++)
+			_table_titles = Array.concat( _table_titles, _table_titles);
+	}
+	//_num_tables 						= _table_titles.length;
 	_table_grid_rows 					= _num_tables / _table_grid_columns;
 	_table_num							= 0;
 	for(_table_grid_row = 0; _table_grid_row < _table_grid_rows; _table_grid_row++)
@@ -1184,7 +1215,7 @@ function table_grid_fill(_tables_start_row, _start_column, _table_colskip, _tabl
 								//MERGED_TOTAL_TV_CSV_FOLDER_LIST		= Array.concat(MERGED_TOTAL_TV_CSV_FOLDER_LIST, export_CSV_folder);
 								//MERGED_TOTAL_TV_CSV_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_CSV_FILENAME_LIST, parameter_value_total_test_merged_TV_CSV_filename);
 								MERGED_TOTAL_TV_TXT_FILENAME_LIST	= Array.concat(MERGED_TOTAL_TV_TXT_FILENAME_LIST, parameter_value_total_test_merged_TV_TXT_filename);
-				    			exit();
+				    			//exit();
 							}
 							//exit();
 						}	
@@ -1197,44 +1228,50 @@ function table_grid_fill(_tables_start_row, _start_column, _table_colskip, _tabl
 					print_section_separator("Merging the CSV files for each multiplot parameter value and target test parameter value", true);
 					if(merge_multiplot_CSVs)//merged_multiplot_RSP_data_by_ROI
 					{					
-						merge_multiplot_RSP_Error_data 					= newArray();						
-						merge_multiplot_Std_Dev_data 					= newArray();						
-						merge_multiplot_RSP_data 						= newArray();						
-						merge_multiplot_TV_data 						= newArray();						
-						//ROI_total_columns								= tables_total_columns(num_ROIs_2_analyze, iterations_2_analyze_strings.length + 1, ROI_table_column_separation);
-						ROI_total_columns								= tables_total_columns(first_column, num_ROIs_2_analyze, iterations_2_analyze_strings.length, ROI_table_column_separation);
+						merge_multiplot_RSP_Error_data 			= newArray();						
+						merge_multiplot_Std_Dev_data 			= newArray();						
+						merge_multiplot_RSP_data 				= newArray();						
+						merge_multiplot_TV_data 				= newArray();						
+						//ROI_total_columns						= tables_total_columns(num_ROIs_2_analyze, iterations_2_analyze_strings.length + 1, ROI_table_column_separation);
+						ROI_total_columns						= tables_total_columns(first_column, num_ROIs_2_analyze, iterations_2_analyze_strings.length, ROI_table_column_separation);
+						for( i = 0; i < num_multiplot_parameter_values - 1; i++)
+							ROI_multiplot_table_title_columns 	= Array.concat( ROI_labels, ROI_labels);
+						ROI_table_grid_columns					= ROI_labels.length;
+						ROI_table_title_columns					= first_column + ROI_table_grid_columns * (ROI_table_columns + ROI_table_column_separation + 1) - ROI_table_column_separation - 1;							
 						if(merge_multiplot_RSP_Error_CSVs)
 						{
-							run											("Clear Results");
-							tables_start_row 							= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_total_columns, MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST, true);
-							merge_multiplot_RSP_Error_data 				= table_multiplot_fill(MERGED_RSP_ERROR_CSV_FOLDER_LIST, MERGED_RSP_ERROR_TXT_FILENAME_LIST, ROI_labels, iterations_2_analyze_strings, target_test_parameter_value_strings, tables_start_row, first_column, table_row_separation, ROI_table_column_separation);
+							merge_multiplot_RSP_Error_data 		= file_list_2_float_array(MERGED_RSP_ERROR_CSV_FOLDER_LIST, MERGED_RSP_ERROR_TXT_FILENAME_LIST, print_input_TXT_path);
+							tables_start_row 					= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_table_title_columns, MERGED_TOTAL_RSP_ERROR_TXT_FILENAME_LIST, true);
+							table_grid_fill						(tables_start_row, first_column, ROI_table_column_separation, table_row_separation, ROI_multiplot_table_title_columns, iterations_2_analyze_strings, target_test_parameter_value_strings, column_labels_row_separation, merge_multiplot_RSP_Error_data, num_recon_iterations + 1, num_target_test_parameter_values, ROI_table_grid_columns, ROW_ORDER);
 							if(write_merged_multiplot_RSP_Error_CSV_data)
-								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_CSV_short_filename, overwrite_merged_RSP_Error_CSV_data, 	print_output_CSV_path, false);
+								results_table_2_CSV				(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_CSV_short_filename, overwrite_merged_RSP_Error_CSV_data, 	print_output_CSV_path, false);
 							if(write_merged_multiplot_RSP_Error_TXT_data)
-								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_TXT_short_filename, merge_multiplot_RSP_Error_data, 		print_output_TXT_path, overwrite_merged_RSP_Error_TXT_data);					
+								float_array_2_TXT				(merge_multiplot_CSV_folder, merge_multiplot_RSP_Error_TXT_short_filename, merge_multiplot_RSP_Error_data, 		print_output_TXT_path, overwrite_merged_RSP_Error_TXT_data);					
 							//exit();															
 						}
 						if(merge_multiplot_RSP_CSVs)
 						{
-							run											("Clear Results");
-							tables_start_row 							= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_total_columns, MERGED_TOTAL_RSP_TXT_FILENAME_LIST, true);
-							merge_multiplot_RSP_data 					= table_multiplot_fill(MERGED_RSP_CSV_FOLDER_LIST, MERGED_RSP_TXT_FILENAME_LIST, ROI_labels, iterations_2_analyze_strings, target_test_parameter_value_strings, tables_start_row, first_column, table_row_separation, ROI_table_column_separation);
+							merge_multiplot_RSP_data 			= file_list_2_float_array(MERGED_RSP_CSV_FOLDER_LIST, MERGED_RSP_TXT_FILENAME_LIST, print_input_TXT_path);
+							tables_start_row 					= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_total_columns, MERGED_TOTAL_RSP_TXT_FILENAME_LIST, true);
+							table_grid_fill						(tables_start_row, first_column, ROI_table_column_separation, table_row_separation, ROI_multiplot_table_title_columns, iterations_2_analyze_strings, target_test_parameter_value_strings, column_labels_row_separation, merge_multiplot_RSP_data, num_recon_iterations + 1, num_target_test_parameter_values, ROI_table_grid_columns, ROW_ORDER);
+							//merge_multiplot_RSP_data 			= table_multiplot_fill(MERGED_RSP_CSV_FOLDER_LIST, MERGED_RSP_TXT_FILENAME_LIST, ROI_labels, iterations_2_analyze_strings, target_test_parameter_value_strings, tables_start_row, first_column, table_row_separation, ROI_table_column_separation);
 							for(multiplot = 0; multiplot < num_multiplot_parameter_values; multiplot++)		
 							if(write_merged_multiplot_RSP_CSV_data)
-								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_RSP_CSV_short_filename, overwrite_merged_RSP_CSV_data, 	print_output_CSV_path, false);
+								results_table_2_CSV				(merge_multiplot_CSV_folder, merge_multiplot_RSP_CSV_short_filename, overwrite_merged_RSP_CSV_data, 	print_output_CSV_path, false);
 							if(write_merged_multiplot_RSP_TXT_data)
-								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_RSP_TXT_short_filename, merge_multiplot_RSP_data, 		print_output_TXT_path, overwrite_merged_RSP_TXT_data);					
+								float_array_2_TXT				(merge_multiplot_CSV_folder, merge_multiplot_RSP_TXT_short_filename, merge_multiplot_RSP_data, 		print_output_TXT_path, overwrite_merged_RSP_TXT_data);					
 							//exit();															
 						}
 						if(merge_multiplot_Std_Dev_CSVs)
 						{
-							run											("Clear Results");
-							tables_start_row 							= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_total_columns, MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST, true);
-							merge_multiplot_Std_Dev_data 				= table_multiplot_fill(MERGED_STD_DEV_CSV_FOLDER_LIST, MERGED_STD_DEV_TXT_FILENAME_LIST, ROI_labels, iterations_2_analyze_strings, target_test_parameter_value_strings, tables_start_row, first_column, table_row_separation, ROI_table_column_separation);
+							merge_multiplot_Std_Dev_data 		= file_list_2_float_array(MERGED_STD_DEV_CSV_FOLDER_LIST, MERGED_STD_DEV_TXT_FILENAME_LIST, print_input_TXT_path);
+							tables_start_row 					= table_add_title_lines(title_start_column, title_start_row, title_row_separation, ROI_total_columns, MERGED_TOTAL_STD_DEV_TXT_FILENAME_LIST, true);
+							//merge_multiplot_Std_Dev_data 		= table_multiplot_fill(MERGED_STD_DEV_CSV_FOLDER_LIST, MERGED_STD_DEV_TXT_FILENAME_LIST, ROI_labels, iterations_2_analyze_strings, target_test_parameter_value_strings, tables_start_row, first_column, table_row_separation, ROI_table_column_separation);
+							table_grid_fill						(tables_start_row, first_column, ROI_table_column_separation, table_row_separation, ROI_multiplot_table_title_columns, iterations_2_analyze_strings, target_test_parameter_value_strings, column_labels_row_separation, merge_multiplot_Std_Dev_data, num_recon_iterations + 1, num_target_test_parameter_values, ROI_table_grid_columns, ROW_ORDER);
 							if(write_merged_multiplot_Std_Dev_CSV_data)
-								results_table_2_CSV						(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_CSV_short_filename, overwrite_merged_Std_Dev_CSV_data, 	print_output_CSV_path, false);
+								results_table_2_CSV				(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_CSV_short_filename, overwrite_merged_Std_Dev_CSV_data, 	print_output_CSV_path, false);
 							if(write_merged_multiplot_Std_Dev_TXT_data)
-								float_array_2_TXT						(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_TXT_short_filename, merge_multiplot_Std_Dev_data, 		print_output_TXT_path, overwrite_merged_Std_Dev_TXT_data);												
+								float_array_2_TXT				(merge_multiplot_CSV_folder, merge_multiplot_Std_Dev_TXT_short_filename, merge_multiplot_Std_Dev_data, 		print_output_TXT_path, overwrite_merged_Std_Dev_TXT_data);												
 							//exit();															
 						}
 						if(merge_multiplot_TV_CSVs)
@@ -1793,6 +1830,16 @@ function file_2_key_value_pairs(_ROI_definitions_directory, _ROI_definitions_fil
 				_ordered_ROI_parameter_strings[j] = _ROI_parameter_values_string;
 	}	
 	return _ordered_ROI_parameter_strings;	
+}
+function file_list_2_float_array(_paths, _filenames, _print_path)
+{
+	_combined_array	= newArray();
+	for( _file = 0; _file < _paths.length; _file++)
+	{
+		_file_array = file_2_float_array(_paths[_file], _filenames[_file], _print_path);
+		_combined_array = Array.concat( _combined_array, _file_array);
+	}
+	return _combined_array;
 }
 function find_array_extrema(data_array, tolerance, notify_equality)
 {
@@ -3734,6 +3781,9 @@ function table_add_colsum_row( _start_row, _start_column, _num_columns, _num_row
 		setResult		(_start_column - 1,  _start_row  + _num_rows, COLUMN_SUM_ROW_LABEL);
 		setResult		(  d2s(_start_column + _column, 0), _start_row  + _num_rows, _colsum);
 	}
+	//if(_start_column < _num_columns)
+	//	for(i = 0; i < _start_column - 1; i++)
+	//		setResult		(i,  _start_row  + _num_rows, EMPTY_STRING);
 	//return colsum;
 	return _start_column + _num_columns;
 }
