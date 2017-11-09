@@ -43,13 +43,13 @@ macro "merge_data_control"
 	ImageJ_launch_directory							= getDirectory("startup");
 	ImageJ_previous_macro							= getInfo("macro.filepath");
 	github_macro_directory							= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
- 	github_collab_macro_directory							= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
+ 	github_collab_macro_directory					= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
  	reconstruction_data_directory_C					= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	reconstruction_data_directory_D					= "D:\\pCT\\pCT_data\\reconstruction_data";
 	ROI_analysis_macro_filename 					= "ROI_Analysis.ijm";
 	ROI_analysis_macro_path 						= github_macro_directory + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
 	merge_analysis_macro_filename 					= "merge_data.ijm";
-	merge_ROI_analysis_files_macro_path 					= github_collab_macro_directory + FOLDER_SEPARATOR + merge_analysis_macro_filename;
+	merge_ROI_analysis_files_macro_path 			= github_collab_macro_directory + FOLDER_SEPARATOR + merge_analysis_macro_filename;
 	multiplotting_macro_filename 					= "Multiplotting.ijm";
 	multiplotting_macro_path 						= github_macro_directory + FOLDER_SEPARATOR + multiplotting_macro_filename;
 	test_result_comparison_macro_filename 			= "Test_Result_Comparison.ijm";
@@ -166,10 +166,13 @@ macro "merge_data_control"
 	//exit();
 	for(i = 0; i < num_parameters - 1; i++)
 	{
-		if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
+		//if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
+		if(num_parameter_values[i] > 1)
 		{
+			//print("parameter_string_prefixes[i] = " + parameter_string_prefixes[i]);
+			print_section_separator				("Merging data for multiplot parameter" + parameter_string_prefixes[i], true);
 			runMacro							(merge_ROI_analysis_files_macro_path, parameter_string_prefixes[i]);
-			exit();
+			//exit();
 		}
 	}
 	//print("parameter_string_prefixes[i]" + parameter_string_prefixes[i]);
@@ -206,6 +209,13 @@ function append_2_log(_dir)
 	print("_dir=" + _dir);
 	_time_stamp = create_time_stamp(false, false);		
 	File.append("merge_data.ijm: " + _time_stamp, _dir + File.separator + ANALYSIS_LOG_FNAME) 							
+}
+function ceil(value)
+{
+	if(value - round(value) > 0)
+		return round(value + 1);
+	else
+		return round(value);
 }
 function close_all_windows(clear_results, recording_on)
 {
@@ -1194,7 +1204,86 @@ function path_2_phantom_name(path, reconstruction_data_folder)
 		if(folder_names[i] == reconstruction_data_folder_name)
 			return folder_names[i + 1];
 }
-
+function print_section_separator(section_heading, print_major_section)
+{
+	slash_section_separator 			= "///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
+	asterisk_section_separator 			= "//*************************************************************************************************************************************************************************************************************************************************************************************************";
+	dash_section_separator 				= "//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------";
+	length_slash_section_separator 		= lengthOf(slash_section_separator);
+	length_asterisk_section_separator 	= lengthOf(asterisk_section_separator);
+	length_dash_section_separator 		= lengthOf(dash_section_separator);
+	length_section_heading 				= lengthOf(section_heading);
+	asterisk_text_ratio 				= 332/272;
+	asterisk_length_diff 				= length_asterisk_section_separator - length_section_heading*asterisk_text_ratio;
+	dash_length_diff 					= length_asterisk_section_separator - length_section_heading*asterisk_text_ratio;
+	length_asterisk_heading_prefix 		= floor(asterisk_length_diff / 2);
+	length_asterisk_heading_suffix 		= ceil(asterisk_length_diff / 2);
+	length_dash_heading_prefix 			= floor(dash_length_diff / 2);
+	length_dash_heading_suffix 			= ceil(dash_length_diff / 2);
+	dash_heading_suffix 				= " ";
+	dash_heading_prefix 				= "//";
+	asterisk_heading_suffix 			= " ";
+	asterisk_heading_prefix 			= "//";
+	for(i = 0; i < length_asterisk_heading_prefix - 3; i++)
+		asterisk_heading_prefix 		+= "*";
+	for(i = 0; i < length_asterisk_heading_suffix - 3; i++)
+		asterisk_heading_suffix 		+= "*";
+	for(i = 0; i < length_dash_heading_prefix - 3; i++)
+		dash_heading_prefix 			+= "-";
+	for(i = 0; i < length_dash_heading_suffix - 3; i++)
+		dash_heading_suffix 			+= "-";
+	asterisk_heading_prefix	 			+= " ";
+	asterisk_heading_suffix 			+= "";
+	asterisk_heading_separator 			= asterisk_heading_prefix + section_heading + asterisk_heading_suffix;
+	dash_heading_prefix 				+= " ";
+	dash_heading_suffix 				+= "";
+	dash_heading_separator 				= dash_heading_prefix + section_heading + dash_heading_suffix;
+	length_asterisk_heading_prefix 		= lengthOf(asterisk_heading_prefix);
+	length_asterisk_heading_suffix 		= lengthOf(asterisk_heading_suffix);
+	length_asterisk_heading_separator 	= lengthOf(asterisk_heading_separator);
+	length_dash_heading_prefix 			= lengthOf(dash_heading_prefix);
+	length_dash_heading_suffix 			= lengthOf(dash_heading_suffix);
+	length_dash_heading_separator 		= lengthOf(dash_heading_separator);
+	
+	asterisk_heading_addition 			= 150;
+	dash_text_ratio 					= 1;
+	dash_heading_addition				= asterisk_heading_addition * dash_text_ratio;//length_dash_heading_separator/length_asterisk_heading_separator;
+	slash_section_separator_addition	= asterisk_heading_addition * asterisk_text_ratio;//length_slash_section_separator/length_asterisk_heading_separator;
+	
+	for(i = 0; i < asterisk_heading_addition; i++)
+	{
+		asterisk_heading_separator += "*";
+		asterisk_section_separator += "*";
+	}
+	for(i = 0; i < dash_heading_addition; i++)
+	{
+		dash_section_separator += "-";
+		dash_heading_separator += "-";
+	}
+	for(i = 0; i < slash_section_separator_addition; i++)
+		slash_section_separator += "/";
+	
+	//asterisk_heading_separator += "//";
+	slash_section_separator += "//";
+	asterisk_section_separator += "//";
+	dash_section_separator += "//";
+	asterisk_heading_separator += "//";
+	dash_heading_separator += "//";
+	if(print_major_section)
+	{
+		print							(slash_section_separator);
+		print							(asterisk_section_separator);
+		print							(asterisk_heading_separator);
+		print							(asterisk_section_separator);
+		print							(slash_section_separator);
+	}
+	else
+	{
+		print							(dash_section_separator);
+		print							(dash_heading_separator);
+		print							(dash_section_separator);			
+	}
+}
 function series_product(series)
 {
 	product 		= 1;

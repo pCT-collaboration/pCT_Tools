@@ -3317,7 +3317,7 @@ function open_image(image_type, dir, filename, print_path)
 	if(image_type == PNG)
 		open					(image_path);
 	run							("Size...", "width=x_frame_size height=y_frame_size constrain average interpolation=Bilinear");	
-	run							("Set Measurements...", "area mean standard min redirect = None decimal = 4");		
+	run							("Set Measurements...", "area mean standard min redirect=None decimal=4");		
 	INPUT_FILE_LIST				= Array.concat(INPUT_FILE_LIST, image_path);			
 	return image_path;
 }
@@ -3338,7 +3338,7 @@ function open_PNG_path(image_path, print_path)
 	if(print_image_paths)
 		print				("------->Opening PNG image from:\n" + image_path);
 	open					(image_path);
-	run						("Set Measurements...", "area mean standard min redirect = None decimal = 4");		
+	run						("Set Measurements...", "area mean standard min redirect=None decimal=4");		
 	run						("Size...", "width=x_frame_size height=y_frame_size constrain average interpolation=Bilinear");	
 	INPUT_FILE_LIST			= Array.concat(INPUT_FILE_LIST, image_path);	
 	return image_path;
@@ -3358,7 +3358,7 @@ function open_reconstructed_image(dir, filename)
 {
 	file_path 		= construct_valid_file_path(dir, filename);		
 	run				("Text Image... ", "open=" + file_path);
-	run				("Set Measurements...", "area mean standard min redirect = None decimal = 4");	
+	run				("Set Measurements...", "area mean standard min redirect=None decimal=4");	
 	INPUT_FILE_LIST	= Array.concat(INPUT_FILE_LIST, file_path);					
 }																						
 function order_comparison_data(unordered_data, ordering_indices, _num_ROIs_2_analyze, images_per_recon, num_TTP_values)
