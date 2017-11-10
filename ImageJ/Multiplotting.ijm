@@ -2849,15 +2849,6 @@ function generate_parameter_test_folder(_parameter_string_prefixes, _parameter_s
 	_folder_string					= substring(_folder_string, 1);
 	return _folder_string;	
 }
-function generate_parameter_test_folder_compared(_parameter_string_prefixes, _parameter_string_precisions, _parameter_combination )
-{
-	_num_parameters					= _parameter_string_prefixes.length;
-	_folder_string 					= "";
-	for(parameter = 0; parameter < _num_parameters; parameter++)	
-		_folder_string 				= _folder_string + "_" + _parameter_string_prefixes[parameter] + "_" + d2s( _parameter_combination[parameter], _parameter_string_precisions[parameter]);	
-	_folder_string					= substring(_folder_string, 1);
-	return _folder_string;	
-}
 function generate_parameter_test_MVP_folder(_MVP_parameter_index, _MVP_parameter_combination, _MVP_combination_offset, _PVs, _PV_offsets, _parameter_string_prefixes, _parameter_string_precisions )
 {
 	_num_parameters					= _parameter_string_prefixes.length;		

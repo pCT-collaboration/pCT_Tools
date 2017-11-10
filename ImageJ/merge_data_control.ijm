@@ -170,7 +170,7 @@ macro "merge_data_control"
 		if(num_parameter_values[i] > 1)
 		{
 			//print("parameter_string_prefixes[i] = " + parameter_string_prefixes[i]);
-			print_section_separator				("Merging data for multiplot parameter" + parameter_string_prefixes[i], true);
+			print_section_separator				("Merging data for multiplot parameter w/ prefix = \n ----------> " + parameter_string_prefixes[i], true);
 			runMacro							(merge_ROI_analysis_files_macro_path, parameter_string_prefixes[i]);
 			//exit();
 		}
