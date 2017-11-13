@@ -438,33 +438,20 @@ macro "ROI_Analysis [F2]"
 	ROI_definitions_filename_suffix			= "_ROIs" + TXT;	
 	ROI_definitions_filename				= phantom_basename + ROI_definitions_filename_suffix;
 	ROI_definitions_file_path				= github_macro_directory_Baylor_ICTHUS + folder_separator + ROI_definitions_filename;
-	ROI_material_names_decoding				= ROI_definition_strings_decoding_op; 										//= air, air, PMP, LDPE,	polystyrene, acrylic, delrin, teflon
-	ROI_labels_decoding						= ROI_definition_strings_decoding_op; 										//= Air(bottom), Air(top), PMP, LDPE, Polystyrene, Acrylic, Delrin, Teflon
-	ROI_shapes_decoding						= ROI_definition_strings_decoding_op;										// = circular_ROI, circular_ROI, circular_ROI, circular_ROI, circular_ROI, circular_ROI, circular_ROI, circular_ROI
-	ROI_diameters_decoding					= ROI_definition_numbers_decoding_op;										//= 12.2, 12.2, 12.2, 12.2, 12.2, 12.2, 12.2, 12.2		
-	ROI_selection_radii_decoding			= ROI_definition_numbers_decoding_op; 										//	= 3.5, 4, 6
-	ROI_profile_radius_beyond_ROI_decoding	= ROI_definition_numbers_decoding_op;										//	= 8														
-	bulk_material_decoding					= ROI_definition_strings_decoding_op;										//	= epoxy	
-	ROI_parameter_decodings					= newArray(ROI_material_names_decoding, ROI_labels_decoding, ROI_shapes_decoding, ROI_diameters_decoding, ROI_selection_radii_decoding, ROI_profile_radius_beyond_ROI_decoding, bulk_material_decoding);		
-	ROI_definitions_parameter_list			= newArray("ROI_material_names", "ROI_labels", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
-	ROI_material_names_index 				= 0;
-	ROI_labels_index 						= 1;
-	ROI_shapes_index 						= 2;
-	ROI_diameters_index 					= 3;
-	ROI_selection_radii_index 				= 4;
-	ROI_profile_radius_beyond_ROI_index	 	= 5;
-	bulk_material_index 					= 6;
-	ROI_parameter_strings					= file_2_key_value_pairs(github_macro_directory_Baylor_ICTHUS, ROI_definitions_filename, phantom_basename, ROI_definitions_parameter_list, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, printing_ROI_definitions);		
-	ROI_material_names 						= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_material_names_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, true);	
-	ROI_labels 								= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_labels_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, true);
-	ROI_shapes 								= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_shapes_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, true);	
-	ROI_diameters 							= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_diameters_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, true);
-	ROI_selection_radii 					= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_selection_radii_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, true);
-	ROI_profile_radius_beyond_ROI	 		= ROI_parameter_string_2_values(ROI_parameter_strings, ROI_profile_radius_beyond_ROI_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, false);	//ROI_profile_radius_beyond_ROI = ROI_profile_radius_beyond_ROI[0];
-	bulk_material 							= ROI_parameter_string_2_values(ROI_parameter_strings, bulk_material_index, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, false);					//bulk_material = bulk_material[0];
+	ROI_parameter_decodings					= newArray(ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_strings_decoding_op);		
+	ROI_definitions_parameter_list			= newArray("ROI_material_names", "ROI_labels", "ROI_label_nicknames", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
+	ROI_parameter_strings					= file_2_key_value_pairs(github_macro_directory_Baylor_ICTHUS, ROI_definitions_filename, phantom_basename, 	ROI_definitions_parameter_list, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, print_ROI_definitions_path);		
+	ROI_material_names 						= ROI_parameter_string_2_values(0, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);	
+	ROI_labels 								= ROI_parameter_string_2_values(1, ROI_parameter_strings,  	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);
+	ROI_label_nicknames 					= ROI_parameter_string_2_values(2, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);					//bulk_material = bulk_material[0];
+	ROI_shapes 								= ROI_parameter_string_2_values(3, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);	
+	ROI_diameters 							= ROI_parameter_string_2_values(4, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);
+	ROI_selection_radii 					= ROI_parameter_string_2_values(5, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);
+	ROI_profile_radius_beyond_ROI	 		= ROI_parameter_string_2_values(6, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, DONT_FORCE_VALUE_2_ARRAY	);	//ROI_profile_radius_beyond_ROI = ROI_profile_radius_beyond_ROI[0];
+	bulk_material 							= ROI_parameter_string_2_values(7, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, DONT_FORCE_VALUE_2_ARRAY	);					//bulk_material = bulk_material[0];
 	bulk_material_RSP 						= material_name_2_RSP(bulk_material, simulated_scan);
 	ROI_material_RSPs 						= ROI_material_names_2_RSPs(ROI_material_names, simulated_scan);
-	num_ROIs_2_analyze 						= ROI_material_names.length; 										// # of material ROI ROIs in phantom
+	num_ROIs_2_analyze 						= ROI_material_names.length; 						// # of material ROI ROIs in phantom
 	//***********************************************************************************************************************************************************************************************//
 	//************************************************************************************** Parameter value arrays *********************************************************************************//
 	//***********************************************************************************************************************************************************************************************//
@@ -3023,24 +3010,24 @@ function ROI_material_names_2_RSPs(_ROI_material_names, _is_simulated_scan)
 		_ROI_material_RSPs[ROI] 	= material_name_2_RSP(_ROI_material_names[ROI], _is_simulated_scan);
 	return _ROI_material_RSPs;
 }
-function ROI_parameter_string_2_values(_ROI_parameter_strings, ROI_parameter_string_index, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _force_array)
+function ROI_parameter_string_2_values(_ROI_parameter_string_index, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _force_array)
 {
-	desired_ROI_parameter_string = _ROI_parameter_strings[ROI_parameter_string_index];
-	desired_ROI_parameter_string_elements = split(desired_ROI_parameter_string, ",");
-	num_desired_ROI_parameter_string_elements = desired_ROI_parameter_string_elements.length;
-	desired_ROI_parameter_values			= newArray(num_desired_ROI_parameter_string_elements);
-	for(i = 0; i < num_desired_ROI_parameter_string_elements; i++)
+	_desired_ROI_parameter_string 				= _ROI_parameter_strings[_ROI_parameter_string_index];
+	_desired_ROI_parameter_string_elements 		= split(_desired_ROI_parameter_string, ",");
+	_num_desired_ROI_parameter_string_elements 	= _desired_ROI_parameter_string_elements.length;
+	_desired_ROI_parameter_values				= newArray(_num_desired_ROI_parameter_string_elements);
+	for(i = 0; i < _num_desired_ROI_parameter_string_elements; i++)
 	{
-		_spaceless_parameter_value_string = strip_surrounding_spaces(desired_ROI_parameter_string_elements[i]);
-		if(_ROI_parameter_decodings[ROI_parameter_string_index] == _ROI_parameter_value_parseFloat)
-			desired_ROI_parameter_values[i] 			= parseFloat(_spaceless_parameter_value_string);
+		_spaceless_parameter_value_string 		= strip_surrounding_spaces(_desired_ROI_parameter_string_elements[i]);
+		if(_ROI_parameter_decodings[_ROI_parameter_string_index] == _ROI_parameter_value_parseFloat)
+			_desired_ROI_parameter_values[i] 	= parseFloat(_spaceless_parameter_value_string);
 		else
-			desired_ROI_parameter_values[i] 			= _spaceless_parameter_value_string;
+			_desired_ROI_parameter_values[i] 	= _spaceless_parameter_value_string;
 	}
-	if( num_desired_ROI_parameter_string_elements == 1 && !_force_array)
-		return desired_ROI_parameter_values[0];
+	if( _num_desired_ROI_parameter_string_elements == 1 && !_force_array)
+		return _desired_ROI_parameter_values[0];
 	else
-		return desired_ROI_parameter_values;
+		return _desired_ROI_parameter_values;
 }
 function save_AVI(directory, filename, compression, frame_rate, overwrite_existing, print_path, close_stack_after_saving)
 {

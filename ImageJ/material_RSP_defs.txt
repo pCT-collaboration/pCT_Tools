@@ -1,0 +1,3 @@
+material_names				= air, PMP, LDPE, epoxy, polystyrene, PMMA, acrylic, delrin, teflon
+simulated_material_RSPs		= 0.0013, 0.877, 0.9973, 1.024, 1.0386, 1.144, 1.155, 1.356, 1.828
+experimental_material_RSPs	= 0.0013, 0.883, 0.979, 1.024, 1.024, 1.144, 1.160, 1.359, 1.79
