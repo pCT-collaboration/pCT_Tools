@@ -18,9 +18,9 @@ alias host=$(hostname)
 ###################################################################################################
 ################################### Console output definitions ####################################
 ###################################################################################################
-#cd /ion/pCT_code/pCT-collaboration/pCT_Tools/bash_scripts
+#cd /ion/pCT_code/pCT-collaboration/pCT_Tools/bash
 #./load_pct_functions.sh
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
 ###################################################################################################
 ######### Console output written on login before subsequent cluster/node dependent output #########
 ###################################################################################################

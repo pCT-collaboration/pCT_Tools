@@ -25,4 +25,4 @@ alias back="cd -"
 ###################################################################################################
 ######## Source the script that loads pct functions and performs host dependent login tasks #######
 ###################################################################################################
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/pct_user_script.sh
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/pct_user_script.sh

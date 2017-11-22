@@ -130,8 +130,8 @@ Blake_rcode_git_clone_addr="${git_clone_addr_base}/${Blake_rcode_git_repo_subdir
 
 # filename/path to script loading pCT user functions/shortcuts
 load_pct_functions_script="load_pct_functions.sh"
-pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts"
-pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts/${load_pct_functions_script}"
+pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash"
+pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash/${load_pct_functions_script}"
 
 pct_data_subdirs=( $org_data_folder $raw_data_folder $pre_data_folder $proj_data_folder $recon_data_folder )
 pct_code_subdirs=( $git_code_folder $rcode_folder $pcode_folder )

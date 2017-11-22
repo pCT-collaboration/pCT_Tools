@@ -1,7 +1,7 @@
 #!/bin/bash
 
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/load_pct_functions.sh
-#. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash_scripts/pct_user_script.sh
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
+#. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/pct_user_script.sh
 
 username=$(id -un)
 admin_users=( "schultze" "sittonb" "karbasip" "schubertk" "cair" )
