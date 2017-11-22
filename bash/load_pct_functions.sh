@@ -223,11 +223,12 @@ tardis_compute_node4_IP="${tardis_IP_base}${pdavison}"
 ###################################################################################################
 kodiak_modules=("purge" "unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
 tardis_modules_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load mpich/ge/gcc/64/3.1.4" "load mpich/ge/open64/64/3.1.4" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.1" "load mvapich2/open64/64/2.1" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
-tardis_modules=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
+tardis_modules_less_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
+tardis_modules=( "load geant4/10.1.1" "load matlab/2016a" "load python/2.7.10" "load root" "load blacs/openmpi/gcc/64/1.1patch03" "load blas/gcc/64/3.6.0" "load lapack/gcc/64/3.6.0" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/openmpi/gcc/64/2.0.2")
 version_CUDA_Kodiak="none"
 version_CUDA_Tardis_Headnode=55
-version_CUDA_Tardis=70
-version_CUDA_workstation=70
+version_CUDA_Tardis=80
+version_CUDA_workstation=80
 rcode_cu_file="/src/pCT_Reconstruction_Data_Segments_Blake.cu"
 rcode_compute="compute_35"
 rcode_sm="sm_35"
@@ -1514,34 +1515,58 @@ function load_CUDA_modules()
     #---------------------------------------------------------------------------------------------#
     if [ ${load_CUDA} == 55 ]
     then
-        print_module_load "unload gcc"
+        #print_module_load "unload gcc"
         print_module_load "load cuda55"
-          print_module_load "load cuda55/blas/5.5.22"
-          print_module_load "load cuda55/fft/5.5.22"
-          print_module_load "load cuda55/toolkit/5.5.22"
+        print_module_load "load cuda55/blas/5.5.22"
+        print_module_load "load cuda55/fft/5.5.22"
+        print_module_load "load cuda55/toolkit/5.5.22"
     #---------------------------------------------------------------------------------------------#
     elif [ ${load_CUDA} == 65 ]
     then
-        print_module_load "unload gcc"
-        print_module_load "load gcc/4.8.4"
+        #print_module_load "unload gcc"
+        #print_module_load "load gcc/4.8.4"
         print_module_load "load cuda65/blas/6.5.14"
         print_module_load "load cuda65/fft/6.5.14"
         print_module_load "load cuda65/gdk/340.29"
-          print_module_load "load cuda65/nsight/6.5.14"
-          print_module_load "load cuda65/profiler/6.5.14"
+        print_module_load "load cuda65/nsight/6.5.14"
+        print_module_load "load cuda65/profiler/6.5.14"
         print_module_load "load cuda65/toolkit/6.5.14"
     #---------------------------------------------------------------------------------------------#
     elif [ ${load_CUDA} == 70 ]
     then
-        print_module_load "unload gcc"
-        print_module_load "load gcc/4.9.2"
+        #print_module_load "unload gcc"
+        #print_module_load "load gcc/4.9.2"
         print_module_load "load cuda70"
-          print_module_load "load cuda70/blas/7.0.28"
-          print_module_load "load cuda70/fft/7.0.28"
-          print_module_load "load cuda70/gdk/346.46"
-          print_module_load "load cuda70/nsight/7.0.28"
+        print_module_load "load cuda70/blas/7.0.28"
+        print_module_load "load cuda70/fft/7.0.28"
+        print_module_load "load cuda70/gdk/346.46"
+        print_module_load "load cuda70/nsight/7.0.28"
         print_module_load "load cuda70/profiler/7.0.28"
-          print_module_load "load cuda70/toolkit/7.0.28"
+        print_module_load "load cuda70/toolkit/7.0.28"
+    fi
+    elif [ ${load_CUDA} == 75 ]
+    then
+        #print_module_load "unload gcc"
+        #print_module_load "load gcc/4.9.2"
+        #print_module_load "load cuda75"
+        print_module_load "load cuda75/blas/7.0.18"
+        print_module_load "load cuda75/fft/7.0.18"
+        #print_module_load "load cuda75/gdk/346.46"
+        print_module_load "load cuda75/nsight/7.0.18"
+        print_module_load "load cuda75/profiler/7.0.18"
+        print_module_load "load cuda75/toolkit/7.0.18"
+    fi
+    elif [ ${load_CUDA} == 80 ]
+    then
+        #print_module_load "unload gcc"
+        #print_module_load "load gcc/4.9.2"
+        #print_module_load "load cuda80"
+        print_module_load "load cuda80/blas/8.0.61"
+        print_module_load "load cuda80/fft/8.0.61"
+        #print_module_load "load cuda80/gdk/346.46"
+        print_module_load "load cuda80/nsight/8.0.61"
+        print_module_load "load cuda80/profiler/8.0.61"
+        print_module_load "load cuda80/toolkit/8.0.61"
     fi
 }
 function scp_recon()
