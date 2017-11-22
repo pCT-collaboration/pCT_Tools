@@ -117,7 +117,7 @@ print_alias $(exe alias gogorg="cd ${recon_group_home}${pct_data_folder}${org_da
 print_alias $(exe alias gogrecon="cd ${recon_group_home}${pct_data_folder}${recon_data_folder}")        #
 print_alias $(exe alias gogcode="cd ${recon_group_home}${pct_code_folder}"   )                          #
 print_alias $(exe alias gogpcode="cd ${recon_group_home}${pcode_subdir_path}${user_folder}")                   #
-print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}" )                  #
+print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}")                  #
 
 #alias goBlake=
 
@@ -147,7 +147,7 @@ then
     #---------------------------------------------------------------------------------------------#
     login_dir="${current_global_rcode_path}"
     #---------------------------------------------------------------------------------------------#
-###################################################################################################
+	###################################################################################################
 ############### Set up Tardis node modules, environment variables, and user prompt ################
 ###################################################################################################
 #*************************************************************************************************#
@@ -269,7 +269,7 @@ then
 #*************************************************************************************************#
 #****************************** Workstation #1/#2 login procedure ********************************#
 #*************************************************************************************************#
-elif [ $host == "tardis-student1" -o $host == "tardis-student2" ]
+elif [ $HOSTNAME == "tardis-student1" -o $HOSTNAME == "tardis-student2" ]
 then
     #---------------------------------------------------------------------------------------------#
     #------------------------------ Set environment variables ------------------------------------#
@@ -303,7 +303,6 @@ then
      print_program_version "gcc" "gcc -dumpversion" "\n"
      print_program_version "CUDA" "nvcc --version" "\n"
 else
-
      print_program_version "Java" "java -version"
      print_program_version "Make" "make --version" "\n"
      print_program_version "git" "git --version" "\n"
