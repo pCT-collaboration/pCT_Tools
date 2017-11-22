@@ -1543,7 +1543,6 @@ function load_CUDA_modules()
         print_module_load "load cuda70/nsight/7.0.28"
         print_module_load "load cuda70/profiler/7.0.28"
         print_module_load "load cuda70/toolkit/7.0.28"
-    fi
     elif [ ${load_CUDA} == 75 ]
     then
         #print_module_load "unload gcc"
@@ -1555,7 +1554,6 @@ function load_CUDA_modules()
         print_module_load "load cuda75/nsight/7.0.18"
         print_module_load "load cuda75/profiler/7.0.18"
         print_module_load "load cuda75/toolkit/7.0.18"
-    fi
     elif [ ${load_CUDA} == 80 ]
     then
         #print_module_load "unload gcc"
