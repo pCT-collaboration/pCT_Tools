@@ -130,25 +130,13 @@ Blake_rcode_git_clone_addr="${git_clone_addr_base}/${Blake_rcode_git_repo_subdir
 
 # filename/path to script loading pCT user functions/shortcuts
 load_pct_functions_script="load_pct_functions.sh"
-pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash"
-pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash/${load_pct_functions_script}"
+pct_functions_git_repo_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts"
+pct_functions_script_path="${global_git_code_path}/${pct_tools_git_repo_subdir_path}/bash_scripts/${load_pct_functions_script}"
 
 pct_data_subdirs=( $org_data_folder $raw_data_folder $pre_data_folder $proj_data_folder $recon_data_folder )
 pct_code_subdirs=( $git_code_folder $rcode_folder $pcode_folder )
-phantom_IDs=( "Emp" "Empty"
-    "CalEmp" ]]; then object_name="Calibration"
-    "Calib" ]]; then object_name="Calibration"
-    "Rod" ]]; then object_name="Rod"
-"Water" ]]; then object_name="Water"   
-"Sensitom" ]]; then object_name="CTP404_Sensitom"
-"LinePair" ]]; then object_name="CTP528_Linepair"
-"LowCon" ]]; then object_name="CTP515_Low_Contrast"
-"Dose16" ]]; then object_name="CTP554_Dose"
-"CIRSPHP0" ]]; then object_name="HN715_PedHead_0"
-"CIRSPHP1" ]]; then object_name="HN715_PedHead_1"
-"LMUDECT" ]]; then object_name="LMU_DECT"
-"CIRSEdge" ]]; then object_name="CIRS_Edge"
-"Birks" ]]; then object_name="Birks"
+phantom_IDs=( "Emp" "Empty" "CalEmp" "Calib" "Rod""Water" "Sensitom" "LinePair" ""Dose16" ""CIRSPHP1" "LMUDECT" "CIRSEdge" "Birks" )
+phantom_names=( "Empty" "Calibration" "Calibration" "Rod" "Water" "CTP404_Sensitom" "CTP528_Linepair" "CTP515_Low_Contrast" "CTP554_Dose" "HN715_PedHead_0" "HN715_PedHead_1" "LMU_DECT" "CIRS_Edge" "Birks")
 phantom_subdirs=( $experimental_data_folder $simulated_data_folder $ref_images_folder )
 run_number_subdirs=( $raw_data_link_folder $proj_data_link_folder )
 ion_subdirs=( $incoming_folder $staging_folder $pct_code_folder $pct_data_folder )
