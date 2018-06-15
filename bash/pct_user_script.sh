@@ -57,71 +57,153 @@ print_alias $(exe alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu")
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias goinc="cd ${incoming_path}")                               #
-print_alias $(exe alias gostage="cd ${staging_path}")                              #
-print_alias $(exe alias godata="cd ${pct_data_path}")                                          #
-print_alias $(exe alias goraw="cd ${raw_data_path}")                         #
-print_alias $(exe alias gopre="cd ${pre_data_path}")                         #
-print_alias $(exe alias goproj="cd ${proj_data_path}")                       #
-print_alias $(exe alias goorg="cd ${org_data_path}")                         #
-print_alias $(exe alias gorecon="cd ${recon_data_path}")                     #
-#print_alias $(exe alias gonewrecon="cd ${current_rdata}")                                         #
-print_alias $(exe alias godocs="cd ${pct_data_path}${pct_docs_folder}" )                      #
+print_alias $(exe alias goinc="cd ${incoming_path}")                                              #
+print_alias $(exe alias gostage="cd ${staging_path}")                                             #
+print_alias $(exe alias godata="cd ${pct_data_path}")                                             #
+print_alias $(exe alias goraw="cd ${raw_data_path}")                                              #
+print_alias $(exe alias gopre="cd ${pre_data_path}")                                              #
+print_alias $(exe alias goproj="cd ${proj_data_path}")                                            #
+print_alias $(exe alias goorg="cd ${org_data_path}")                                              #
+print_alias $(exe alias gorecon="cd ${recon_data_path}")                                          #
+#print_alias $(exe alias gonewrecon="cd ${current_rdata}")                                        #
+print_alias $(exe alias godocs="cd ${pct_data_path}${pct_docs_folder}" )                          #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias gocode="cd ${global_code_path}" )                             #
-print_alias $(exe alias gogitcode="cd ${global_git_code_path}" )                             #
-print_alias $(exe alias gopcode="cd ${global_pcode_path}" )                                      #
+print_alias $(exe alias gocode="cd ${global_code_path}" )                                         #
+print_alias $(exe alias gogitcode="cd ${global_git_code_path}" )                                  #
+print_alias $(exe alias gopcode="cd ${global_pcode_path}" )                                       #
 print_alias $(exe alias gorcode="cd ${global_rcode_path}" )                                       #
+print_alias $(exe alias gogitrcode="cd ${global_Baylor_rcode_git_repo_path}" )                    #
+print_alias $(exe alias gogitmyrrcode="cd ${global_Blake_rcode_git_repo_path}" )                  #
+print_alias $(exe alias gogitorcode="cd ${global_old_rcode_git_repo_path}" )                      #
+print_alias $(exe alias gogittools="cd ${global_pct_tools_git_repo_path}" )                       #
 print_alias $(exe alias gotools="cd ${pct_functions_git_repo_path}")
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak user data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias gomyinc="cd ${incoming_path}${user_folder}"  )             #
-print_alias $(exe alias gomystage="cd ${staging_path}${user_folder}" )             #
+print_alias $(exe alias gomyinc="cd ${incoming_path}${user_folder}"  )                            #
+print_alias $(exe alias gomystage="cd ${staging_path}${user_folder}" )                            #
 print_alias $(exe alias gomydata="cd ${user_home}${pct_data_folder}"  )                           #
 print_alias $(exe alias gomyorg="cd ${user_home}${pct_data_folder}${org_data_folder}" )           #
 print_alias $(exe alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data_folder}")        #
 print_alias $(exe alias gomycode="cd ${user_home}${pct_code_folder}"   )                          #
-print_alias $(exe alias gomypcode="cd ${user_home}${pcode_subdir_path}${user_folder}")                   #
-print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_subdir_path}${user_folder}" )                  #
+print_alias $(exe alias gomypcode="cd ${user_home}${pcode_subdir_path}${user_folder}")            #
+print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_subdir_path}${user_folder}" )           #
+
+global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+tardis_Blake_rcode_git_repo_path="${tardis_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+Blake_rcode_git_repo_subdir_path="${Blake_git_account}/${Blake_rcode_git_repo}"
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Tardis data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias golpct="cd ${tardis_pct_folder}" )                                               #
-print_alias $(exe alias golcode="cd ${tardis_code_path}")                             #
-print_alias $(exe alias golgitcode="cd ${tardis_git_code_path}" )                             #
-print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}")                   #
-print_alias $(exe alias golpcode="cd ${tardis_pcode_path}${user_folder}")                   #
+print_alias $(exe alias golpct="cd ${tardis_pct_folder}" )                                        #
+print_alias $(exe alias golcode="cd ${tardis_code_path}")                                         #
+print_alias $(exe alias golgitcode="cd ${tardis_git_code_path}" )                                 #
+print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}")                         #
+print_alias $(exe alias golpcode="cd ${tardis_pcode_path}${user_folder}")                         #
+print_alias $(exe alias golgitrcode="cd ${tardis_Baylor_rcode_git_repo_path}")                    #
+print_alias $(exe alias golgitmyrrcode="cd ${tardis_Blake_rcode_git_repo_path}")                  #
+print_alias $(exe alias golgitorcode="cd ${tardis_old_rcode_git_repo_path}")                      #
+print_alias $(exe alias golgittools="cd ${tardis_pct_tools_git_repo_path}")                       #
 print_alias $(exe alias goldata="cd ${tardis_data_path}")                                         #
-print_alias $(exe alias golorg="cd ${tardis_org_data_path}")                        #
-print_alias $(exe alias golrecon="cd ${tardis_recon_data_path}")                    #
-print_alias $(exe alias golusers="cd ${tardis_user_data_path}")                    #
-print_alias $(exe alias goltempin="cd ${tardis_temp_input_data_path}")                    #
-print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")                    #
+print_alias $(exe alias golorg="cd ${tardis_org_data_path}")                                      #
+print_alias $(exe alias golrecon="cd ${tardis_recon_data_path}")                                  #
+print_alias $(exe alias golusers="cd ${tardis_user_data_path}")                                   #
+print_alias $(exe alias goltempin="cd ${tardis_temp_input_data_path}")                            #
+print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")                          #
+#print_alias $(exe alias golnewrecon="cd ${current_lrdata}")                                      #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Currently used Kodiak/Tardis recon code directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+#current_git_rcode="Baylor" # Options: Baylor, user, old
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
 
+#current_global_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias gocgitcode="cd ${current_global_rcode_path}" )                                        #
+# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+#current_global_git_rcode_path=${current_global_rcode_path}
+print_alias $(exe alias gocgitcode="cd ${current_global_git_rcode_path}" )                                        #
+# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+#current_global_user_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias gocucode="cd ${current_global_user_rcode_path}" )                                        #
+# /ion/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
+#current_global_group_rcode_path="${global_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias gocgcode="cd ${current_global_group_rcode_path}" )                                        #
+# /ion/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
 
-#print_alias $(exe alias golnewrecon="cd ${current_lrdata}")                                         #
+#current_tardis_rcode_path="${tardis_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias goclgitcode="cd ${current_tardis_rcode_path}" )                                        #
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+#current_tardis_git_rcode_path=${current_tardis_rcode_path}
+print_alias $(exe alias goclgitcode="cd ${current_tardis_git_rcode_path}" )                                        #
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+#current_tardis_user_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias goclucode="cd ${current_tardis_user_rcode_path}" )                                        #
+# /local/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
+#current_tardis_group_rcode_path="${tardis_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+print_alias $(exe alias goclgcode="cd ${current_tardis_group_rcode_path}" )                                        #
+# /local/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
+
+#${old_rcode_git_repo_subdir_path}
+#${Baylor_rcode_git_repo_subdir_path}
+#${Blake_rcode_git_repo_subdir_path}
+# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${Baylor_rcode_git_repo_subdir_path}/")                         #
+# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${Blake_rcode_git_repo_subdir_path}/")                         #
+# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${old_rcode_git_repo_subdir_path}/")                         #
+# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${Baylor_rcode_git_repo_subdir_path}/")                         #
+# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${Blake_rcode_git_repo_subdir_path}/")                         #
+# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${old_rcode_git_repo_subdir_path}/")                         #
+
+# global_Baylor_rcode_git_repo_path="${global_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
+# tardis_Baylor_rcode_git_repo_path="${tardis_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
+
+# print_alias $(exe alias gogitrcode="cd ${global_Baylor_rcode_git_repo_path}" )                    #
+# print_alias $(exe alias golgitrcode="cd ${tardis_Baylor_rcode_git_repo_path}")                    #
+
+# global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+# tardis_Blake_rcode_git_repo_path="${tardis_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
+# print_alias $(exe alias gogitmyrrcode="cd ${global_Blake_rcode_git_repo_path}" )                  #
+# print_alias $(exe alias golgitmyrrcode="cd ${tardis_Blake_rcode_git_repo_path}")                  #
+
+# old_rcode_git_repo_subdir_path="${pct_collab_git_account}/${old_rcode_git_repo}"
+# global_old_rcode_git_repo_path="${global_git_code_path}/${old_rcode_git_repo_subdir_path}"
+# tardis_old_rcode_git_repo_path="${tardis_git_code_path}/${old_rcode_git_repo_subdir_path}"
+# print_alias $(exe alias gogitorcode="cd ${global_old_rcode_git_repo_path}" )                      #
+# print_alias $(exe alias golgitorcode="cd ${tardis_old_rcode_git_repo_path}")                      #
+#-------------------------------------------------------------------------------------------------#
+print_section_header "Currently used Kodiak/Tardis recon IO data directory change shortcut (alias) commands" 1,33 5,40
+#-------------------------------------------------------------------------------------------------#
+#/ion/home/schultze/pCT_data/CTP404_Sensitom/Experimental/input_Sensitom_CDH6
+#user_current_data_path="${user_data_path}${current_phantom}${experimental_data_folder}${dindir}"
+print_alias $(exe alias gocudata="cd ${user_current_data_path}" )                                        #
+#########rgroup_current_data_path="${rgroup_recon_data_path}${recon_data_folder}"
+#/local/pCT_data/organized_data/input_Sensitom_CDH6
+#tardis_current_data_path="${tardis_org_data_path}${dindir}"
+print_alias $(exe alias gocldata="cd ${tardis_current_data_path}" )                                        #
+#/ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+#user_current_recon_data_path="${user_recon_data_path}${doutdir}"
+print_alias $(exe alias gocurecon="cd ${user_current_recon_data_path}" )                                        #
+########rgroup_current_recon_data_path="${rgroup_recon_data_path}${recon_data_folder}"
+#/local/pCT_data/reconstruction_data/output_Sensitom_CDH6
+#tardis_current_recon_data_path="${tardis_recon_data_path}${doutdir}"
+print_alias $(exe alias goclurecon="cd ${tardis_current_recon_data_path}" )                                        #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak recon group directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-#print_alias $(exe alias gorgrpgit="cd ${pct_home}/${recon_group}/")                                        #
+#print_alias $(exe alias gorgrpgit="cd ${pct_home}/${recon_group}/")                              #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak group data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-print_alias $(exe alias gorgrp="cd ${pct_home}/${recon_group}")        #
-print_alias $(exe alias goghome="cd ${pct_home}/${recon_group}")        #
-print_alias $(exe alias gogdata="cd ${recon_group_home}${pct_data_folder}"  )                           #
-print_alias $(exe alias gogorg="cd ${recon_group_home}${pct_data_folder}${org_data_folder}" )           #
-print_alias $(exe alias gogrecon="cd ${recon_group_home}${pct_data_folder}${recon_data_folder}")        #
-print_alias $(exe alias gogcode="cd ${recon_group_home}${pct_code_folder}"   )                          #
-print_alias $(exe alias gogpcode="cd ${recon_group_home}${pcode_subdir_path}${user_folder}")                   #
-print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}")                  #
-
+print_alias $(exe alias gorgrp="cd ${pct_home}/${recon_group}")                                   #
+print_alias $(exe alias goghome="cd ${pct_home}/${recon_group}")                                  #
+print_alias $(exe alias gogdata="cd ${recon_group_home}${pct_data_folder}"  )                     #
+print_alias $(exe alias gogorg="cd ${recon_group_home}${pct_data_folder}${org_data_folder}" )     #
+print_alias $(exe alias gogrecon="cd ${recon_group_home}${pct_data_folder}${recon_data_folder}")  #
+print_alias $(exe alias gogcode="cd ${recon_group_home}${pct_code_folder}"   )                    #
+print_alias $(exe alias gogpcode="cd ${recon_group_home}${pcode_subdir_path}${user_folder}")      #
+print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}")      #
 #alias goBlake=
-
-
 ###################################################################################################
 ################## Set up Kodiak modules, environment variables, and user prompt ##################
 ###################################################################################################

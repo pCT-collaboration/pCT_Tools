@@ -8,6 +8,10 @@ user_folder="/${current_user}"
 recon_group="ionrecon"
 other_pct_users=("penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout")
 declare -a PCT_USERS
+current_rcode="Baylor" # Options: Baylor, Blake, old
+dindir="/input_Sensitom_CDH6/"
+doutdir="/output_Sensitom_CDH6/B_25600/"
+current_phantom="CTP404_Sensitom"
 ###################################################################################################
 #################### Folder name variables for Kodiak/Tardis nodes code/data ######################
 ###################################################################################################
@@ -73,6 +77,25 @@ pre_data_path="${pct_data_path}${pre_data_folder}"
 proj_data_path="${pct_data_path}${proj_data_folder}"
 org_data_path="${pct_data_path}${org_data_folder}"
 recon_data_path="${pct_data_path}${recon_data_folder}"
+
+#-------- Kodiak user code/data paths ------------#
+user_inc_data_path="${incoming_path}${user_folder}"                            #
+user_stage_data_path="${staging_path}${user_folder}"                             #
+user_data_path="${user_home}${pct_data_folder}"                             #
+user_org_data_path="${user_home}${pct_data_folder}${org_data_folder}"            #
+user_recon_data_path="${user_home}${pct_data_folder}${recon_data_folder}"        #
+user_code_path="${user_home}${pct_code_folder}"                            #
+user_pcode_path="${user_home}${pcode_subdir_path}${user_folder}"            #
+user_rcode_path="${user_home}${rcode_subdir_path}${user_folder}"            #
+#-------- Kodiak group code/data paths ------------#
+recon_group_home="${pct_home}/${recon_group}"                                  #
+rgroup_data_path="${recon_group_home}${pct_data_folder}"                       #
+rgroup_org_data_path="${recon_group_home}${pct_data_folder}${org_data_folder}"     #
+rgroup_recon_data_path="${recon_group_home}${pct_data_folder}${recon_data_folder}"  #
+rgroup_code_path="${recon_group_home}${pct_code_folder}"                       #
+rgroup_pcode_path="${recon_group_home}${pcode_subdir_path}${user_folder}"      #
+rgroup_rcode_path="${recon_group_home}${rcode_subdir_path}${user_folder}"      #
+
 #-------- Tardis code/data paths ------------#
 tardis_data_path=${tardis_pct_folder}${pct_data_folder}
 tardis_raw_data_path="${tardis_data_path}${raw_data_folder}"
@@ -84,18 +107,35 @@ tardis_unorg_data_path="${tardis_data_path}${unorg_data_folder}"
 tardis_user_data_path="${tardis_data_path}${tardis_user_data_folder}"
 tardis_temp_input_data_path="${tardis_data_path}${temp_input_data_folder}"
 tardis_temp_output_data_path="${tardis_recon_data_path}${temp_output_data_folder}"
-###################################################################################################
+
+# dindir="/input_Sensitom_CDH6/"
+# doutdir="/output_Sensitom_CDH6/B_25600/"
+# current_phantom="/CTP404_Sensitom"
+# experimental_data_folder="/Experimental"
+# simulated_data_folder="/Simulated"
+
+#/ion/home/schultze/pCT_data/CTP404_Sensitom/Experimental/input_Sensitom_CDH6
+user_current_data_path="${user_data_path}${current_phantom}${experimental_data_folder}${dindir}"
+#########rgroup_current_data_path="${rgroup_recon_data_path}${recon_data_folder}"
+#/local/pCT_data/organized_data/input_Sensitom_CDH6
+tardis_current_data_path="${tardis_org_data_path}${dindir}"
+#/ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+user_current_recon_data_path="${user_recon_data_path}${doutdir}"
+########rgroup_current_recon_data_path="${rgroup_recon_data_path}${recon_data_folder}"
+#/local/pCT_data/reconstruction_data/output_Sensitom_CDH6
+tardis_current_recon_data_path="${tardis_recon_data_path}${doutdir}"
+#################################################################################################
 ############################ Setting Kodiak/Tardis/GitHub code paths ##############################
 ###################################################################################################
-pct_tools_git_repo_subdir_path="${pct_collab_git_account}/${pct_tools_git_repo}"
-old_rcode_git_repo_subdir_path="${pct_collab_git_account}/${old_rcode_git_repo}"
-Baylor_rcode_git_repo_subdir_path="${Baylor_git_account}/${Baylor_rcode_git_repo}"
-Blake_rcode_git_repo_subdir_path="${Blake_git_account}/${Blake_rcode_git_repo}"
+pct_code_path="${pct_folder}${pct_code_folder}"
 pcode_subdir_path=${pct_code_folder}${pcode_folder}
 rcode_subdir_path=${pct_code_folder}${rcode_folder}
 git_code_subdir_path=${pct_code_folder}${git_code_folder}
+Baylor_rcode_git_repo_subdir_path="${Baylor_git_account}/${Baylor_rcode_git_repo}"
+Blake_rcode_git_repo_subdir_path="${Blake_git_account}/${Blake_rcode_git_repo}"
+old_rcode_git_repo_subdir_path="${pct_collab_git_account}/${old_rcode_git_repo}"
+pct_tools_git_repo_subdir_path="${pct_collab_git_account}/${pct_tools_git_repo}"
 
-pct_code_path="${pct_folder}${pct_code_folder}"
 global_code_path="${pct_folder}${pct_code_folder}"
 global_pcode_path=${pct_folder}${pcode_subdir_path}
 global_rcode_path=${pct_folder}${rcode_subdir_path}
@@ -112,8 +152,8 @@ global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo
 tardis_code_path="${tardis_pct_folder}${pct_code_folder}"
 tardis_pcode_path=${tardis_pct_folder}${pcode_subdir_path}
 tardis_rcode_path=${tardis_pct_folder}${rcode_subdir_path}
-tardis_git_code_path=${tardis_git_clones_dir}
 tardis_git_clones_dir=${tardis_code_path}${git_code_folder}
+tardis_git_code_path=${tardis_git_clones_dir}
 tardis_pct_collab_dir=${tardis_git_clones_dir}/${pct_collab_git_account}
 tardis_Baylor_dir=${tardis_git_clones_dir}/${Baylor_git_account}
 tardis_Blake_dir=${tardis_git_clones_dir}/${Blake_git_account}
@@ -156,9 +196,30 @@ tardis_user_paths=( $tardis_rcode_path $tardis_pcode_path $tardis_user_data_path
 direct_git='direct'
 user_git='user'
 direct_git_flag='-g'
-current_rcode_account="${Blake_git_account}"
-current_rcode_repo="${Blake_rcode_git_repo}"
-current_rcode_branch="development"
+Baylor_rcode="Baylor_rcode"
+Blake_rcode="Blake_rcode"
+old_rcode="old_rcode"
+current_rcode=$Baylor_rcode # Options: Baylor, Blake, old
+if [[ "$current_rcode" == "$Baylor_rcode" ]]
+then
+    current_rcode_account="${Baylor_git_account}"
+    current_rcode_repo="${Baylor_rcode_git_repo}"
+    current_rcode_branch="single_GPU"
+elif [[ "$current_rcode" == "$Blake_rcode" ]]
+then
+    current_rcode_account="${Blake_git_account}"
+    current_rcode_repo="${Blake_rcode_git_repo}"
+    current_rcode_branch="development"
+elif [[ "$current_rcode" == "$Baylor_rcode" ]]
+then
+    current_rcode_account="${pct_collab_git_account}"
+    current_rcode_repo="${old_rcode_git_repo}"
+    current_rcode_branch="master"
+else
+    current_rcode_account="${Baylor_git_account}"
+    current_rcode_repo="${Baylor_rcode_git_repo}"
+    current_rcode_branch="single_GPU"
+fi
 current_rcode_git=$direct_git
 if [[ $current_rcode_git == 'direct' ]]
 then
@@ -166,15 +227,34 @@ then
 else
     current_set_rcode_git_flag=''
 fi
-   
-current_global_git_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+
+current_global_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+current_global_git_rcode_path=${current_global_rcode_path}
+# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
 current_global_user_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+# /ion/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
 current_global_group_rcode_path="${global_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-current_tardis_git_rcode_path="${tardis_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+# /ion/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
+
+current_tardis_rcode_path="${tardis_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
+current_tardis_git_rcode_path=${current_tardis_rcode_path}
+# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
 current_tardis_user_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
+# /local/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
 current_tardis_group_rcode_path="${tardis_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-current_global_rcode_path=${current_global_git_rcode_path}
-current_tardis_rcode_path=${current_tardis_git_rcode_path}
+# /local/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
+
+# echo - e "${current_global_git_rcode_path}"
+# echo - e "${current_global_user_rcode_path}"
+# echo - e "${current_global_group_rcode_path}"
+# echo - e "${current_tardis_git_rcode_path}"
+# echo - e "${current_tardis_user_rcode_path}"
+# echo - e "${current_tardis_group_rcode_path}"
+# echo - e "${current_global_rcode_path}"
+# echo - e "${current_tardis_rcode_path}"
 
 current_pcode_account="${pct_collab_git_account}"
 current_pcode_repo="${pcode_git_repo}"
@@ -224,7 +304,7 @@ tardis_compute_node4_IP="${tardis_IP_base}${pdavison}"
 kodiak_modules=("purge" "unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
 tardis_modules_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.5.0" "load blas/open64/64/3.5.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.5.0" "load lapack/open64/64/3.5.0" "load mpich/ge/gcc/64/3.1.4" "load mpich/ge/open64/64/3.1.4" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.1" "load mvapich2/open64/64/2.1" "load openblas/dynamic/0.2.14" "load openmpi/gcc/64/1.8.5" "load openmpi/open64/64/1.8.5" "load scalapack/gcc/64/1.8.0" "load scalapack/open64/64/1.8.0")
 tardis_modules_less_old=("purge" "load cmake/3.2" "load java/1.8.0" "load emacs/24.5" "load geant4/10.1.1" "load git/2.4.3" "load make/4.1" "load matlab/2015a" "load perl/5.20" "load python/3.4" "load root" "load ruby/2.2.2" "load blacs/openmpi/gcc/64/1.1patch03" "load blacs/openmpi/open64/64/1.1patch03" "load blas/gcc/64/3.6.0" "load blas/open64/64/3.6.0" "load fftw3/openmpi/gcc/64/3.3.4" "load fftw3/openmpi/open64/64/3.3.4" "load lapack/gcc/64/3.6.0" "load lapack/open64/64/3.6.0" "load mpich/ge/gcc/64/3.2" "load mpich/ge/open64/64/3.2" "load mpiexec/0.84_432" "load mvapich2/1.9-gcc-4.9.2" "load mvapich2/gcc/64/2.2b" "load mvapich2/open64/64/2.2b" "load openblas/dynamic/0.2.15" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/mvapich2/gcc/64/2.0.2" "load scalapack/openmpi/gcc/64/2.0.2")
-tardis_modules=( "load geant4/10.1.1" "load matlab/2016a" "load python/2.7.10" "load root" "load blacs/openmpi/gcc/64/1.1patch03" "load blas/gcc/64/3.6.0" "load lapack/gcc/64/3.6.0" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/openmpi/gcc/64/2.0.2")
+tardis_modules=( "load geant4/10.1.1" "load matlab/2016a" "load python/2.7.10" "load blacs/openmpi/gcc/64/1.1patch03" "load blas/gcc/64/3.6.0" "load lapack/gcc/64/3.6.0" "load openmpi/gcc/64/1.10.1" "load openmpi/open64/64/1.10.1" "load scalapack/openmpi/gcc/64/2.0.2")
 version_CUDA_Kodiak="none"
 version_CUDA_Tardis_Headnode=55
 version_CUDA_Tardis=80
@@ -362,6 +442,75 @@ function array_member_test ()
     for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
     return 1
 }
+# function dcount() 
+# { 
+    # target="."
+    # maxdepth=1
+    # optstring='p:m:'
+    # while getopts $optstring opt; do
+        # case $opt in
+            # p) target=${OPTARG};;
+            # m) maxdepth=${OPTARG};;
+            # #n) node_name_flag='true';;
+            # *) error "Unexpected option ${flag}";;
+        # esac
+    # done   
+    # find ${target} -maxdepth ${maxdepth} -type d -print| wc -l
+    # #ls -l | grep "^d" | wc -l
+    # #ls -lR | grep "^d" | wc -l
+    # #ls -l . | grep -c ^d
+    # #find . -mindepth 1 -maxdepth 1 -type d -printf . | wc -c
+    # #find . -type d ! -name . -printf . -prune | wc -c
+    # #echo $(($(find -type d | wc -l) - 1))
+    # #tree -d .| awk END{print}
+    # # tree -i -L 1
+    # #echo */ | wc
+    # #echo *.* | wc
+    # #
+    # #
+    # #
+    # #shopt -s dotglob
+    # # count=0
+    # # for dir in *; do
+      # # test -d "$dir" || continue
+      # # test . = "$dir" && continue
+      # # test .. = "$dir" && continue
+      # # ((count++))
+    # # done
+    # # echo $count
+    # #REPLY="${dirs_array[@]}"
+    # #IFS=$DEFAULT_IFS   
+# }
+function dcount() 
+{ 
+    target="."
+    maxdepth=1
+    optstring='p:m:'
+    while getopts $optstring opt; do
+        case $opt in
+            p) target=${OPTARG};;
+            m) maxdepth=${OPTARG};;
+            #n) node_name_flag='true';;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    find ${target} -maxdepth ${maxdepth} -type d -print| wc -l
+}
+function fcount() 
+{ 
+    target="."
+    maxdepth=1
+    optstring='p:m:'
+    while getopts $optstring opt; do
+        case $opt in
+            p) target=${OPTARG};;
+            m) maxdepth=${OPTARG};;
+            #n) node_name_flag='true';;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done   
+    find ${target} -maxdepth ${maxdepth} -type f -print| wc -l
+}
 function lsdirs() 
 { 
     dirs=$(find -maxdepth 1 -type d -printf "%f\n")
@@ -421,6 +570,75 @@ function lsm()
     print "Search results:\n$results" 0,32 6,40 underline
     print_newline
 }
+function cp2k() 
+{ 
+    target="."
+    overwrite_flag='false'
+    source="$1"
+    destination="$2"
+    optstring='p:o'
+    while getopts $optstring opt; do
+        case $opt in
+            p) target=${OPTARG}
+                echo "OPTARG=${OPTARG}: $1, $2, $3";
+                shift 2;
+                echo "after: $1, $2, $3";source="${1}";destination="${2}";
+                break;;
+            o) overwrite_flag='true';
+                echo "${overwrite_flag}: $1, $2, $3";
+                shift;
+                echo "after: $1, $2, $3";source="$1"; destination="$2";
+                break;;
+            # p) target=${OPTARG};shift 2;source="$1"; destination="$2";break;;
+            ##m) maxdepth=${OPTARG};shift;;
+            #o) overwrite_flag='true'; shift;source="$1"; destination="$2";break;;
+            *) error "Unexpected option ${flag}";break;;
+        esac
+    done   
+    #source="$1"
+    #destination="$2"
+    echo "$1 => $source"
+    echo "$2 -> $destination"
+    #if [ $? -eq 1 ]; then print "ERROR: Invalid node alias provided" 0,31 5,33; return 1; fi
+    if ( "$overwrite_flag" )
+    then 
+        #rsync -aEHzvhI --progress --compress $source $destination
+        #rsync -aEHzvhI --progress --compress B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+        echo "Overwrite"
+        #echo "$source"
+        #echo "$destination"
+    else
+        #rsync -aEHzvh --progress --size-only $source $destination    
+        #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+        #rsync -aEHzvh --progress --size-only /ion/incoming/karbasip/input_Sensitom_CDH6/* .
+        echo "Size Only"
+        #echo "$source"
+        #echo "$destination" 
+    fi
+	#-a = archive mode; equals -rlptgoD (no -H,-A,-X)
+    #-l = copy symlinks as symlinks
+	#-t = preserve times, 
+	#-p = preserve permissions, 
+	#-E = preserve executability, 
+	#-H = preserve hard links
+	#-g = preserve group
+	#-o = preserve owner
+	#-D = same as --devices --specials
+	#--devices = preserve device files (super-user only)
+    #--copy-devices = copy device contents as regular file
+    #--specials = preserve special files
+	#-z, --compress = compress file data during the transfer, 
+	#-h, --human-readable = output numbers in a human-readable format
+    # --ignore-times = update files even if size/mod time match
+    # --ignore-existing
+    #--size-only = skip files that match in size, 
+	# --progress = show progress during transfer
+    #(-arpEHzvht) - (-rlptgoD) = -aEHzvh
+	#rsync -arpEHvht --progress --compress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+    #rsync -r --ignore-existing --include=*/ --include=*.js --exclude=* source/ destination
+    #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+    #cp -vnpr /src/* /dest
+}
 function current_node_name()
 {
     node_ID=$HOSTNAME
@@ -478,9 +696,9 @@ function read_file()
         -h  show this help text
         -u  desired username (if different from login)"
     local OPTIND
-  path=$PWD
-  filename="readme.txt"
-while getopts 'p:f:' opt; do
+    path=$PWD
+    filename="readme.txt"
+    while getopts 'p:f:' opt; do
         case $opt in        
             h) echo "${usage}"; return;;
             p) path=${OPTARG};;

@@ -29,7 +29,7 @@ macro "multiplotting"
 	//***************************************************************************************************************************************************************************************************//
 	//************* Execution control Booleans and general parameter value test and MVP behavior Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
-	simulated_scan 												= true;
+	simulated_scan 												= false;
 	experimental_scan 											= !simulated_scan;
 	log_printing												= true;			
 	exporting_log												= false;		
@@ -67,35 +67,35 @@ macro "multiplotting"
 	//************* Parameter value test Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
 	check_all_paths_existence 									= false;
-	analyze_specific_data 										= true;
+	analyze_specific_data 										= false;
 	only_perform_missing_analyses 								= false;
 	generate_averaged_data										= false;
 	generate_specific_averaged_data								= false;
 	generate_averaged_MVP_data									= false;
 	perform_all_missing_analyses								= false;
-	perform_MVP_analyses										= false;
-	exit_after_analyzing_specific_data							= true;
-	exit_after_performing_all_missing_analyses					= true;
+	perform_MVP_analyses										= true;
+	exit_after_analyzing_specific_data							= false;
+	exit_after_performing_all_missing_analyses					= false;
 	exit_after_performing_all_parameter_test_analyses			= false;
-	exit_after_performing_MVP_ROI_analyses						= false;
+	exit_after_performing_MVP_ROI_analyses						= true;
 	exit_after_averaging_specific_data							= false;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
 	analyze_compared_data 										= false;
-	add_comparison_lines_2_plots								= true;
+	add_comparison_lines_2_plots								= false;
 	add_compared_data											= false;
-	add_compared_RSP_data 										= true;
-	add_compared_RSP_error_data 								= true;
-	add_compared_std_dev_data 									= true;
-	add_compared_TV_data 										= true;
+	add_compared_RSP_data 										= false;
+	add_compared_RSP_error_data 								= false;
+	add_compared_std_dev_data 									= false;
+	add_compared_TV_data 										= false;
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
 	generate_PVT_comparison_data 								= true;
 	generate_PVT_RSP_comparison_data 							= false;
-	generate_PVT_RSP_error_comparison_data 						= true;
-	generate_PVT_std_dev_comparison_data 						= true;
+	generate_PVT_RSP_error_comparison_data 						= false;
+	generate_PVT_std_dev_comparison_data 						= false;
 	generate_PVT_TV_comparison_data	 							= true;				
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
@@ -228,8 +228,11 @@ macro "multiplotting"
 	IMAGEJ_PROGRAM_DIR								= getDirectory("imagej") ;
 	IMAGEJ_LAUNCH_DIR								= getDirectory("startup");
 	IMAGEJ_PREVIOUS_MACRO							= getInfo("macro.filepath");
-	GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
+	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
  	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\Tools\\ImageJ";
+ 	github_macro_directory_Baylor_ICTHUS			= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ\\";
+ 	github_macro_directory_pCT_Collaboration		= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ\\";
+ 	GITHUB_MACRO_DIR								= github_macro_directory_pCT_Collaboration;
  	RECON_DATA_DIR_C								= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	RECON_DATA_DIR_D								= "D:\\pCT\\pCT_data\\reconstruction_data";
 	ROI_ANALYSIS_MACRO_FILENAME 					= "ROI_Analysis.ijm";
@@ -258,13 +261,18 @@ macro "multiplotting"
 	EXPERIMENTAL_DATA								= "Experimental";	
 	DRIVE_C											= "C";
 	DRIVE_D											= "D";
-	CURRENT_RECON_DATA_DRIVE						= "D";
-	CURRENT_RECON_DATA_TYPE							= SIMULATED_DATA;
+	CURRENT_RECON_DATA_DRIVE						= DRIVE_D;
+	CURRENT_RECON_DATA_TYPE							= EXPERIMENTAL_DATA;
+	simulated_scan 									= false;
+	experimental_scan 								= !simulated_scan;
 	
 	if(CURRENT_RECON_DATA_DRIVE == DRIVE_C)					RECON_DATA_DIR 	= RECON_DATA_DIR_C;
 	else if(CURRENT_RECON_DATA_DRIVE == DRIVE_D)			RECON_DATA_DIR 	= RECON_DATA_DIR_D;
 	if(CURRENT_RECON_DATA_TYPE == SIMULATED_DATA) 			TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + SIMULATED_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;
-	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;		
+	//else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;		
+	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
+	
+	TEST_BATCH_DIR 															= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
 
 	// Image/data filename and dir prefixes, file extensions, and results table column headings
 	TXT 											= ".txt";
@@ -308,7 +316,7 @@ macro "multiplotting"
 	RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES 		= "x";
 	INITIAL_ITERATE_FILENAME 						= RECONSTRUCTED_IMAGE_FILE_BASENAMES + "0" + TXT;	
 	AUTO_BREAK_FILENAME 							= "autobreak.txt";
-	AUTO_BREAK_PATH 								= IMAGEJ_MACRO_DIR + AUTO_BREAK_FILENAME;
+	AUTO_BREAK_PATH 								= GITHUB_MACRO_DIR + AUTO_BREAK_FILENAME;
 	PARAMETER_TEST_INFO_BASENAME					= "Test_Parameters_";
 	SPECIFIC_DATA_FOLDERS_FILENAME 					= "ROI_analysis_folders.txt";
 	RECON_FOLDERS_FILENAME 							= "reconstruction_folders.txt";
@@ -413,8 +421,8 @@ macro "multiplotting"
 	iterations_2_analyze_string_precision 				= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
 	//first_slice_2_analyze 							= x_slices/2;								// first slice analyzed by pCT_Analysis macro
 	//last_slice_2_analyze 								= x_slices/2;								// last slice analyzed by pCT_Analysis macro		
-	first_slice_2_analyze								= 10;
-	last_slice_2_analyze								= 10;
+	first_slice_2_analyze								= 11;
+	last_slice_2_analyze								= 11;
 	slices_2_analyze									= Array.slice(sequential_values, first_slice_2_analyze, last_slice_2_analyze + 1);
 	num_slices_2_analyze								= slices_2_analyze.length;					// 
 	slices_2_analyze_string_precision 					= 0;										// # of digits after decimal point to use in conversion of slice # to string 	
@@ -538,7 +546,7 @@ macro "multiplotting"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------- Specifications used to identify file containing specifications of parameters of parameter value test -------------------------------------------------------//
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	parameter_test_number						= 5;
+	parameter_test_number						= 1;
 	parameter_test_info_filename				= PARAMETER_TEST_INFO_BASENAME + d2s(parameter_test_number, 0)  + TXT;
 	parameter_test_info 						= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, print_input_data_path);
 	num_parameters 								= parameter_test_info.length;
@@ -761,7 +769,7 @@ macro "multiplotting"
 	{
 		print_section_separator					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
 		//SPECIFIC_DATA_FOLDERS_FILENAME 		= "ROI_analysis_folders.txt";
-		specific_data_folders 					= file_2_array(TEST_BATCH_DIR, SPECIFIC_DATA_FOLDERS_FILENAME, DONT_PRINT_PATH);	
+		specific_data_folders 					= file_2_array(TEST_BATCH_DIR, SPECIFIC_DATA_FOLDERS_FILENAME, PRINT_PATH);	
 		always_perform_analyses 				= !only_perform_missing_analyses;
 		for(i = 0; i < specific_data_folders.length; i++)
 		{
@@ -770,7 +778,7 @@ macro "multiplotting"
 			//current_PVT_folder				= recon_data_folders[i];
 			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
 			data_verified 						= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
-			if(recon_data_exists && (data_verified || always_perform_analyses))
+			if(recon_data_exists && (!data_verified || always_perform_analyses))
 				runMacro						(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR + reconstructed_data_folder + FOLDER_SEPARATOR);//	runMacro		(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR+ compared_folders[0]  + FOLDER_SEPARATOR );
 			autobreak();
 		}	
@@ -784,8 +792,8 @@ macro "multiplotting"
 		for(i = 0; i < recon_data_folders.length; i++)
 		{
 			current_PVT_folder					= recon_data_folders[i];
-			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, current_PVT_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME);
-			missing_data 						= verify_ROI_analysis_output_files(TEST_BATCH_DIR, current_PVT_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders);
+			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, current_PVT_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, PRINT_PATH);
+			missing_data 						= verify_ROI_analysis_output_files(TEST_BATCH_DIR, current_PVT_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, PRINT_PATH);
 			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, current_PVT_folder);
 			if(recon_data_exists && missing_data)
 				runMacro						(ROI_ANALYSIS_MACRO_PATH, current_analysis_target);//	runMacro		(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR+ compared_folders[0]  + FOLDER_SEPARATOR );	
@@ -794,24 +802,29 @@ macro "multiplotting"
 		if(exit_after_performing_all_missing_analyses)
 			exit();	
 	}
+	
 	if(perform_MVP_analyses)
 	{//SPECIFIC_DATA_FOLDERS_FILENAME 			= "ROI_analysis_folders.txt";
 		print_section_separator					("Performing ROI analysis for all paramter value test folder reconstructions", PRINT_MAJOR_SECTION);	
 		always_perform_analyses 				= !only_perform_missing_analyses;
 		for(i = 0; i < all_folder_strings.length; i++)
+		//for(i = 0; i < 5; i++)
 		{
 			reconstructed_data_folder 			= all_folder_strings[i];
 			print_section_separator				("Performing ROI analysis on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
 			//current_PVT_folder				= recon_data_folders[i];
 			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
+			//print("recon_data_exists = " + recon_data_exists);
 			data_verified 						= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
-			if(recon_data_exists && (data_verified || always_perform_analyses))
+			if(recon_data_exists && (!data_verified || always_perform_analyses))
 				runMacro						(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR + reconstructed_data_folder + FOLDER_SEPARATOR);//	runMacro		(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR+ compared_folders[0]  + FOLDER_SEPARATOR );	
 			autobreak();
 		}
 		if(exit_after_performing_MVP_ROI_analyses)
 			exit();	
 	}
+	Kill();
+	exit();	
 	if(generate_specific_averaged_data)
 	{
 		print_section_separator					("Generating averaged data files for specific set of reconstructions", PRINT_MAJOR_SECTION);
@@ -1976,6 +1989,8 @@ macro "multiplotting"
 //************************* User defined function definitions ***************************************************************************************************************************************//
 //***************************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function eprint(_print_statement) { print(_print_statement); exit(); }
+function Kill					()										{ exit					("-----> Manual exit initiated");																				}
 function add_prefix_2_strings(strings, common_prefix)
 {
 	num_strings 			= strings.length;
@@ -2044,9 +2059,9 @@ function array_2_TXT(path, filename, data_array, print_path, overwrite_existing_
 }
 function autobreak()
 {
-	autobreak_boolean 	= file_2_array(IMAGEJ_MACRO_DIR, AUTO_BREAK_FILENAME, DONT_PRINT_PATH);
+	autobreak_boolean 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, DONT_PRINT_PATH);
 	if(autobreak_boolean[0])
-		exit();
+		 eprint("autobreak initiated exit");//exit();
 }
 function calculate_TV(path, ROWS, COLUMNS, SLICES)
 {
@@ -4312,6 +4327,7 @@ function verify_recon_output(_recon_data_dir, _recon_output_dir, _reconstructed_
 			print			("ERROR: reconstructed image does not exist:\n" + check_image_path);
 			data_verified 	= false;
 			missing_data	= Array.concat(missing_data, check_image_path);
+			return false;
 		}			
 	}
 	check_TV_path			= _recon_output_dir_path + File.separator + _TV_input_data_filename;
@@ -4320,6 +4336,7 @@ function verify_recon_output(_recon_data_dir, _recon_output_dir, _reconstructed_
 		print				("ERROR: TV measurement file does not exist:\n" + check_TV_path);
 		data_verified 		= false;
 		missing_data		= Array.concat(missing_data, check_TV_path);
+		return false;
 	}
 	if(data_verified)
 		print		("=======> RECON OUTPUT DATA VERIFIED\n");

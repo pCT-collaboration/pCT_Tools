@@ -74,13 +74,16 @@ macro "merge_data_control"
 	experimental_data								= "Experimental";	
 	drive_C											= "C";
 	drive_D											= "D";
-	current_reconstruction_data_drive				= "D";
-	current_reconstruction_data_type				= simulated_data;
+	current_reconstruction_data_drive				= drive_D;
+	current_reconstruction_data_type				= experimental_data;
 	
 	if(current_reconstruction_data_drive == drive_C)				reconstruction_data_directory 	= reconstruction_data_directory_C;
 	else if(current_reconstruction_data_drive == drive_D)			reconstruction_data_directory 	= reconstruction_data_directory_D;
 	if(current_reconstruction_data_type == simulated_data) 			test_batch_directory 			= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
 	else if(current_reconstruction_data_type == experimental_data)	test_batch_directory 			= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
+
+	//TEST_BATCH_DIR 								= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	test_batch_directory 							= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
 
 	// Image/data filename and directory prefixes, file extensions, and results table column headings
 	TXT 											= ".txt";
@@ -135,7 +138,7 @@ macro "merge_data_control"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------- Specifications used to identify file containing specifications of parameters of parameter value test -------------------------------------------------------//
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	parameter_test_number						= 5;
+	parameter_test_number						= 1;
 	parameter_test_info_filename				= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
 	parameter_test_info 						= file_2_array(test_batch_directory, parameter_test_info_filename, false);
 	num_parameters 								= parameter_test_info.length;
@@ -158,7 +161,8 @@ macro "merge_data_control"
 	parameter_value_strings 					= generate_all_parameter_value_strings(parameter_values, num_parameter_values, parameter_value_offsets, parameter_string_precisions);
 	modulo_values 								= generate_modulo_values(num_parameter_values);
 	total_combinations 							= series_product(num_parameter_values);
-	allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
+	//allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
+	allowed_parameter_string_prefixes			= newArray("A", "L");
 	App("parameter_string_prefixes", parameter_string_prefixes);
 	App("num_parameter_values", num_parameter_values);
 	print(num_parameters);
@@ -166,8 +170,8 @@ macro "merge_data_control"
 	//exit();
 	for(i = 0; i < num_parameters - 1; i++)
 	{
-		//if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
-		if(num_parameter_values[i] > 1)
+		if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
+		//if(num_parameter_values[i] > 1)
 		{
 			//print("parameter_string_prefixes[i] = " + parameter_string_prefixes[i]);
 			print_section_separator				("Merging data for multiplot parameter w/ prefix = \n ----------> " + parameter_string_prefixes[i], true);
