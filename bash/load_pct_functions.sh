@@ -314,7 +314,6 @@ rcode_compute="compute_35"
 rcode_sm="sm_35"
 rcode_object="recon.out"
 rcode_flags="-O3"
-alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
 ###################################################################################################
 ######################## Define variables for console output formatting ###########################
 ###################################################################################################
@@ -346,6 +345,21 @@ DEFAULT_IFS=' '
 ###################################### Function definitions #######################################
 ###################################################################################################
 ###################################################################################################
+#-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------#
+#------------------------------ General helper/utility functions ---------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------#
+#alias cpo="cp -vnpr /src/* /dest $1 $2"
+alias cpo="cp -vr --preserve=all $1 $2"
+alias cpn="cp -vrn --preserve=all $1 $2"
+alias rsynco="rsync -aEHzvhI --progress $1 $2"
+alias rsyncn="rsync -aEHzvh --progress --size-only $1 $2"
+#alias rsynco="rsync -aEHzvhI --progress --compress $1 $2"
+#alias rsyncn="rsync -aEHzvhI --progress --compress --size-only $1 $2"
+alias qstatu='qstat -t -u schultze'
+alias qstatu='qstat -t -u schultze'
+alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
 #-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
 #------------------------------ General helper/utility functions ---------------------------------#
@@ -483,7 +497,7 @@ function array_member_test ()
 # }
 function dcount() 
 { 
-    target="."
+    target=.
     maxdepth=1
     optstring='p:m:'
     while getopts $optstring opt; do
@@ -603,41 +617,62 @@ function cp2k()
     if ( "$overwrite_flag" )
     then 
         #rsync -aEHzvhI --progress --compress $source $destination
-        #rsync -aEHzvhI --progress --compress B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+        #rsync -aEHzvhI --progress --compress B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 #/ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
         echo "Overwrite"
         #echo "$source"
         #echo "$destination"
     else
         #rsync -aEHzvh --progress --size-only $source $destination    
-        #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+        #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 #/ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
         #rsync -aEHzvh --progress --size-only /ion/incoming/karbasip/input_Sensitom_CDH6/* .
+        #rsync -aEHzvh --progress --size-only * ${user_current_recon_data_path}
+        #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_1* ${user_current_recon_data_path}
         echo "Size Only"
         #echo "$source"
         #echo "$destination" 
     fi
-	#-a = archive mode; equals -rlptgoD (no -H,-A,-X)
+    #rsync -aEHzvhI --progress $source $destination
+    #rsync -aEHzvh --progress --size-only $source $destination    
+    #-a = archive mode; equals -rlptgoD (no -H,-A,-X)
     #-l = copy symlinks as symlinks
-	#-t = preserve times, 
-	#-p = preserve permissions, 
-	#-E = preserve executability, 
-	#-H = preserve hard links
-	#-g = preserve group
-	#-o = preserve owner
-	#-D = same as --devices --specials
-	#--devices = preserve device files (super-user only)
+    #-t = preserve times, 
+    #-p = preserve permissions, 
+    #-E = preserve executability, 
+    #-H = preserve hard links
+    #-g = preserve group
+    #-o = preserve owner
+    #-D = same as --devices --specials
+    #--devices = preserve device files (super-user only)
     #--copy-devices = copy device contents as regular file
     #--specials = preserve special files
-	#-z, --compress = compress file data during the transfer, 
-	#-h, --human-readable = output numbers in a human-readable format
+    #-z, --compress = compress file data during the transfer, 
+    #-h, --human-readable = output numbers in a human-readable format
     # --ignore-times = update files even if size/mod time match
     # --ignore-existing
+    #-I, --ignore-times          don't skip files that match in size and mod-time
     #--size-only = skip files that match in size, 
-	# --progress = show progress during transfer
+    # --progress = show progress during transfer
     #(-arpEHzvht) - (-rlptgoD) = -aEHzvh
-	#rsync -arpEHvht --progress --compress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
+    #rsync -arpEHvht --progress --compress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
     #rsync -r --ignore-existing --include=*/ --include=*.js --exclude=* source/ destination
     #rsync -aEHzvh --progress --size-only B_25600_L_0.000100_TV_0_A_0.950000_L0_0_Nk_6 /ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
     #cp -vnpr /src/* /dest
+    #-a, --archive                same as -dR --preserve=all
+    # -d                           same as --no-dereference --preserve=links
+    # -H                            follow command-line symbolic links in SOURCE
+    # -L, --dereference            always follow symbolic links in SOURCE
+    # -n, --no-clobber             do not overwrite an existing file (overrides a previous -i option)
+    # -P, --no-dereference         never follow symbolic links in SOURCE
+    # -p                           same as --preserve=mode,ownership,timestamps
+    # --preserve[=ATTR_LIST]    preserve attributes (default:mode,ownership,timestamps), others: context, links, xattr, all
+    # -c                           deprecated, same as --preserve=context
+    # -R, -r, --recursive          copy directories recursively
+    # -u, --update                 copy only when SOURCE file is newer than the destination file or when the destination file is missing
+    # -v, --verbose                explain what is being done
+    #
+    #
+    #
+    #
 }
 function current_node_name()
 {

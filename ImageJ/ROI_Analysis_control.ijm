@@ -29,22 +29,22 @@ macro "multiplotting"
 	//***************************************************************************************************************************************************************************************************//
 	//************* Execution control Booleans and general parameter value test and MVP behavior Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
-	simulated_scan 												= false;
-	experimental_scan 											= !simulated_scan;
+	//***************************************************************************************************************************************************************************************************//
+	//************* Execution control Booleans and general parameter value test and multiplot behavior Booleans ************************************************************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
 	log_printing												= true;			
 	exporting_log												= false;		
-	debug_path_printing											= true;
+	debug_path_printing											= false;
 	printing_ROI_definitions									= true;		
 	printing_reconstructed_image_analysis_info					= true;
 	printing_PVT_info											= true;
+	printing_multiplot_parameter_info							= true;	
 	printing_MVP_parameter_info									= true;	
 	printing_input_output_filenames								= true;	
 	print_ROI_definitions_path									= false;		
-	
-	print_missing_paths											= true;
-	print_directories_created									= true;		
-	print_input_data_path										= true;
-	print_input_CSV_path										= true;
+	print_directories_created									= false;	
+	print_input_data_path										= false;
+	print_input_CSV_path										= false;
 	print_input_TXT_path										= false;
 	print_input_PNG_paths										= false;
 	print_output_CSV_path										= true;
@@ -67,13 +67,16 @@ macro "multiplotting"
 	//************* Parameter value test Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
 	check_all_paths_existence 									= false;
+	ROI_analysis 												= true;
 	analyze_specific_data 										= false;
 	only_perform_missing_analyses 								= false;
+	always_perform_analyses 									= !only_perform_missing_analyses;
 	generate_averaged_data										= false;
 	generate_specific_averaged_data								= false;
 	generate_averaged_MVP_data									= false;
 	perform_all_missing_analyses								= false;
-	perform_MVP_analyses										= true;
+	perform_MVP_analyses										= false;
+	exit_after_ROI_analyses 									= true;
 	exit_after_analyzing_specific_data							= false;
 	exit_after_performing_all_missing_analyses					= false;
 	exit_after_performing_all_parameter_test_analyses			= false;
@@ -89,7 +92,6 @@ macro "multiplotting"
 	add_compared_RSP_error_data 								= false;
 	add_compared_std_dev_data 									= false;
 	add_compared_TV_data 										= false;
-
 	//***************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Parameter value test Booleans **********************************************************************************//
 	//***************************************************************************************************************************************************************************************************//		
@@ -191,28 +193,193 @@ macro "multiplotting"
 				write_TV_diff_MVP_AVIs							= false;
 					overwrite_TV_diff_MVP_AVIs					= false;
 	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ CSV file merging Booleans ************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//			
+	perform_data_merging												= true;	
+	merge_ROI_analysis_CSVs												= true;
+	merge_ROI_analysis_RSP_Error_CSVs									= true;
+	merge_ROI_analysis_RSP_CSVs											= true;
+	merge_ROI_analysis_Std_Dev_CSVs										= true;
+	merge_TV_CSVs														= true;
+	merge_multiplot_CSVs												= true;
+	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
+	merge_multiplot_RSP_CSVs											= true && merge_multiplot_CSVs;
+	merge_multiplot_Std_Dev_CSVs										= true && merge_multiplot_CSVs;
+	merge_multiplot_TV_CSVs												= true  && merge_multiplot_CSVs;
+	write_merged_data 													= true;
+	write_merged_CSV_data 												= true && write_merged_data;
+	write_merged_TXT_data 												= true && write_merged_data;
+	write_merged_RSP_CSV_data 											= true && write_merged_CSV_data;
+	write_merged_RSP_Error_CSV_data 									= true && write_merged_CSV_data;
+	write_merged_Std_Dev_CSV_data 										= true && write_merged_CSV_data;
+	write_merged_TV_CSV_data 											= true && write_merged_CSV_data;
+	write_merged_RSP_TXT_data 											= true && write_merged_TXT_data;
+	write_merged_RSP_Error_TXT_data 									= true && write_merged_TXT_data;
+	write_merged_Std_Dev_TXT_data 										= true && write_merged_TXT_data;
+	write_merged_TV_TXT_data 											= true && write_merged_TXT_data;
+	overwrite_merged_data 												= false;
+	overwrite_merged_CSV_data 											= true && overwrite_merged_data;
+	overwrite_merged_TXT_data 											= true && overwrite_merged_data;
+	overwrite_merged_RSP_CSV_data 										= true && overwrite_merged_CSV_data;
+	overwrite_merged_RSP_Error_CSV_data 								= true && overwrite_merged_CSV_data;
+	overwrite_merged_Std_Dev_CSV_data 									= true && overwrite_merged_CSV_data;
+	overwrite_merged_TV_CSV_data 										= true && overwrite_merged_CSV_data;
+	overwrite_merged_RSP_TXT_data 										= true && overwrite_merged_TXT_data;
+	overwrite_merged_RSP_Error_TXT_data 								= true && overwrite_merged_TXT_data;
+	overwrite_merged_Std_Dev_TXT_data 									= true && overwrite_merged_TXT_data;
+	overwrite_merged_TV_TXT_data 										= true && overwrite_merged_TXT_data;
+	write_merged_multiplot_data 										= true;
+	write_merged_multiplot_CSV_data 									= true && write_merged_multiplot_data;
+	write_merged_multiplot_TXT_data 									= true && write_merged_multiplot_data;
+	write_merged_multiplot_RSP_CSV_data 								= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_RSP_Error_CSV_data 							= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_Std_Dev_CSV_data 							= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_TV_CSV_data 									= true && write_merged_multiplot_CSV_data;
+	write_merged_multiplot_RSP_TXT_data 								= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_RSP_Error_TXT_data 							= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_Std_Dev_TXT_data 							= true && write_merged_multiplot_TXT_data;
+	write_merged_multiplot_TV_TXT_data 									= true && write_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_data 									= false;
+	overwrite_merged_multiplot_CSV_data 								= true && overwrite_merged_multiplot_data;
+	overwrite_merged_multiplot_TXT_data 								= true && overwrite_merged_multiplot_data;
+	overwrite_merged_multiplot_RSP_CSV_data 							= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_RSP_Error_CSV_data 						= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_Std_Dev_CSV_data 						= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_TV_CSV_data 								= true && overwrite_merged_multiplot_CSV_data;
+	overwrite_merged_multiplot_RSP_TXT_data 							= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_RSP_Error_TXT_data 						= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_Std_Dev_TXT_data 						= true && overwrite_merged_multiplot_TXT_data;
+	overwrite_merged_multiplot_TV_TXT_data 								= true && overwrite_merged_multiplot_TXT_data;
+	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ Define Boolean constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
 	ON 												= true;
 	OFF 											= false;
-	ALL_BOOL 										= false;
-	NONE_BOOL 										= true;
-	COLUMN_MAJOR									= true;
-	ROW_MAJOR										= false;
-	CLOSE_PNG										= true;
-	DONT_CLOSE_PNG									= false;
-	SHORTEN_STRINGS									= true;
-	DONT_SHORTEN_STRINGS							= false;	
-	PRINT_PATH										= true;
-	DONT_PRINT_PATH									= false;	
-	PRINTING_ON										= true;
-	PRINTING_OFF									= false;	
-	PRINT_MAJOR_SECTION								= true;
-	PRINT_MINOR_SECTION								= false;	
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	INTERNAL_MACRO_CALLER							= true;
+	EXTERNAL_MACRO_CALLER							= false;
+	IJIO_CONFIG_OPTIONS_ON							= true;
+	IJIO_CONFIG_OPTIONS_OFF							= false;
 	CLOSE_WINDOW									= true;
 	DONT_CLOSE_WINDOW								= false;	
+	CLOSE_PNG										= true;
+	DONT_CLOSE_PNG									= false;
 	MAKE_TOP_DIR									= true;
 	DONT_MAKE_TOP_DIR								= false;
+	MAKE_TOP_DIRECTORY								= true;
+	DONT_MAKE_TOP_DIRECTORY							= false;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ALL_BOOL 										= false;
+	NONE_BOOL 										= true;
+	AND_LOGIC 										= true;
+	OR_LOGIC 										= false;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	FORCE_VALUE_2_ARRAY								= true;
+	DONT_FORCE_VALUE_2_ARRAY						= false;
+	ARRAY_FILL_CYCLIC								= true;
+	ARRAY_FILL_DUPLICATE							= false;
+	RETURN_MATCH_INDEX								= true;
+	RETURN_MATCH_TF									= false;
+	RETURN_FORCE_ARRAY								= true;
+	RETURN_DONT_FORCE_ARRAY							= false;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	PRINT_MAJOR_SECTION								= true;
+	PRINT_MINOR_SECTION								= false;	
+	PRINT_IO_INFO									= true;
+	DONT_PRINT_IO_INFO								= false;	
+	PRINT_PATH										= true;
+	DONT_PRINT_PATH									= false;	
+	PRINT_DIRECTORIES_CREATED						= true;
+	DONT_PRINT_DIRECTORIES_CREATED					= false;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	USE_TAB_CMD_STRING								= true;
+	USE_TAB_SPACES_STRING							= false;
+	IMPLICATION_ARROW								= true;
+	DASH_SHAFT_ARROW								= false;
+	REMOVE_TRAILING_ZEROS							= true;
+	DONT_REMOVE_TRAILING_ZEROS						= false;
+	SHORTEN_STRINGS									= true;
+	DONT_SHORTEN_STRINGS							= false;	
+	RETURN_PRECISIONS								= true;
+	RETURN_STRINGS									= false;
+	STRING_ADD_SPACES								= true;
+	STRING_DONT_ADD_SPACES							= false;
+	MULTIVALUE_ONLY_ON								= true;
+	MULTIVALUE_ONLY_OFF								= false;
+	REMOVE_PARAMETER_VALUE_ONLY						= true;
+	REMOVE_PARAMETER_PREFIX_AND_VALUE				= false;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	COLUMN_MAJOR									= true;
+	ROW_MAJOR										= false;
+	COLUMN_ORDER									= true;
+	ROW_ORDER										= false;
+	SERIES_SUMMATION								= true;
+	SERIES_PRODUCT									= false;
+	SERIES_OP_UP_TO_INDEX							= true;
+	SERIES_OP_FROM_INDEX							= false;
+	SWITCH_OPERANDS									= true;
+	DONT_SWITCH_OPERANDS							= false;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	RETURN_ERROR_CODE								= -1;
+	BOOL_CONVERSION									= -1;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	PRINTING_ON										= 0;
+	PRINTING_OFF									= 1;	
+	PRINTING_GROUPS									= 2;	
+	PRINTING_VARS									= 3;	
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	MULTIPLICATION									= 0;
+	DIVISION										= 1;
+	ADDITION										= 2;
+	SUBTRACTION										= 3;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ARRAY_HAS_NUMBERS								= 1;
+	ARRAY_HAS_STRINGS								= 2;
+	ARRAY_HAS_MIXED_TYPE							= 3;
+	IS_NOT_ARRAY									= -1;
+	IS_EMPTY_ARRAY									= 0;
+	IS_NUMBER_ARRAY									= 1;
+	IS_STRING_ARRAY									= 2;
+	IS_MIXED_ARRAY									= 3;
+	RETURN_MIN										= 0;
+	RETURN_MAX 										= 1;
+	RETURN_MINMAX									= 2;
+	PRINT_MATCH										= 0;
+	DONT_PRINT_MATCH								= 1;
+	THROW_MISMATCH_ERROR							= 2;
+	DONT_THROW_MISMATCH_ERROR						= 4;
+	ARRAY_VALUES_RANGE_TYPE_BRACKETED				= 0;										// Parameter value range string construction form: <label>[#-#]
+	ARRAY_VALUES_RANGE_TYPE_EQUALS					= 1;										// Parameter value range string construction form: <label> = [#-#]
+	ARRAY_VALUES_RANGE_TYPE_UNDERSCORED				= 2;										// Parameter value range string construction form: <label>_[#-#]
+	ARRAY_VALUES_RANGE_OMIT_SINGLE_VALUE			= 0;										// Parameter value range string construction for non-multivalue parameter: <label>[#]
+	ARRAY_VALUES_RANGE_BRACKET_SINGLE_VALUE			= 1;										// Parameter value range string construction for non-multivalue parameter: <label>=#
+	ARRAY_VALUES_RANGE_EQUALS_SINGLE_VALUE			= 2;										// Parameter value range string construction for non-multivalue parameter: omit <label> & value info string
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ARRAY_SLICING_VALUES_BELOW						= 0;
+	ARRAY_SLICING_VALUES_EQUAL						= 1;
+	ARRAY_SLICING_VALUES_ABOVE						= 2;
+	ARRAY_SLICING_VALUES_UNEQUAL					= 3;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	RETURN_SPLIT_STRINGS							= 0;
+	RETURN_SPLIT_PREFIXES							= 1;
+	RETURN_SPLIT_VALUES								= 2;
+	RETURN_SPLIT_SHORT_VALUES						= 3;
+	RETURN_EQUALS_STRINGS							= 4;
+	RETURN_PADDED_EQUALS_STRINGS					= 5;
+	RETURN_EQUALS_SHORT_STRINGS						= 6;
+	RETURN_PADDED_EQUALS_SHORT_STRINGS				= 7;
+	RETURN_NEW_STRINGS								= 3;
+	RETURN_NEW_VALUES								= 4;
+	RETURN_NEW_PREFIXES								= 5;
+	REMOVE_PARAMETER_STRING							= 0;
+	REMOVE_VALUE_STRINGS							= 1;
+	INSERT_PARAMETER_STRING_BEFORE					= 2;
+	INSERT_PARAMETER_STRING_AFTER					= 3;
+	REPLACE_PARAMETER_STRING						= 4;
+ 	REFORMAT_PARAMETER_VALUES_STRING				= 5;
+ 	REFORMAT_PARAMETER_VALUE_STRINGS				= 5;
+//	CONVERT_VALUES_2_RANGES							= 8;
+//	CONVERT_RANGES_2_VALUES							= 9;
 	//**************************************************************************************************************************************************************************************************//
 	//***************************************************************************** Set reconstruction data dir/file info ******************************************************************************//
 	//**************************************************************************************************************************************************************************************************//
@@ -222,68 +389,27 @@ macro "multiplotting"
 	std_dev_Booleans 								= newArray(generate_std_dev_MVPs, write_std_dev_MVPs, overwrite_std_dev_MVPs, write_std_dev_MVP_animated_GIFs, overwrite_std_dev_MVP_animated_GIFs, write_std_dev_MVP_AVIs, overwrite_std_dev_MVP_AVIs);
 	TV_Booleans 									= newArray(plot_TV_MVPs, write_TV_MVPs, overwrite_TV_MVPs, write_TV_MVP_animated_GIFs, overwrite_TV_MVP_animated_GIFs, write_TV_MVP_AVIs, overwrite_TV_MVP_AVIs);
 	TV_step_Booleans								= newArray(plot_TV_step_MVPs, write_TV_step_MVPs, overwrite_TV_step_MVPs, write_TV_step_MVP_animated_GIFs, overwrite_TV_step_MVP_animated_GIFs, write_TV_step_MVP_AVIs, overwrite_TV_step_MVP_AVIs);
-	//***********************************************************************************************************************************************************************************************//
-	//***************************************************************************** Set reconstruction data dir/file info *********************************************************************//
-	//***********************************************************************************************************************************************************************************************//
-	FOLDER_SEPARATOR								= File.separator;
-	IMAGEJ_PLUGINS_DIR								= getDirectory("plugins");
-	IMAGEJ_MACRO_DIR								= getDirectory("macros");
-	IMAGEJ_PROGRAM_DIR								= getDirectory("imagej") ;
-	IMAGEJ_LAUNCH_DIR								= getDirectory("startup");
-	IMAGEJ_PREVIOUS_MACRO							= getInfo("macro.filepath");
-	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
- 	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\Tools\\ImageJ";
- 	github_macro_directory_Baylor_ICTHUS			= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ\\";
- 	github_macro_directory_pCT_Collaboration		= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ\\";
- 	GITHUB_MACRO_DIR								= github_macro_directory_pCT_Collaboration;
- 	RECON_DATA_DIR_C								= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
-	RECON_DATA_DIR_D								= "D:\\pCT\\pCT_data\\reconstruction_data";
-	ROI_ANALYSIS_MACRO_FILENAME 					= "ROI_Analysis.ijm";
-	ROI_ANALYSIS_MACRO_PATH 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_ANALYSIS_MACRO_FILENAME;
-	MULTIPLOTTING_MACRO_FILENAME 					= "Multiplotting.ijm";
-	MULTIPLOTTING_MACRO_PATH 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + MULTIPLOTTING_MACRO_FILENAME;
-	TEST_RESULT_COMPARISON_MACRO_FILENAME 			= "Test_Result_Comparison.ijm";
-	TEST_RESULT_COMPARISON_MACRO_PATH 				= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + TEST_RESULT_COMPARISON_MACRO_FILENAME;
-	RECON_DATA_FOLDER								= FOLDER_SEPARATOR + "reconstruction_data";
-	SIMULATED_DATA_FOLDER							= FOLDER_SEPARATOR + "Simulated";
-	EXPERIMENTAL_DATA_FOLDER						= FOLDER_SEPARATOR + "Experimental";
-	OUTPUT_FOLDER									= FOLDER_SEPARATOR + "Output";
-	GEANT4_DATA_FOLDER_BASENAME						= FOLDER_SEPARATOR + "G_";
-	PHANTOM_BASENAME								= "CTP404_Sensitom";
-	//PHANTOM_BASENAME								= "CTP404_Sensitom_4M";
-	PHANTOM_NAME_FOLDER								= FOLDER_SEPARATOR + PHANTOM_BASENAME;
-	RUN_DATE										= "15-05-24";
-	//RUN_DATE 										= "14-12-11";
-	RUN_DATE_FOLDER									= GEANT4_DATA_FOLDER_BASENAME + RUN_DATE;
-	RUN_NUMBER_FOLDER								= FOLDER_SEPARATOR + "0001";
-	PREPROCESS_DATE_FOLDER							= FOLDER_SEPARATOR + "15-05-24";
-	//PREPROCESS_DATE								= FOLDER_SEPARATOR + "14-12-11";
-	
-	// Options controlling construction of reconstruction_data_dir/TEST_BATCH_DIR
-	SIMULATED_DATA									= "Simulated";
-	EXPERIMENTAL_DATA								= "Experimental";	
-	DRIVE_C											= "C";
-	DRIVE_D											= "D";
-	CURRENT_RECON_DATA_DRIVE						= DRIVE_D;
-	CURRENT_RECON_DATA_TYPE							= EXPERIMENTAL_DATA;
-	simulated_scan 									= false;
-	experimental_scan 								= !simulated_scan;
-	
-	if(CURRENT_RECON_DATA_DRIVE == DRIVE_C)					RECON_DATA_DIR 	= RECON_DATA_DIR_C;
-	else if(CURRENT_RECON_DATA_DRIVE == DRIVE_D)			RECON_DATA_DIR 	= RECON_DATA_DIR_D;
-	if(CURRENT_RECON_DATA_TYPE == SIMULATED_DATA) 			TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + SIMULATED_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;
-	//else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;		
-	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
-	
-	TEST_BATCH_DIR 															= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-
-	// Image/data filename and dir prefixes, file extensions, and results table column headings
-	TXT 											= ".txt";
-	CSV 											= ".csv";
-	PNG 											= ".png";
-	GIF 											= ".gif";
-	AVI 											= ".avi";
-	IJM 											= ".ijm";
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ Define numeric constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
+	LOOP_LOWER_BOUND								= 0;
+	LOOP_UPPER_BOUND								= 1;
+	TOLERANCE										= 0.0000001;								// Tolerance separating min/max values of array used in findMinima/findMaxima
+	DASHES_PER_CHAR 								= 1.3;										// Average width of a character in terms of the width of a dash character 
+	NUM_TAB_SPACES 									= 8;
+	FLOAT_ARRAY_2_FILE_PRECISION					= 6;										// Precision to use for writing TV reduction values to CSV files
+	MIN_SUM_ARROW_LENGTH							= 3;
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ Define array constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
+	EMPTY_ARRAY 									= newArray();								// Passed to set_plot_extrema when no additional lines are plotted
+	SEQUENTIAL_VALUES_ARRAY							= Array.getSequence(100);					// Long sequential values array which other sequence arrays can be sliced from	
+//	POWERS_OF_2										= newArray(0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512);
+	POWERS_OF_2										= array_powers_of_2(14);
+	MISSING_COLUMN_RESULTS 							= newArray("null", NaN);
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************* Define string constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
 	TRUE											= "true";
 	FALSE											= "false";
 	ADD_OPERATION									= "add";
@@ -300,24 +426,151 @@ macro "multiplotting"
 	ROI_MATERIAL_RSP_COLUMN_LABEL 					= "Predicted RSP";
 	RSP_ERROR_COLUMN_LABEL 							= "% Error";
 	MEAN_COLUMN_LABEL 								= "Mean";	
-		
-	// Input/Output dir/subdir names/prefixes 
-	RECONSTRUCTED_IMAGE_FOLDER_PREFIX 				= "x";
-	ITERATION_2_ANALYZE_FOLDER_PREFIX 				= "Iteration_";
-	ROI_ANALYSIS_SLICE_2_ANALYZE_FOLDER_PREFIX 		= "Slice_";
-	SLICE_2_ANALYZE_FOLDER_PREFIX 					= "Slice_";
-	SLICE_2_ANALYZE_FOLDER_SHORT_PREFIX 			= "s";
-	ROI_SELECTION_DIAMETER_FOLDER_PREFIX 			= "d";
-	COMPARED_DATA_FOLDER_SUFFIX						= "_compared";
-	AVERAGED_DATA_FOLDER_SUFFIX						= "_avg";
+	//----------------------------------------------------------------
+	FOLDER_SEPARATOR								= File.separator;
+	TXT 											= ".txt";
+	CSV 											= ".csv";
+	PNG 											= ".png";
+	GIF 											= ".gif";
+	AVI 											= ".avi";
+	IJM 											= ".ijm";
+	EMPTY_STRING 									= "";										// String constant: empty string
+	SPACE_STRING 									= " ";										// String constant: space character string
+	UNDERSCORE_STRING 								= "_";										// String constant: underscore character string
+	COMMA_STRING 									= ",";										// String constant: comma character string
+	DECIMAL_STRING 									= ".";										// String constant: decimal character string
+	PERIOD_STRING 									= ".";										// String constant: period character string
+	EQUALS_STRING 									= "=";										// String constant: equals character string
+	PLUS_SIGN_STRING 								= "+";										// String constant: equals character string
+	DASH_STRING 									= "-";										// String constant: dash character string
+	RIGHT_CARAT_STRING 								= ">";										// String constant: right carat character string
+	LEFT_BRACKET_STRING 							= "[";										// String constant: right carat character string
+	RIGHT_BRACKET_STRING 							= "]";										// String constant: right carat character string
+	NEWLINE_CMD_STRING								= "\n";
+	TAB_CMD_STRING									= "\t";
+	TAB_AS_SPACES_STRING							= string_tab_construction(USE_TAB_SPACES_STRING, NUM_TAB_SPACES);	
+	TAB_STRING										= string_tab_construction(exporting_log, NUM_TAB_SPACES);	
+	PADDED_EQUALS_STRING 							= SPACE_STRING + EQUALS_STRING + SPACE_STRING;
+	PADDED_PLUS_SIGN_STRING							= SPACE_STRING + PLUS_SIGN_STRING + SPACE_STRING;
+	TRUE_STRING										= "true";
+	FALSE_STRING									= "false";
+	add_operation									= "add";
+	multiply_operation								= "multiply";
+	BOOL_TRUE_STRING								= "True";
+	BOOL_FALSE_STRING								= "False";
+	x_direction										= "x";
+	y_direction										= "y";	 					
+	OVAL_SELECTION									= "oval";
+	CENTERED_SELECTION								= "centered";
+	circular_ROI									= "circle";
+	square_ROI										= "square";		
+	no_compression									= "None";
+	JPEG_compression								= "JPEG";
+	PNG_compression									= "PNG";
+	ROI_definition_numbers_decoding_op				= "parseFloat";	
+	ROI_definition_strings_decoding_op				= "none";	
+	ROI_material_RSP_column_label 					= "Predicted RSP";
+	RSP_error_column_label 							= "% Error";
+	mean_column_label 								= "Mean";	
+	COLUMN_SUM_ROW_LABEL 							= "Sum";	
+	TV_before_TVS_label 							= "TV: Before TVS";	
+	TV_after_TVS_label 								= "TV: After TVS";
+	TV_reduction_label 								= "TVS TV Reduction";
+	TV_table_titles									= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
+	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
+	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
+	ASK_KILL_DIALOG_TITLE							= "Continue or cancel execution?";
+	ASK_KILL_DIALOG_STATEMENT						= "Select 'OK' to continue or 'Cancel' to halt execution";
+	//***********************************************************************************************************************************************************************************************************//
+	//******************************************************* Execution status/progress logging variables and printing properties, settings, and control ********************************************************//
+	//***********************************************************************************************************************************************************************************************************//
+	//PRINT_STATUS									= PRINT_ON();
+	//PRINT_STATUS									= PRINT_OFF();
+	//PRINT_STATUS									= PRINT_GROUPVARS_ONLY();
+	PRINT_STATUS									= PRINT_SEPVARS_ONLY();
+	num_input_data_sets 							= 0;
+	num_loops 										= 0;
+	debug_print_counter								= 1;
+	//***********************************************************************************************************************************************************************************************//
+	//******************************************************** Construct commonly used strings for parameter values and files/folders ***************************************************************//
+	//***********************************************************************************************************************************************************************************************//			
+	//loop_bounds									= newArray(0, 1);
+	INPUT_FILE_LIST 								= newArray();   		
+	OUTPUT_FILE_LIST								= newArray();
+	CSV_OUTPUT_FILE_LIST							= newArray();
+	COPIED_FILE_LIST								= newArray();
+	COPIED_FILE_FROM_LIST							= newArray();
+	COPIED_FILE_TO_LIST								= newArray();
+	DIRECTORIES_CREATED								= newArray();
+	//***********************************************************************************************************************************************************************************************//
+	//***************************************************************************** Set reconstruction data dir/file info *********************************************************************//
+	//***********************************************************************************************************************************************************************************************//
+	//FOLDER_SEPARATOR								= File.separator;
+	IMAGEJ_PLUGINS_DIR								= getDirectory("plugins");
+	IMAGEJ_MACRO_DIR								= getDirectory("macros");
+	IMAGEJ_PROGRAM_DIR								= getDirectory("imagej") ;
+	IMAGEJ_LAUNCH_DIR								= getDirectory("startup");
+	IMAGEJ_PREVIOUS_MACRO							= getInfo("macro.filepath");
+	USER_HOME_DIRECTORY								= getDirectory("home");
+	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
+ 	//GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\Tools\\ImageJ";
+ 	//github_macro_directory_Baylor_ICTHUS			= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ\\";
+ 	//github_macro_directory_pCT_Collaboration		= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ\\";
+ 	GITHUB_MACRO_DIRECTORY_BAYLOR_ICTHUS			= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ\\";
+ 	GITHUB_MACRO_DIRECTORY_PCT_COLLABORATION		= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ\\";
+ 	GITHUB_MACRO_DIR								= GITHUB_MACRO_DIRECTORY_PCT_COLLABORATION;
+ 	RECON_DATA_DIR_C								= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
+	RECON_DATA_DIR_D								= "D:\\pCT\\pCT_data\\reconstruction_data";
 
+	ROI_ANALYSIS_MACRO_FILENAME 					= "ROI_Analysis.ijm";
+	ROI_ANALYSIS_MACRO_PATH 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_ANALYSIS_MACRO_FILENAME;
+	MULTIPLOTTING_MACRO_FILENAME 					= "Multiplotting.ijm";
+	MULTIPLOTTING_MACRO_PATH 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + MULTIPLOTTING_MACRO_FILENAME;
+	TEST_RESULT_COMPARISON_MACRO_FILENAME 			= "Test_Result_Comparison.ijm";
+	TEST_RESULT_COMPARISON_MACRO_PATH 				= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + TEST_RESULT_COMPARISON_MACRO_FILENAME;
+	RECON_DATA_FOLDER								= FOLDER_SEPARATOR + "reconstruction_data";
+	SIMULATED_DATA									= "Simulated";
+	SIMULATED_DATA_FOLDER							= FOLDER_SEPARATOR + SIMULATED_DATA;
+	EXPERIMENTAL_DATA								= "Experimental";	
+	EXPERIMENTAL_DATA_FOLDER						= FOLDER_SEPARATOR + EXPERIMENTAL_DATA;
+	OUTPUT_FOLDER									= FOLDER_SEPARATOR + "Output";
+	GEANT4_DATA_FOLDER_BASENAME						= FOLDER_SEPARATOR + "G_";
+	PHANTOM_BASENAME								= "CTP404_Sensitom";
+	//PHANTOM_BASENAME								= "CTP404_Sensitom_4M";
+	PHANTOM_NAME_FOLDER								= FOLDER_SEPARATOR + PHANTOM_BASENAME;
+	RUN_DATE										= "15-05-24";
+	//RUN_DATE 										= "14-12-11";
+	RUN_DATE_FOLDER									= GEANT4_DATA_FOLDER_BASENAME + RUN_DATE;
+	RUN_NUMBER_FOLDER								= FOLDER_SEPARATOR + "0001";
+	PREPROCESS_DATE_FOLDER							= FOLDER_SEPARATOR + "15-05-24";
+	//PREPROCESS_DATE								= FOLDER_SEPARATOR + "14-12-11";
+	RECON_DATA_PATH_SUFFIX							= "B_25600";
+	
+	// Options controlling construction of reconstruction_data_dir/TEST_BATCH_DIR
+	DRIVE_C											= "C";
+	DRIVE_D											= "D";
+	SIMULATED_SCAN 									= false;
+	EXPERIMENTAL_SCAN 								= !SIMULATED_SCAN;
+	simulated_scan 									= SIMULATED_SCAN;
+	experimental_scan 								= EXPERIMENTAL_SCAN;
+	CURRENT_RECON_DATA_DRIVE						= DRIVE_D;
+	CURRENT_RECON_DATA_TYPE							= EXPERIMENTAL_DATA;
+	
+	if(CURRENT_RECON_DATA_DRIVE == DRIVE_C)					RECON_DATA_DIR 	= RECON_DATA_DIR_C;
+	else if(CURRENT_RECON_DATA_DRIVE == DRIVE_D)			RECON_DATA_DIR 	= RECON_DATA_DIR_D;
+	if(CURRENT_RECON_DATA_TYPE == SIMULATED_DATA) 			TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + SIMULATED_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;
+	//else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + RUN_DATE_FOLDER + RUN_NUMBER_FOLDER + OUTPUT_FOLDER + PREPROCESS_DATE_FOLDER + FOLDER_SEPARATOR;		
+	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
+	
+	//D:\pCT\pCT_data\reconstruction_data\CTP404_Sensitom\Experimental\B_25600\B_25600_L_0.000100_TV_1_A_0.750000_L0_0_Nk_4
+	TEST_BATCH_DIR 															= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+		
 	// Input/output info and data basenames/filenames
+	MATERIAL_RSP_DEFS_FILENAME 						= "material_RSP_defs.txt";
+	MATERIAL_RSP_DEFS_PATH 							= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + MATERIAL_RSP_DEFS_FILENAME;
 	ROI_DEFINITIONS_FILENAME_SUFFIX					= "_ROIs" + TXT;	
 	ROI_DEFINITIONS_FILENAME						= PHANTOM_BASENAME + ROI_DEFINITIONS_FILENAME_SUFFIX;
 	ROI_DEFINITIONS_FILE_PATH						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_DEFINITIONS_FILENAME;
-	RECONSTRUCTED_IMAGE_FILE_BASENAMES 				= "x_";
-	RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES 		= "x";
-	INITIAL_ITERATE_FILENAME 						= RECONSTRUCTED_IMAGE_FILE_BASENAMES + "0" + TXT;	
 	AUTO_BREAK_FILENAME 							= "autobreak.txt";
 	AUTO_BREAK_PATH 								= GITHUB_MACRO_DIR + AUTO_BREAK_FILENAME;
 	PARAMETER_TEST_INFO_BASENAME					= "Test_Parameters_";
@@ -325,6 +578,7 @@ macro "multiplotting"
 	RECON_FOLDERS_FILENAME 							= "reconstruction_folders.txt";
 	AVERAGING_FOLDERS_FILENAME 						= "averaging_folders.txt";
 	MULTIPLOT_FOLDERS_FILENAME 						= "multiplot_folders.txt";
+	ANALYSIS_LOG_FNAME 								= "AnalysisLog.nfo";
 	COMPARED_FOLDERS_FILENAME 						= "compared_folders.txt";	
 	PROFILE_CSV_BASENAME 							= "Line_Profiles";
 	PROFILE_DATA_FILE_BASENAMES 					= "Line_Profile";
@@ -332,6 +586,19 @@ macro "multiplotting"
 	GRADIENT_CSV_BASENAME 							= "Gradients";
 	GRADIENT_DATA_FILE_BASENAMES 					= "Gradient";	
 	
+	// Input/Output dir/subdir names/prefixes 
+	RECONSTRUCTED_IMAGE_FOLDER_PREFIX 				= "x";
+	RECONSTRUCTED_IMAGE_FILE_BASENAMES 				= "x_";
+	RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES 		= "x";
+	INITIAL_ITERATE_FILENAME 						= RECONSTRUCTED_IMAGE_FILE_BASENAMES + "0" + TXT;	
+	COMPARED_DATA_FOLDER_SUFFIX						= "_compared";
+	AVERAGED_DATA_FOLDER_SUFFIX						= "_avg";
+	ITERATION_2_ANALYZE_FOLDER_PREFIX 				= "Iteration_";
+	ROI_ANALYSIS_SLICE_2_ANALYZE_FOLDER_PREFIX 		= "Slice_";
+	SLICE_2_ANALYZE_FOLDER_PREFIX 					= "Slice_";
+	SLICE_2_ANALYZE_FOLDER_SHORT_PREFIX 			= "s";
+	ROI_SELECTION_DIAMETER_FOLDER_PREFIX 			= "d";
+
 	RSP_DATA_FILE_BASENAMES							= "RSP";
 	RSP_ERROR_DATA_FILE_BASENAMES					= "RSP_Error";
 	STD_DEV_DATA_FILE_BASENAMES						= "Std_Dev";
@@ -367,7 +634,6 @@ macro "multiplotting"
 	ROI_ANALYSIS_RSP_ERROR_OFNAME					= RSP_ERROR_DATA_FILE_BASENAMES	+ CSV;
 	ROI_ANALYSIS_STD_DEV_OFNAME						= STD_DEV_DATA_FILE_BASENAMES  	+ CSV;
 	ROI_ANALYSIS_TV_OFNAME							= TV_DATA_FILE_BASENAMES		+ TXT;
-
 	//***********************************************************************************************************************************************************************************************************//
 	//********************************************************************************** Log Printing Properties and Settings ***********************************************************************************//
 	//***********************************************************************************************************************************************************************************************************//
@@ -375,7 +641,7 @@ macro "multiplotting"
 	String.resetBuffer; 
 	for(i = 0; i < num_tab_spaces; i++)
 		String.append(" ");
-	print_newline										= "\n";
+	//print_newline										= "\n";
 	tab_string											= "\t";
 	//tab_as_spaces_string								= "    ";
 	tab_as_spaces_string								= String.buffer;
@@ -769,10 +1035,7 @@ macro "multiplotting"
 			print_input_output_filenames				();
 	}
 
-	ROI_analysis_targets = Array.copy(all_folder_strings);
-	always_perform_analyses 				= !only_perform_missing_analyses;
-	ROI_analysis = ON;
-	exit_after_ROI_analyses = ON;
+	ROI_analysis_targets 						= Array.copy(all_folder_strings);
 	
 	if(analyze_specific_data)
 	{
@@ -790,17 +1053,17 @@ macro "multiplotting"
 		ROI_analysis_targets 					= Array.copy(recon_data_folders);
 		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
 	}
-	if(ROI_analysis)
+	if(perform_MVP_analyses)
 	{
 		//print_section_separator					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
 		for(i = 0; i < ROI_analysis_targets.length; i++)
 		//for(i = 0; i < 5; i++)
 		{
-			print_section_separator				("Performing ROI analysis on: " + _reconstructed_data_folder, PRINT_MINOR_SECTION);
-			_reconstructed_data_folder 			= ROI_analysis_targets[i];
-			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, _reconstructed_data_folder);
-			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, _reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
-			missing_ROI_analysis_data			= verify_ROI_analysis_output_files(TEST_BATCH_DIR, _reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
+			reconstructed_data_folder 			= ROI_analysis_targets[i];
+			print_section_separator				("Performing ROI analysis on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
+			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, reconstructed_data_folder);
+			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
+			missing_ROI_analysis_data			= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
 			run_ROI_analysis					= recon_data_exists && (!ROI_analysis_exists || always_perform_analyses);			
 			//if(run_ROI_analysis)
 			if(recon_data_exists)
@@ -831,8 +1094,146 @@ macro "multiplotting"
 //************************* User defined function definitions ***************************************************************************************************************************************//
 //***************************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function eprint(_print_statement) { print(_print_statement); exit(); }
+//***************************************************************************************************************************************************************************************************//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------- Basic user defined system task function definitions -----------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//***************************************************************************************************************************************************************************************************//
+//function Kill					()										{ exit					("-----> Manual exit initiated");																				}
+//function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();										}
+//***************************************************************************************************************************************************************************************************//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------- Basic user defined system task function definitions -----------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//***************************************************************************************************************************************************************************************************//
+//showMessageWithCancel	("Array mismatch at: \n" + _array[i] + NEWLINE_CMD_STRING + _array_2_match[i]);
+function Ap						(_array)								{ Array.print			(_array);																										}
+function App					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);								}
+function Appc					(_print_statement, _array)				{ cprint				("-----> " + _print_statement + PADDED_EQUALS_STRING); 		printca		(_array);								}
+function Aps					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
+function Apsc					(_print_statement, _array)				{ cprint				(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	cprint(TAB_STRING + _array[i]);	}
+function Appexit				(_print_statement, _array)				{ App					(_print_statement, _array); 								Ap			(_array);								}
+function autobreak				()										{ autobreak_bool	 	= file_2_array(IJ_macro_directory, autobreak_filename, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
+function ceil					(value)									{ return 				conditional_return( (value - round(value) > 0), round(value + 1), round(value) ); 								}
+function clearResults			()										{ run					("Clear Results");																								}
+function Apc					(_array)								{ Array.print			(_array);																										}
+function Appc					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);								}
+function Apsc					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
+function askKill				(_message)								{ showMessageWithCancel	(ASK_KILL_DIALOG_TITLE, _message + NEWLINE_CMD_STRING + ASK_KILL_DIALOG_STATEMENT); 							}
+function dKill					()										{ dump					(); 														exit		();										}
+function errKill				(_err_statement)						{ exit					("ERROR: " + _err_statement);								exit		();										}
+function lKill					(_loop_variable, _loop_kill_index)		{ if					(_loop_variable >= _loop_kill_index) 						exit		("-----> Reached loop kill index"); 	}
 function Kill					()										{ exit					("-----> Manual exit initiated");																				}
+function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();										}
+function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();										}
+function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();	}
+function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();										}
+function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);	}
+function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
+function ifNaN					(_value, _ifNaN_true, _ifNaN_false)		{ return				conditional_return(isNaN(_value), _ifNaN_true, _ifNaN_false);													}
+function ifSkipIndex			(_index, _skip_indices)					{ return isMember		(i, _skip_indices_array, RETURN_MATCH_TF);																		}
+function IJROI_analysis_config_CSV()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_CSV);										}
+function IJROI_analysis_config_image()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_image);									}
+function insert_right_arrow		(_length, _prefix, _suffix, _type)		{ return 				_prefix + right_arrow(_length, _type) + _suffix;																}
+function isArray				(_value)								{ _array				= array_from_data(_value); 	return conditional_return		( (_array.length != 1), true, false);				}
+function isArrayType			(_array, _is_array_type)				{ _array_type			= array_type(_array);		return	conditional_return		( (_array_type == _is_array_type), true, false);	}
+function isEmptyArray			(_array)								{ return 				isArrayType(_array, IS_EMPTY_ARRAY);																			}
+function isNumberArray			(_array)								{ return 				isArrayType(_array, IS_NUMBER_ARRAY);																			}
+function isString				(_value)								{ return 				!( isNumber(_value) || isArray(_value) );																		}
+function isStringArray			(_array)								{ return 				isArrayType(_array, IS_STRING_ARRAY);																			}
+function isMixedArray			(_array)								{ return 				isArrayType(_array, IS_MIXED_ARRAY);																			}
+function peq					(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
+function printc					(_print_statement)						{ if					(PRINT_STATUS == PRINT_SEPVARS())								print		(_print_statement);						}
+function printca				(_array)								{ if					(PRINT_STATUS == PRINT_SEPVARS())								Array.print	(_array);								}
+function printcas				(_print_statement, _variable)			{ printc				(_print_statement); 										printca		(_array);								}
+function printn					(_print_statement, _variable)			{ print					(_print_statement +  NEWLINE_CMD_STRING  + _variable );															}
+function print_loop_status		(_statement, _loop_num, _section_type)	{ print_section			(_statement + _loop_num, _section_type);																		}
+function print_newline			()										{ print					(NEWLINE_CMD_STRING);																							}
+function printcvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appc		(_print_statement, _variable_array);	}
+function printvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								App			(_print_statement, _variable_array);	}
+function printvareq				(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
+function pt						()										{ print					("=======> Debugging location marker print #" + debug_print_counter++);											}	
+function PRINT_ON				()										{ return 				PRINTING_ON;																									}
+function PRINT_OFF				()										{ return 				PRINTING_OFF;																									}
+function PRINT_GROUPVARS_ONLY	()										{ return 				PRINTING_GROUPS;																								}
+function PRINT_SEPVARS_ONLY		()										{ return 				PRINTING_VARS;																									}
+function PRINT_GROUPVARS		()										{ return 				(PRINT_STATUS == PRINTING_GROUPS	|| PRINT_STATUS == PRINTING_ON);													}
+function PRINT_SEPVARS			()										{ return 				(PRINT_STATUS == PRINTING_SEPVARS 	|| PRINT_STATUS == PRINTING_ON);													}
+function sequential_value_array	(_start_index, _end_index)				{ return 				Array.slice(SEQUENTIAL_VALUES_ARRAY, _start_index, _end_index);													}
+function string_2_array			(string) 								{ return 				split(string); 																									}
+function string_cut_last_N_chars(_string, _N)							{ return 				substring(_string, 0, lengthOf(_string) - _N);																	}
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+
+//	IJIO_precision_CSV										= 6;	
+//	IJIO_precision_image									= 5;
+//	IJROI_analysis_measurements 						= "area mean standard min max ";
+//	IJROI_analysis_redirect 							= "None";
+//	IJROI_analysis_CSV_precision 						= IJIO_precision_CSV;
+//	IJROI_analysis_image_precision 						= IJIO_precision_image;
+//	IJIO_ResultsTable_extension 						= ".csv";
+//	IJIO_ResultsTable_options 							= "copy_column copy_row save_column save_row";
+//	IJIO_jpeg_quality 									= 85;
+//	IJIO_transparent_index 								= -1;
+function IJIO_config(_IJIO_jpeg_quality, _IJIO_transparent_index, _IJIO_ResultsTable_extension, _IJIO_ResultsTable_options)
+{
+	_IJIO_jpeg_quality_string				= "jpeg="	+ _IJIO_jpeg_quality 			+ SPACE_STRING;
+	_IJIO_transparent_index_string			= "gif=" 	+ _IJIO_transparent_index 		+ SPACE_STRING;
+	_IJIO_ResultsTable_extension_string		= "file=" + _IJIO_ResultsTable_extension 	+ SPACE_STRING;
+	_IJIO_ResultsTable_options_string		= _IJIO_ResultsTable_options;
+	run										("Input/Output...", _IJIO_jpeg_quality_string + _IJIO_transparent_index_string + _IJIO_ResultsTable_extension_string + _IJIO_ResultsTable_options_string);
+	//run									("Input/Output...", "jpeg = " + _IJIO_jpeg_quality + " gif = " + _IJIO_transparent_index + " file = " + _IJIO_ResultsTable_extension + SPACE_STRING + _IJIO_ResultsTable_options);
+}
+function IJROI_analysis_config(_IJROI_analysis_measurements, _IJROI_analysis_redirect, _IJROI_analysis_precision)
+{
+	_IJROI_analysis_measurements_string		= _IJROI_analysis_measurements 					+ SPACE_STRING;
+	_IJROI_analysis_redirect_string			= "redirect=" + _IJROI_analysis_redirect 		+ SPACE_STRING;
+	_IJROI_analysis_precision_string		= "decimal=" 	+ _IJROI_analysis_precision;
+	run										("Set Measurements...", _IJROI_analysis_measurements_string + _IJROI_analysis_redirect_string + _IJROI_analysis_precision_string);
+	//run									("Set Measurements...", "area mean standard min max redirect = None decimal=" + IJIO_precision_CSV);
+}
+function IJIO_configOptions(_options_ON)
+{
+	if(_options_ON)
+		IJIO_config(IJIO_jpeg_quality, IJIO_transparent_index, IJIO_ResultsTable_extension, IJIO_ResultsTable_options);
+	else
+		IJIO_config(IJIO_jpeg_quality, IJIO_transparent_index, IJIO_ResultsTable_extension, EMPTY_STRING);
+}
+function runMeasure(_shape, _centered, _x, _y, _width, _height)
+{
+	_width_string		= "width=" 		+ _width 	+ SPACE_STRING;
+	_height_string		= "height=" 	+ _height	+ SPACE_STRING;
+	_x_string			= "x=" 			+ _x		+ SPACE_STRING;
+	_y_string			= "y=" 			+ _y		+ SPACE_STRING;
+	_shape_string		= _shape					+ SPACE_STRING;
+	_centered_string	= _centered;
+	run	("Specify...", 	_width_string + _height_string + _x_string + _y_string + _shape_string + _centered_string);
+	run	("Measure");
+}
+
+//run			("Close");	
+//run				("Close All");
+//run				("Record...");
+//run				("Text Image... ", 			"open="+ path );
+//run				("Duplicate...", 			"title=" + _window_title );
+//run				("Size...", 				"width=" + _x_colunns + " height=" + _x_rows + " constrain average interpolation=Bilinear");	
+//run			("Enhance Contrast", 		"saturated=0.35");
+//run				("Flip Horizontally");
+//run				("Flip Vertically");
+//run				("Image to Results");
+//run				("Images to Stack", 		"name=" + stack_title + " title=" + image_names_matching + " use keep");			
+//run				("Images to Stack", 		"name=" + _stack_title + " title=" + _image_names_matching);			
+//run				("Animation Options...", 	"speed=" + GIF_speed);
+//run				("Animated Gif ... ", 		"number=0 filename=" + path);
+//run				("AVI... ", 				"compression=" + compression + " frame=" + frame_rate + " save=" + path);			
+//run			("Profile Plot Options...", "width=1000 height=1000 font=20 minimum=0 maximum=0 draw draw_ticks interpolate sub-pixel");
+//run			("Canvas Size...", 			"width=900 height=500 position=Center");	
+//run			("Colors...", 				"foreground=white background=white selection=yellow");	
+//run				("Specify...", 				"width=" + ROI_selection_diameter + " height=" + ROI_selection_diameter + " x=" + selection_center_x + " y=" + selection_center_y + " oval centered");
+//run				("Measure");
+//run				("Convolve...", 			"text1=" + gradient_x_kernel + " normalize"); // Scharr-x		
+
 function add_prefix_2_strings(strings, common_prefix)
 {
 	num_strings 			= strings.length;
@@ -875,7 +1276,7 @@ function array_2_CSV(_rows, _columns, _array, _dir, _filename, _print_path, _ove
 }	
 function array_2_string(array, precisions)
 {
-	string 			= "";
+	string 			= EMPTY_STRING;
 	for(i = 0; i < lengthOf(array); i++)
 	{
 		if( precisions[i] == -1 )
@@ -884,6 +1285,17 @@ function array_2_string(array, precisions)
 			string 	+= d2s(array[i], precisions[i]) + " ";
 	}
 	return string;
+}
+function array_2_tables( array, row, column, I, J, K)
+{																
+	index 		= i + j * I + k * J * I;
+	//index 		= k + i * K + J * I * K;
+	for(i = 0; i < I; i++){	
+		for(j = 0; j <= J; j++){	
+			for(k = 0; k < K; k++){
+				index 		= i + j * I + k * J * I;
+				setResult	(j + column,  row, array[index]);	
+	}}}
 }
 function array_2_TXT(path, filename, data_array, print_path, overwrite_existing_TXT)	
 {
@@ -898,6 +1310,159 @@ function array_2_TXT(path, filename, data_array, print_path, overwrite_existing_
 		File.close			(filehandle);	
 		OUTPUT_FILE_LIST	= Array.concat(OUTPUT_FILE_LIST, TXT_filename);
 	}					
+}
+function array_apply_op(_array, _coefficient, _operation, _switch_operands)
+{
+	_result_array					= Array.copy(_array);
+	_coefficient_array				= array_match_length_fill(_array, _coefficient);
+	if								(_switch_operands)
+	{
+		_left_operand_array			= Array.copy(_coefficient_array);
+		_right_operand_array		= Array.copy(_array);
+	}
+	else
+	{
+		_left_operand_array			= Array.copy(_array);
+		_right_operand_array		= Array.copy(_coefficient_array);
+	}
+	for								(i = 0; i < _array.length; i++)
+	{
+			if						(_operation == ADDITION)
+				_result_array[i] 	= _left_operand_array[i] + _right_operand_array[i];
+			else if					(_operation == SUBTRACTION)
+				_result_array[i] 	= _left_operand_array[i] - _right_operand_array[i];
+			else if					(_operation == MULTIPLICATION)
+				_result_array[i] 	= _left_operand_array[i] * _right_operand_array[i];
+			else if					(_operation == DIVISION)
+				_result_array[i] 	= _left_operand_array[i] / _right_operand_array[i];
+			else
+				errKill				("Unknown '_operation' passed to 'array_apply_op' function");
+	}
+	return 							_result_array;
+}
+function array_fill(_array, _fill_term)
+{
+	for(i = 0; i < _array.length; i++)
+		_array[i] 	=  _fill_term;
+	return 			_array;
+}
+function array_from_data(_data)
+{
+	_new_array			= newArray();
+	_new_array			= Array.concat(_new_array, _data);
+	return 				_new_array;
+}
+function array_init(_array_length, _fill_value)
+{
+	_new_array		= array_new(_array_length);
+	_init_array 	= array_fill(_new_array, _fill_value);
+	return 			_init_array;
+}
+function array_match_length_fill(_array, _fill_term)
+{
+	_fill_term_array						= array_from_data(_fill_term);
+	_fill_term_array2						= array_from_data(_fill_term);
+	_fill_term_array_length					= _fill_term_array.length;
+	_fill_term_array_length_deficiency		= _array.length - _fill_term_array_length;
+	for										(i = 0; i < _fill_term_array_length_deficiency; i++)
+	{
+		if									(_fill_term == ARRAY_FILL_CYCLIC)
+			_fill_term_array_index			= i % _fill_term_array_length;
+		else if								(_fill_term == ARRAY_FILL_DUPLICATE)
+			_fill_term_array_index			= _fill_term_array_length - 1;
+		else
+			_fill_term_array_index			= 0;
+		_fill_term_array2					= Array.concat(_fill_term_array2, _fill_term_array[_fill_term_array_index]);
+		_fill_term_array					= Array.concat(_fill_term_array, _fill_term_array[_fill_term_array_length - 1]);
+	}
+	match(_fill_term_array2, _fill_term_array, EMPTY_STRING, THROW_MISMATCH_ERROR + DONT_PRINT_MATCH);
+	//match(_1st_item, _2nd_item, _statement, _bool_control);
+	return 									_fill_term_array;
+}
+function array_new(_array_length)
+{
+	_new_array			= newArray(_array_length);
+	for(i = 0; i < _new_array.length; i++)
+		_new_array[i] 	=  EMPTY_STRING;
+	return 				_new_array;
+}
+function array_powers_of_2(_power)
+{
+	_powers_of_2			= newArray(_power);
+	for						(i = 0; i < _power; i++)
+		_powers_of_2[i]		= pow(2,i);
+	return					_powers_of_2;
+}
+function array_remove_indices(_array, _indices_2_remove)
+{
+	_reduced_array				= newArray();
+	_indices_2_remove_array		= array_from_data(_indices_2_remove);
+	for							(i = 0; i < _array.length; i++)
+		if						(!isMember(i, _indices_2_remove_array, RETURN_MATCH_TF))
+			_reduced_array		= Array.concat(_reduced_array, _array[i]);
+	return 						_reduced_array;
+}
+function array_slicing_ops(_array, _reference_array, _slicing_op_values, _slicing_op)
+{
+	_sliced_array				= newArray();
+	_slicing_op_values_array	= array_from_data(_slicing_op_values);
+	_slicing					= array_init(_slicing_op_values_array.length, 0);
+	if							(_reference_array.length == 0)
+		_reference_array		= Array.copy(_array);
+	_reference_values			= _reference_array.length;
+	for							(i = 0; i < _reference_values; i++)
+	{
+		_value					= _array[i];
+		_ref_value				= _reference_array[i];
+		for						(j = 0; j < _slicing_op_values_array.length;j++)
+		{
+			_slicing_op_value	= _slicing_op_values_array[j];
+			if						
+			( 
+								( (_slicing_op 	== 	ARRAY_SLICING_VALUES_BELOW		&& 	_ref_value 	>= 	_slicing_op_value) ) ||
+								( (_slicing_op 	== 	ARRAY_SLICING_VALUES_EQUAL		&& 	_ref_value 	!= 	_slicing_op_value) ) ||
+								( (_slicing_op 	== 	ARRAY_SLICING_VALUES_ABOVE		&& 	_ref_value 	<= 	_slicing_op_value) ) ||
+								( (_slicing_op 	== 	ARRAY_SLICING_VALUES_UNEQUAL	&& 	_ref_value 	== 	_slicing_op_value) ) 
+			)
+				_slicing[j]		= 1;
+			else
+				_slicing[j]		= 0;
+		}
+		if						( (_slicing_op == ARRAY_SLICING_VALUES_UNEQUAL) && isMember(1, _slicing, RETURN_MATCH_TF))
+			_sliced_array 		= Array.concat(_sliced_array, _value);
+		else if					(!isMember(0, _slicing, RETURN_MATCH_TF))
+			_sliced_array 		= Array.concat(_sliced_array, _value);
+		Array.fill				(_slicing, 0);
+	}
+	return						_sliced_array;
+}
+function array_sort_by(_array, _sorting_indices)
+{
+	_sorted_array			= newArray(_array.length);	
+	for						(i = 0; i < _array.length; i++)
+		_sorted_array[i]	= _array[_sorting_indices[i]];
+	return 					_sorted_array;
+}
+function array_type(_array)
+{
+	_number_count	= 0;
+	is_array		= isArray(_array);
+	if				(!is_array)
+		return 		IS_NOT_ARRAY;
+	_array_elements	= _array.length;
+	if				(_array_elements == 0)
+		return 		IS_EMPTY_ARRAY;
+	for				(i = 0; i < _array_elements; i++)
+		if			(isNumber(_array[i]))
+			_number_count++;
+	if				(_number_count == 0)
+		return		ARRAY_HAS_STRINGS;
+	else if			(_number_count < _array_elements)
+		return		ARRAY_HAS_STRINGS + ARRAY_HAS_NUMBERS;
+	else if			(_number_count == _array_elements)
+		return		ARRAY_HAS_NUMBERS;
+	else
+		return		RETURN_ERROR_CODE;
 }
 function autobreak()
 {
@@ -3001,13 +3566,135 @@ function stack_2_AVI(stack_title, dir, filename, compression, frame_rate, AVI_2_
 		save_AVI	(dir, filename, compression, frame_rate, overwrite_AVI, print_path, close_stack_after_saving);
 }
 function string_2_array(string) { return split(string); }
-function string_array_concatenation(_string_array, _front_concatenation_string, _back_concatenation_string)
+function getStringSequence(_sequence_start_num, _sequence_end_num, _string_precision)
 {
-	_num_array_strings = _string_array.length;
-	_concatenated_string_array = newArray(_num_array_strings);
-	for(i = 0; i < _num_array_strings; i++)
-		_concatenated_string_array[i] = _front_concatenation_string + _string_array[i] + _back_concatenation_string;
-	return _concatenated_string_array;
+	_sequential_values			= Array.getSequence(_sequence_end_num + 1);					
+	_sequential_values_subset	= Array.slice(_sequential_values, _sequence_start_num, _sequence_end_num + 1);	
+	_sequential_strings			= newArray();
+	for( i = 0; i < _sequential_values_subset.length; i++)
+		_sequential_strings = Array.concat(_sequential_strings, d2s( _sequential_values_subset[i], _string_precision));
+	return _sequential_strings;
+}
+function minimize_string_precision(_value_strings, _max_precisions, _return_precision, _force_array)
+{
+	_value_strings_array							= array_from_data(_value_strings);
+	_max_precisions_array							= array_match_length_fill(_value_strings_array, _max_precisions);
+	_return_value_array								= array_new(_value_strings_array.length);
+	for												(_string = 0; _string < _return_value_array.length; _string++)
+	{
+		_value_string								= _value_strings_array[_string];	
+		_max_precision								= _max_precisions_array[_string];	
+		_value 										= parseFloat(_value_string);
+		if											(_max_precision < 0)
+		{
+			i 										= 0;
+			_continue								= true;
+			while									(_continue)
+			{
+				_new_value_string 					= d2s(_value, i);
+				_new_value 							= parseFloat(_new_value_string);
+				if									(_value - _new_value == 0)
+					_continue 						= false;
+				i++;
+			}
+			_return_value						= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+			_return_value_array[_string] 		= _return_value;
+			//_return_value_array[_string] 		= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+		}
+		else
+		{
+			_return_value							= if_else(_return_precision, _max_precision, _value_string);
+			for										(i = 0; i < _max_precision; i++)
+			{
+				_new_value_string 					= d2s(_value, i);
+				_new_value 							= parseFloat(_new_value_string);
+				_return_value						= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+				if									(_value - _new_value == 0)
+					i 								= _max_precision;
+			}
+			if										( i < _max_precision)
+				_return_value						= if_else(_return_precision, _max_precision, _value_string);
+			_return_value_array[_string] 			= _return_value;	
+			//if									( i >= _max_precision)
+				//_return_value_array[_string] 		= _return_value;	
+			//else
+				//_return_value_array[_string] 		= if_else(_return_precision, _max_precision, _value_string);
+		}
+	}
+	if(	_force_array || _return_value_array.length > 1)	
+		return _return_value_array;							
+	else
+		return _return_value_array[0];
+}
+function precisionOf(_string)
+{
+	_decimal_position_index			= indexOf(_string, DECIMAL_STRING);
+	if								(_decimal_position_index != -1)
+	{
+		_decimal_value_string		= substring	(_string, _decimal_position_index + 1 );
+		_decimal_value_precision	= lengthOf(_decimal_value_string);
+		return						_decimal_value_precision;
+	}
+	else
+		return						0;
+}
+function right_arrow(_arrow_length, _implication_arrow)
+{
+	right_arrow_string			= EMPTY_STRING;
+	if							(_implication_arrow == IMPLICATION_ARROW)
+		right_arrow_base_char	= EQUALS_STRING;
+	else
+		right_arrow_base_char	= DASH_STRING;
+	for							(i = 0; i < _arrow_length; i++)
+		right_arrow_string		+= right_arrow_base_char;
+	return 						right_arrow_string + RIGHT_CARAT_STRING;
+}
+//function string_array_concatenation(_string_array, _front_concatenation_string, _back_concatenation_string)
+//{
+//	_num_array_strings = _string_array.length;
+//	_concatenated_string_array = newArray(_num_array_strings);
+//	for(i = 0; i < _num_array_strings; i++)
+//		_concatenated_string_array[i] = _front_concatenation_string + _string_array[i] + _back_concatenation_string;
+//  	return _concatenated_string_array;
+//}
+function string_array_concatenation(_string_array, _string_array_precisions, _strings_2_prepend, _strings_2_append)//, _minimize_string_precision)
+{
+		
+	_string_precisions_array		= array_match_length_fill(_string_array, _string_array_precisions);
+	_strings_2_prepend_array		= array_match_length_fill(_string_array, _strings_2_prepend);
+	_strings_2_append_array			= array_match_length_fill(_string_array, _strings_2_append);
+	_new_string_array				= Array.copy(_string_array);
+	for								(i = 0; i < _string_array.length; i++)
+		_new_string_array[i]		= _strings_2_prepend_array[i] + d2s(_string_array[i], _string_precisions_array[i]) + _strings_2_append_array[i];
+	return 							_new_string_array;
+}
+function string_max_length(_string_array)
+{
+	_max_string_array_length			= 0;
+	for									(i = 0; i < _string_array.length; i++)
+		if								(lengthOf(_string_array[i]) > _max_string_array_length)
+			_max_string_array_length	= lengthOf(_string_array[i]);
+	return 								_max_string_array_length;
+}
+function string_separator_construction(_prefix, _separator_substring, _separator_duplications, _suffix)
+{
+	String.resetBuffer; 
+	for						(i = 0; i < _separator_duplications; i++)
+		String.append		(_separator_substring);
+	_separator_string		= _prefix + String.buffer + _suffix;
+	return					_separator_string;
+}
+function string_tab_construction(_use_tab_command, _num_tab_spaces)
+{
+	String.resetBuffer; 
+	for							(i = 0; i < _num_tab_spaces; i++)
+		String.append			(SPACE_STRING);
+	TAB_AS_SPACES_STRING		= String.buffer;
+	if							(_use_tab_command)
+		return					TAB_CMD_STRING;
+	else
+		return					TAB_AS_SPACES_STRING;
+	
 }
 function strip_surrounding_spaces(string)
 {
