@@ -2121,7 +2121,7 @@ function set_rcode()
         setting_tardis_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${account}/${repo}"
         setting_global_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${account}/${repo}"   
     fi
-    if [ $HOSTNAME == "kodiak" -o $HOSTNAME == "n130" ]
+    if [ $HOSTNAME == "kodiak" -o $HOSTNAME == "n130"  -o $HOSTNAME == "login001" ]
     then
         cd ${setting_global_rcode_path}
     else
