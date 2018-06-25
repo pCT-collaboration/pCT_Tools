@@ -6,7 +6,6 @@
 username=$(id -un)
 admin_users=( "schultze" "sittonb" "karbasip" "schubertk" "cair" )
 array_member_test $username "${admin_users[@]}"
-
 if ! array_member_test $username "${admin_users[@]}" 
 then 
     echo "ERROR: You must be an approved pCT administrator to access these tools"
@@ -138,6 +137,187 @@ function create_all_tardis_user_dirs()
     create_tardis_user_dirs -p ${tardis_user_data_path} -P 755
     create_tardis_user_dirs -p ${tardis_temp_input_data_path} -P 755
     create_tardis_user_dirs -p ${tardis_temp_output_data_path} -P 755
+}
+function mkpdir()
+{
+    #OPTIND=1 
+    local OPTIND
+    mkdir_opts=''
+    mkdir_opts_string=''
+    chmod_opts=''
+    chmod_opts_string=''
+    verbose_string='true'
+    parent_dirs='false'
+    recurse_perms='false'
+    dir_arg=$(expr $# - 1)
+    perms_arg=$(expr $#)
+    dir=${!dir_arg}
+    chmod_dir=${dir}                                   
+    perms=${!perms_arg}
+    mkdir_statement="Creating directory /${dir}"
+    echo $parent_dir
+    
+    usage="Usage: mkpdir [OPTION(S)] DIRECTORY NNN
+    Create DIRECTORY and set its permissions to permission code NNN
+
+    where OPTION(S) are:
+        -h  show this help text
+        -p  make parent directories as needed (no error if existing)
+        -r  change permissions of files and directories recursively
+        -R  change permissions of files and directories recursively
+        -s silence status/progress printing, i.e. turn off 'verbose' command options"
+        
+    while getopts 'prRsh' opt; do
+        case $opt in
+            p) parent_dirs='true';;
+            r) recurse_perms='true';;
+            R) recurse_perms='true';;
+            s) verbose_string='false';;
+            h) echo "$usage";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    if ( $parent_dirs )
+    then 
+        mkdir_opts="${mkdir_opts}p"
+        mkdir_statement="${mkdir_statement} and any missing parents"
+    fi
+    if ( $recurse_perms )
+    then 
+        chmod_opts="${chmod_opts}R"; 
+        chmod_statement="Recursively changing permissions of /$dir and all files/directories within"
+        chmod_dir=${dir%%/*}                                   # Extract parent directory
+    else
+        chmod_statement="Changing permissions of /$dir "
+    fi
+    if ( $verbose_string ); then mkdir_opts="${mkdir_opts}v"; chmod_opts="${chmod_opts}v"; fi
+    if [[ ${#mkdir_opts} -gt 0 ]]; then mkdir_opts_string="-${mkdir_opts}"; fi
+    if [[ ${#chmod_opts} -gt 0 ]]; then chmod_opts_string="-${chmod_opts}"; fi
+    if ( $verbose_string ); then echo "$mkdir_statement"; echo "$chmod_statement"; fi
+    #echo $mkdir_opts_string
+    #echo $chmod_opts_string
+    mkdir $mkdir_opts_string $dir
+    chmod $chmod_opts_string $perms $chmod_dir
+}
+function mkpdirb()
+{
+    local OPTIND
+    mkdir_opts=''
+    mkdir_opts_string=''
+    chmod_opts=''
+    chmod_opts_string=''
+    verbose_string='true'
+    parent_dirs='false'
+    recurse_perms='false'
+    dir_arg=$(expr $# - 1)
+    perms_arg=$(expr $#)
+    dir="${!dir_arg}"
+    chmod_dir=${dir}                                   
+    full_dir=$dir
+    perms="${!perms_arg}"
+    mkdir_statement="Creating directory /${dir}"
+    chmod_statement="Changing permissions of /$dir "
+
+    usage="Usage: mkpdir [OPTION(S)] DIRECTORY NNN
+    Create DIRECTORY and set its permissions to permission code NNN
+
+    where OPTION(S) are:
+        -h  show this help text
+        -p  make parent directories as needed (no error if existing)
+        -r  change permissions of files and directories recursively
+        -R  change permissions of files and directories recursively
+        -s silence status/progress printing, i.e. turn off 'verbose' command options"
+    
+    for arg in "$@"; do
+        shift
+        case "$arg" in
+            "--parents")    set -- "$@" "-p" ;;
+            "--recursive")  set -- "$@" "-r" ;;
+            "--silent")     set -- "$@" "-s" ;;
+            "--help")       set -- "$@" "-h" ;;
+            *)              set -- "$@" "$arg"
+        esac
+    done
+    
+    while getopts 'prRsh' opt; do
+        case $opt in
+            p) parent_dirs='true'; mkdir_opts="${mkdir_opts}p";;
+            r) recurse_perms='true'; chmod_opts="${chmod_opts}"; chmod_dir=${dir%%/*};;
+            R) recurse_perms='true'; chmod_opts="${chmod_opts}"; chmod_dir=${dir%%/*};;
+            s) verbose_string='false';;
+            h) echo "$usage";;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    if ( $parent_dirs ); then mkdir_statement="${mkdir_statement} and any missing parents"; fi
+    if ( $recurse_perms ); then chmod_statement="Recursively changing permissions of /$dir and all files/directories within"; fi
+    if ( $verbose_string ); then mkdir_opts="${mkdir_opts}v"; chmod_opts="${chmod_opts}v"; fi
+    if [[ ${#mkdir_opts} -gt 0 ]]; then mkdir_opts_string="-${mkdir_opts}"; fi
+    if [[ ${#chmod_opts} -gt 0 ]]; then chmod_opts_string="-${chmod_opts}"; fi
+    
+    if ( $verbose_string ); then echo "$mkdir_statement"; echo "$chmod_statement"; fi
+    mkdir $mkdir_opts_string $dir
+    
+    if ( $recurse_perms )
+    then 
+        #shift "$((OPTIND+0))" #shift 2
+        chmod_dir=""                                                # Reset chmod target directory to empty string
+        #ifs_split '/' "$full_dir"                                     # Split $full_dir into separate folders
+        #OIFS=$IFS                       # Save default 'IFS' value before changing so it can restored 
+        #IFS='/'                         # Delimiter for splitting path into its directory names
+        #set -- $full_dir                     # Split file names into '_' separated tokens $1, $2, ...
+        #IFS=$OIFS                       # Restore 'IFS' to its default value
+        folders=(${full_dir//// })
+        for folder in ${folders[@]}
+        do
+            chmod_dir="${chmod_dir}${folder}/"                        # Append token to run # directory name
+            echo "folder=${folder}"      # Notify user of current chmod action
+            echo "chmod_dir=${chmod_dir}"      # Notify user of current chmod action
+            chmod $chmod_opts_string $perms $chmod_dir              # Apply permissions to j-th folder along ${full_dir} path
+        done
+        #j=1                                                         # Set integer # for next token # to access
+        #var="$j"                                                    # Convert integer j into string to access tokens by argument #
+        #while [[ ${!var} != "" ]]; do                               # Parse while next token is not empty
+        #    echo "folder=${!var}"      # Notify user of current chmod action
+        #    chmod_dir="${chmod_dir}${!var}/"                        # Append token to run # directory name
+        #    echo "Setting permissions of $chmod_dir to $perms"      # Notify user of current chmod action
+        #    #chmod $chmod_opts_string $perms $chmod_dir              # Apply permissions to j-th folder along ${full_dir} path
+        #    j=$(($j+1))                                             # Advance token #
+        #    var="$j"                                                # Token # integer -> string so !var accesses next token
+        #done
+    else
+        chmod $chmod_opts_string $perms $chmod_dir  
+    fi
+}
+function ifs_split()
+{
+    local OPTIND
+    OIFS=$IFS                       # Save default 'IFS' value before changing so it can restored 
+    IFS=$1                         # Delimiter for splitting path into its directory names   
+    set -- "$2"
+    IFS=$OIFS                       # Restore 'IFS' to its default value
+}
+function init_tardis_node()
+{
+    # /local/pCT_code/                                      #tardis_code_path
+    # /local/pCT_code/git/                                  #tardis_git_clones_dir
+    # /local/pCT_code/git/BaylorICTHUS/                     #tardis_Baylor_dir
+    # /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction   #tardis_Baylor_rcode_git_repo_path
+    
+    # /local/pCT_data/                                      #tardis_data_path
+    # /local/pCT_data/user_data/                            #tardis_user_data_path
+    # /local/pCT_data/reconstruction_data/                  #tardis_recon_data_path
+    # /local/pCT_data/organized_data/                       #tardis_org_data_path
+    
+    mkpdir ${tardis_code_path} 755
+    mkpdir ${tardis_git_clones_dir} 755
+    mkpdir ${tardis_Baylor_dir} 755
+    mkpdir ${tardis_Baylor_rcode_git_repo_path} 755
+    
+    mkpdir ${tardis_data_path} 755
+    mkpdir ${tardis_user_data_path} 755
+    mkpdir ${tardis_recon_data_path} 755
+    mkpdir ${tardis_org_data_path} 755
 }
 function tardis_default_cloning()
 {

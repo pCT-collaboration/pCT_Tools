@@ -6,12 +6,14 @@ master="master"
 current_user=$(id -un)
 user_folder="/${current_user}"
 recon_group="ionrecon"
-other_pct_users=("penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout")
+other_pct_users=("penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout" "rowlands")
+all_pct_users=("schultze" "karbasip" "schulter" "penfolds" "plautzt" "piersimonip" "bashkirovv" "dedesg" "zatserkl" "johnsonr" "karonisn" "dout" "rowlands")
 declare -a PCT_USERS
 current_rcode="Baylor" # Options: Baylor, Blake, old
 dindir="/input_Sensitom_CDH6/"
 doutdir="/output_Sensitom_CDH6/B_25600/"
 current_phantom="CTP404_Sensitom"
+path_dirs=$(echo "${PATH//:/$'\n'}")
 ###################################################################################################
 #################### Folder name variables for Kodiak/Tardis nodes code/data ######################
 ###################################################################################################
@@ -358,6 +360,8 @@ alias rsyncn="rsync -aEHzvh --progress --size-only $1 $2"
 #alias rsynco="rsync -aEHzvhI --progress --compress $1 $2"
 #alias rsyncn="rsync -aEHzvhI --progress --compress --size-only $1 $2"
 alias qstatu='qstat -t -u schultze'
+alias rmf='rm -rf $1'
+alias deldir='rmdir -v --ignore-fail-on-non-empty $1'
 alias qstatu='qstat -t -u schultze'
 alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
 #-------------------------------------------------------------------------------------------------------------------------#

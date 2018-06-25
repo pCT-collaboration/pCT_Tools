@@ -82,8 +82,8 @@ macro "ROI_Analysis [F2]"
 	EXTERNAL_MACRO_CALLER								= false;
 	IJIO_CONFIG_OPTIONS_ON								= true;
 	IJIO_CONFIG_OPTIONS_OFF								= false;
-	ALL_BOOL 											= false;
 	NONE_BOOL 											= true;
+	ALL_BOOL 											= false;
 	AND_LOGIC 											= true;
 	OR_LOGIC 											= false;
 	COLUMN_ORDER										= true;
@@ -191,35 +191,38 @@ macro "ROI_Analysis [F2]"
 	//********************************************************************************** Log Printing Properties and Settings ***********************************************************************************//
 	//***********************************************************************************************************************************************************************************************************//
 	PRINTING_STATUS										= PRINTING_ON;
-	print("TAB_CMD_STRING \n" + DASH_STRING + TAB_CMD_STRING + DASH_STRING);
-	print("TAB_AS_SPACES_STRING \n" + DASH_STRING + TAB_AS_SPACES_STRING + DASH_STRING);
-	print("TAB_STRING \n" + DASH_STRING + TAB_STRING + DASH_STRING);
+	//print("TAB_CMD_STRING \n" + DASH_STRING + TAB_CMD_STRING + DASH_STRING);
+	//print("TAB_AS_SPACES_STRING \n" + DASH_STRING + TAB_AS_SPACES_STRING + DASH_STRING);
+	//print("TAB_STRING \n" + DASH_STRING + TAB_STRING + DASH_STRING);
 	//exit();
 	//***************************************************************************************************************************************************************************************************//
 	//************************* Boolean control *******************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
+	PLOT_BOOLS_INDEX									= 0;
+	DATA_BOOLS_INDEX									= 1;
+	ANIMATION_BOOLS_INDEX								= 2;
 	write_all											= true;
 	write_plots_only									= false;
 	write_data_only										= true;
 	write_animations_only								= false;
 	write_only_bools 									= newArray(write_plots_only, write_data_only, write_animations_only);
-	write_all_plots										= only_bool_array_control(0, write_only_bools, true, ALL_BOOL);
-	write_all_data										= only_bool_array_control(1, write_only_bools, true, ALL_BOOL);
-	write_all_animations								= only_bool_array_control(2, write_only_bools, true, ALL_BOOL);
-	write_no_plots										= only_bool_array_control(0, write_only_bools, false, NONE_BOOL);
-	write_no_data										= only_bool_array_control(1, write_only_bools, false, NONE_BOOL);
-	write_no_animations									= only_bool_array_control(2, write_only_bools, false, NONE_BOOL);	
+	write_all_plots										= only_bool_array_control(PLOT_BOOLS_INDEX, write_only_bools, true, ALL_BOOL);
+	write_all_data										= only_bool_array_control(DATA_BOOLS_INDEX, write_only_bools, true, ALL_BOOL);
+	write_all_animations								= only_bool_array_control(ANIMATION_BOOLS_INDEX, write_only_bools, true, ALL_BOOL);
+	write_no_plots										= only_bool_array_control(PLOT_BOOLS_INDEX, write_only_bools, false, NONE_BOOL);
+	write_no_data										= only_bool_array_control(DATA_BOOLS_INDEX, write_only_bools, false, NONE_BOOL);
+	write_no_animations									= only_bool_array_control(ANIMATION_BOOLS_INDEX, write_only_bools, false, NONE_BOOL);	
 	overwrite_all										= true;
 	overwrite_plots_only								= false;
 	overwrite_data_only									= true;
 	overwrite_animations_only							= false;
 	overwrite_only_bools 								= newArray(overwrite_plots_only, overwrite_data_only, overwrite_animations_only);
-	overwrite_all_plots									= only_bool_array_control(0, overwrite_only_bools, true, ALL_BOOL);
-	overwrite_all_data									= only_bool_array_control(1, overwrite_only_bools, true, ALL_BOOL);
-	overwrite_all_animations							= only_bool_array_control(2, overwrite_only_bools, true, ALL_BOOL);
-	overwrite_no_plots									= only_bool_array_control(0, overwrite_only_bools, false, NONE_BOOL);
-	overwrite_no_data									= only_bool_array_control(1, overwrite_only_bools, false, NONE_BOOL);
-	overwrite_no_animations								= only_bool_array_control(2, overwrite_only_bools, false, NONE_BOOL);	
+	overwrite_all_plots									= only_bool_array_control(PLOT_BOOLS_INDEX, overwrite_only_bools, true, ALL_BOOL);
+	overwrite_all_data									= only_bool_array_control(DATA_BOOLS_INDEX, overwrite_only_bools, true, ALL_BOOL);
+	overwrite_all_animations							= only_bool_array_control(ANIMATION_BOOLS_INDEX, overwrite_only_bools, true, ALL_BOOL);
+	overwrite_no_plots									= only_bool_array_control(PLOT_BOOLS_INDEX, overwrite_only_bools, false, NONE_BOOL);
+	overwrite_no_data									= only_bool_array_control(DATA_BOOLS_INDEX, overwrite_only_bools, false, NONE_BOOL);
+	overwrite_no_animations								= only_bool_array_control(ANIMATION_BOOLS_INDEX, overwrite_only_bools, false, NONE_BOOL);	
 	create_plots										= false;
 	//***************************************************************************************************************************************************************************************************//
 	//********************* Set task action performance: (plots, data writes, animations) = (T/F, T/F, T/F) *********************************************************************************************//
@@ -1383,6 +1386,8 @@ function bool_array_control(_bool_in, _bool_index, _bool_all, _bool_none, _bool_
 //function bool_control(_bool_in, _bool_all, _bool_none)
 function bool_control(_bool_in, _bool_all, _bool_none, _bool_explicit)
 {
+	// Description: Uses the "all"/"none" bools for a particular output operation to determine if the default bool '_bool_in' for this output operation of a particular task should be overwritten,
+	// unless '_bool_explicit' is 'true', in which case the default bool '_bool_in' is retained regardless of the "all"/"none"/"only" bool values    
 	if(_bool_explicit)
 		return _bool_in;
 	_bool_out = _bool_in;
@@ -1394,6 +1399,8 @@ function bool_control(_bool_in, _bool_all, _bool_none, _bool_explicit)
 }
 function bool_dependence(_bool_in, _dependence_expression, _dependence)
 {
+	// Description: Set a bool whose default value '_bool_in' has a logical AND/OR dependence (specified by '_dependence') on the result of the expression '_dependence_expression'
+	// Logic: Evaluate '_dependence_expression' and depending on the logical operation '_dependence', perform a logical AND/OR with this and the default bool value '_bool_in'as operands
 	_dependence_expression_eval	= _dependence_expression;
 	if(_dependence)
 		return (_bool_in && _dependence_expression_eval);
@@ -2541,6 +2548,11 @@ function only_bool_array_assign(_only_bools, _all_bools, _none_bools)
 }
 function only_bool_array_control(_bool_index, _only_bools, _bool_default, _all_or_none)
 {
+	// Description: Each output operation has 3 bools, specifying all tasks should/shouldn't/only be permitted to perform this operation. A 'true' for "only" implies "all=true"/"none=false" for the
+	// corresponding output operation and "all=false"/"none=true" for all other output operations. This function uses the "only" bools array '_only_bools' to determine if "only" has been set for an 
+	// output operation and if so, to set the "all"/"none" bools (specified by '_all_or_none') of the corresponding operation to 'true'/'false' and those of the other output operations to 'false'/'true'.
+	// Logic: If 'only bool' has a 'true' value, if its array index = '_bool_index' return '_bool_default', else return '_all_or_none'.  If '_only_bool' has all 'false', return '_bool_default'
+	// Example: only_bool_array_control((_bool_index)DATA_BOOLS_INDEX, (_only_bools)write_only_bools=newArray(write_plots_only=false, write_data_only=true, write_animations_only=false), (_bool_default)true, (_all_or_none)ALL_BOOL=false);
 	_only_bool_index = only_bool_uniqueness_check(_only_bools);
 	if(_only_bool_index == _bool_index)
 		return _bool_default;
@@ -2551,6 +2563,7 @@ function only_bool_array_control(_bool_index, _only_bools, _bool_default, _all_o
 }
 function only_bool_uniqueness_check(_only_bools)
 {
+	// Check to make sure there is at most 1 'true' boolean member of '_only_bools' and return its index if there is, otherwise return -1
 	num_only_bools = 0;
 	for(i = 0; i < _only_bools.length; i++)
 	{
@@ -3285,6 +3298,11 @@ function suffixes_2_filenames(common_basename, filename_suffixes)
 }
 function task_only_bool_dependence(_bool_default, _task_bools, _write_no_bools)
 {
+	// Description: Each task involves performing 1 or more output operations (e.g. writing data/plots/animations), specified by '_task_bools'. Particular output operations may be turned off 
+	// (specified by '_write_no_bools') and if a task only performs output operations that are turned off, then this task should also be turned off.  This function turns a task off if all its 
+	// output operations are turned off, otherwise the task retains its default on/off status specified by '_bool_default'
+	// Logic: For each 'true' in '_write_no_bools', set the corresponding index of '_task_bools' 'false'. If any 'true' remain in '_task_bools', return '_bool_default', else return 'false'
+	// Example: perform_ROI_analysis = task_only_bool_dependence(true, tasksof_perform_ROI_analysis= newArray(true, true, true), write_none= newArray(write_no_plots, write_no_data, write_no_animations)=);
 	_bool_out_array = Array.copy(_task_bools);
 	for(i = 0; i < _write_no_bools.length; i++)
 		if(_write_no_bools[i])

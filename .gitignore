@@ -16,19 +16,6 @@
 *.a
 
 ###################################################################################
-########### User Defined Exceptions to Default File/Folder Ignore List ############
-###################################################################################
-#---- Exceptions ----# 
-#!*.def
-!*.eps
-!*.ijm
-#!*.ist
-!*.m
-#!*.mst
-!*.pdf
-!*.ps
-#!*.tex
-###################################################################################
 ########### User Defined Additions to Default File/Folder Ignore List #############
 ###################################################################################
 
@@ -36,7 +23,13 @@
 ######################## Default File/Folder Ignore List ##########################
 ###################################################################################
 #---- Folders ----#
-\nppBackup
+nppBackup
+bash/BACKUP/
+ImageJ/ExecLogs/
+doc/*
+
+#---- Unorganized bash scripts ----#
+*.sh
 
 #---- Text files ----#
 *.bak
@@ -136,3 +129,18 @@ usertype.dat
 *.vcxprojResolveAssemblyReference.cache
 *.vssettings
 *.write.1.tlog
+
+###################################################################################
+########### User Defined Exceptions to Default File/Folder Ignore List ############
+###################################################################################
+#---- Exceptions ----# 
+#!*.def
+!*.eps
+!*.ijm
+#!*.ist
+!*.m
+#!*.mst
+!doc/pCT-Documentation.pdf
+!*.ps
+#!*.tex
+doc/documentation.pdf

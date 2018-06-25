@@ -161,8 +161,9 @@ macro "merge_data_control"
 	parameter_value_strings 					= generate_all_parameter_value_strings(parameter_values, num_parameter_values, parameter_value_offsets, parameter_string_precisions);
 	modulo_values 								= generate_modulo_values(num_parameter_values);
 	total_combinations 							= series_product(num_parameter_values);
-	//allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
-	allowed_parameter_string_prefixes			= newArray("A", "L");
+	allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
+	//allowed_parameter_string_prefixes			= newArray("A", "L");
+	//allowed_parameter_string_prefixes			= newArray("A");
 	App("parameter_string_prefixes", parameter_string_prefixes);
 	App("num_parameter_values", num_parameter_values);
 	print(num_parameters);
