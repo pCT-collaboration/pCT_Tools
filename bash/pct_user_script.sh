@@ -1,27 +1,54 @@
 #!/bin/bash
 ###################################################################################################
-############################### Redefine common bash functions ####################################
+############################### Define global variables ####################################
 ###################################################################################################
 IFS_DEFAULT=$IFS
+DEFAULT_IFS=' '
+current_user=$(id -un)
+current_group=$(id -gn)
+user_folder="/${current_user}"
+recon_group="ionrecon"
+path_dirs=$(echo "${PATH//:/$'\n'}")
+###################################################################################################
+########################## Source pCT constant variable definition script #########################
+###################################################################################################
+#-------------------------------------------------------------------------------------------------#
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_constvars.sh
+#-------------------------------------------------------------------------------------------------#
+###################################################################################################
+########################## Set current data & code value/choice variables #########################
+###################################################################################################
+dindir="/input_Sensitom_CDH6/"
+doutdir="/output_Sensitom_CDH6/B_25600/"
+current_rcode="Baylor_rcode" 	# Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
+#current_rcode=$Baylor_rcode 	# Options: $Baylor_rcode, $pct_collab_rcode, $Blake_rcode, $old_rcode
+current_rcode_git='direct' 		# Options: user_git='user', direct_git='direct'
+#current_rcode_git=$direct_git 	# Options: user_git='user', direct_git='direct'
+current_phantom="CTP404_Sensitom"
+current_phantom_ID="LMUDECT"
+current_phantom_name="LMU_DECT"
+current_scan_type="Experimental"
+current_run_date="16-04-26"
+current_run_number="0067_Top_Cont"
+current_preprocessed_date="16-06-09"
+#current_run_number="0074_Bot_Sup_Cont"
+#current_preprocessed_date="16-06-10/"
+#current_run_number="0075_Bot_Inf_Cont"
+#current_preprocessed_date="16-06-11/"
+###################################################################################################
+############################### Redefine common bash functions ####################################
+###################################################################################################
 alias mv="mv -v"
 alias rm="rm -v"
 alias echo="echo -e"
 alias scp="scp -rCp -c blowfish"
 alias cp="cp -apv"
 ###################################################################################################
-################################# Define new bash functions #######################################
+############################## Source pCT function definition script ##############################
 ###################################################################################################
-alias cpdir="cp -apRv"
-alias deldir="rm -rf"
-alias contents="tree -dluDC"
-alias lst="ls -alt --color"
-alias host=$(hostname)
-###################################################################################################
-################################### Console output definitions ####################################
-###################################################################################################
-#cd /ion/pCT_code/pCT-collaboration/pCT_Tools/bash
-#./load_pct_functions.sh
+#-------------------------------------------------------------------------------------------------#
 . /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
+#-------------------------------------------------------------------------------------------------#
 ###################################################################################################
 ######### Console output written on login before subsequent cluster/node dependent output #########
 ###################################################################################################
