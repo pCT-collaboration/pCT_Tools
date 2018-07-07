@@ -1464,6 +1464,7 @@ function Kill					()										{ exit					("-----> Manual exit initiated");						
 function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();										}
 function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();										}
 function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();	}
+function exitSection			(_print_statement)						{ print_section			(_print_statement, PRINT_MAJOR_SECTION);					exit		();	}
 function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();										}
 function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);	}
 function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}

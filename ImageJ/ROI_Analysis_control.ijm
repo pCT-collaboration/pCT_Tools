@@ -11,7 +11,7 @@
 //
 //
 //
-macro "multiplotting"
+macro "ROI_Analysis_control"
 {
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//***************************************************************************************************************************************************************************************************//
@@ -21,11 +21,12 @@ macro "multiplotting"
 	close_all_windows		(true, true);
 	setBatchMode			(true);	
 	//setBatchMode			(false);
-	print_section_separator("Generating multi-curve plots vs target test parameter for a user specified parameter, with each plot having individual curves for each value of this parameter, then writing the plot data and resulting images to disk as PNG", true);
-	//print_section_separator("Generating multi-curve plots vs target test parameter for ", true);
-	//print_section_separator("Generating multi-curve plots vs target test parameter forGenerating multi-curve plots vs target test parameter for", true);
-	//print_section_separator("Generating multi-curve plots vs target test parameter for ", false);
-	//print_section_separator("Generating multi-curve plots vs target test parameter forGenerating multi-curve plots vs target test parameter for", false);
+	print_section("Performing ROI analysis on desired reconstruction(s)", true);
+	//print_section("Generating multi-curve plots vs target test parameter for a user specified parameter, with each plot having individual curves for each value of this parameter, then writing the plot data and resulting images to disk as PNG", true);
+	//print_section("Generating multi-curve plots vs target test parameter for ", true);
+	//print_section("Generating multi-curve plots vs target test parameter forGenerating multi-curve plots vs target test parameter for", true);
+	//print_section("Generating multi-curve plots vs target test parameter for ", false);
+	//print_section("Generating multi-curve plots vs target test parameter forGenerating multi-curve plots vs target test parameter for", false);
 	//***************************************************************************************************************************************************************************************************//
 	//************* Execution control Booleans and general parameter value test and MVP behavior Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
@@ -42,6 +43,7 @@ macro "multiplotting"
 	printing_MVP_parameter_info									= true;	
 	printing_input_output_filenames								= true;	
 	print_ROI_definitions_path									= false;		
+	PRINT_ANALYSIS_CFG_PATH										= true;
 	print_directories_created									= false;	
 	print_input_data_path										= false;
 	print_input_CSV_path										= false;
@@ -68,6 +70,7 @@ macro "multiplotting"
 	//***************************************************************************************************************************************************************************************************//	
 	check_all_paths_existence 									= false;
 	ROI_analysis 												= true;
+	analyze_all_dir_reconstructions								= true;
 	analyze_specific_data 										= false;
 	only_perform_missing_analyses 								= false;
 	always_perform_analyses 									= !only_perform_missing_analyses;
@@ -75,7 +78,7 @@ macro "multiplotting"
 	generate_specific_averaged_data								= false;
 	generate_averaged_MVP_data									= false;
 	perform_all_missing_analyses								= false;
-	perform_MVP_analyses										= false;
+	perform_MVP_analyses										= true;
 	exit_after_ROI_analyses 									= true;
 	exit_after_analyzing_specific_data							= false;
 	exit_after_performing_all_missing_analyses					= false;
@@ -423,6 +426,10 @@ macro "multiplotting"
 	PNG_COMPRESSION									= "PNG";
 	ROI_DEFINITION_NUMBERS_DECODING_OP				= "parseFloat";	
 	ROI_DEFINITION_STRINGS_DECODING_OP				= "none";	
+	FLOAT_DECODING_OP								= "parseFloat";	
+	INT_DECODING_OP									= "parseInt";	
+	STRING_DECODING_OP								= "none";	
+	BOOL_DECODING_OP								= "parseBool";	
 	ROI_MATERIAL_RSP_COLUMN_LABEL 					= "Predicted RSP";
 	RSP_ERROR_COLUMN_LABEL 							= "% Error";
 	MEAN_COLUMN_LABEL 								= "Mean";	
@@ -563,7 +570,7 @@ macro "multiplotting"
 	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
 	
 	//D:\pCT\pCT_data\reconstruction_data\CTP404_Sensitom\Experimental\B_25600\B_25600_L_0.000100_TV_1_A_0.750000_L0_0_Nk_4
-	TEST_BATCH_DIR 															= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	TEST_BATCH_DIR 									= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR+ "07052018" + FOLDER_SEPARATOR;		
 		
 	// Input/output info and data basenames/filenames
 	MATERIAL_RSP_DEFS_FILENAME 						= "material_RSP_defs.txt";
@@ -573,6 +580,9 @@ macro "multiplotting"
 	ROI_DEFINITIONS_FILE_PATH						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_DEFINITIONS_FILENAME;
 	AUTO_BREAK_FILENAME 							= "autobreak.txt";
 	AUTO_BREAK_PATH 								= GITHUB_MACRO_DIR + AUTO_BREAK_FILENAME;
+	//ANALYSIS_CFG_INFO_FILENAME						= "analysis.txt";
+	ANALYSIS_CFG_INFO_FILENAME						= "analysis.cfg";
+	ANALYSIS_CFG_INFO_FILE_PATH						= GITHUB_MACRO_DIR + ANALYSIS_CFG_INFO_FILENAME;
 	PARAMETER_TEST_INFO_BASENAME					= "Test_Parameters_";
 	SPECIFIC_DATA_FOLDERS_FILENAME 					= "ROI_analysis_folders.txt";
 	RECON_FOLDERS_FILENAME 							= "reconstruction_folders.txt";
@@ -649,12 +659,32 @@ macro "multiplotting"
 		print_tab										= tab_string;
 	else
 		print_tab										= tab_as_spaces_string;
-//***********************************************************************************************************************************************************************************************//
+	//***********************************************************************************************************************************************************************************************//
+	//****************************************************** Parse the externally specified ROI analysis configurations from analysis.cfg file ******************************************************//
+	//***********************************************************************************************************************************************************************************************//
+	cfg_parameter_decodings						= newArray(BOOL_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, BOOL_DECODING_OP, BOOL_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP);		
+	cfg_parameter_list							= newArray("simulated_scan", "voxel_width", "voxel_height", "voxel_thickness", "voxels_per_mm", "flip_horizontally", "flip_vertically", "num_recon_iterations", "first_iteration_2_analyze", "last_iteration_2_analyze", "first_slice_2_analyze", "last_slice_2_analyze" );
+	//cfg_parameter_value_strings				= file_2_key_value_pairs(GITHUB_MACRO_DIR, ANALYSIS_CFG_INFO_FILENAME, 	cfg_parameter_list, DONT_PRINT_PATH);		
+	cfg_parameter_values 						= parse_analysis_cfg(cfg_parameter_list, cfg_parameter_decodings, PRINT_ANALYSIS_CFG_PATH);
+	simulated_scan 								= cfg_parameter_values[0];
+	voxel_width 								= cfg_parameter_values[1];
+	voxel_height 								= cfg_parameter_values[2];
+	voxel_thickness 							= cfg_parameter_values[3];
+	voxels_per_mm 								= cfg_parameter_values[4];
+	flip_horizontally 							= cfg_parameter_values[5];
+	flip_vertically 							= cfg_parameter_values[6];
+	num_recon_iterations 						= cfg_parameter_values[7];
+	first_iteration_2_analyze 					= cfg_parameter_values[8];
+	last_iteration_2_analyze 					= cfg_parameter_values[9];
+	first_slice_2_analyze 						= cfg_parameter_values[10];
+	last_slice_2_analyze 						= cfg_parameter_values[11];
+	print_analysis_cfgs							(cfg_parameter_list, cfg_parameter_values, cfg_parameter_decodings);
+	//***********************************************************************************************************************************************************************************************//
 	//************************************************** Import ROI definitions for current phantom and set corresponding internal variables/arrays *************************************************//
 	//***********************************************************************************************************************************************************************************************//
 	ROI_parameter_decodings						= newArray(ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP);		
 	ROI_definitions_parameter_list				= newArray("ROI_material_names", "ROI_labels", "ROI_label_nicknames", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
-	ROI_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_DIR, ROI_DEFINITIONS_FILENAME, PHANTOM_BASENAME, 	ROI_definitions_parameter_list, ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, print_ROI_definitions_path);		
+	ROI_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_DIR, ROI_DEFINITIONS_FILENAME, 	ROI_definitions_parameter_list, print_ROI_definitions_path);		
 	ROI_material_names 							= ROI_parameter_string_2_values(ROI_definitions_parameter_list[0],  ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);	
 	ROI_labels 									= ROI_parameter_string_2_values(ROI_definitions_parameter_list[1], 	ROI_definitions_parameter_list, ROI_parameter_strings,  ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);
 	ROI_label_nicknames 						= ROI_parameter_string_2_values(ROI_definitions_parameter_list[2], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);					//bulk_material = bulk_material[0];
@@ -665,9 +695,7 @@ macro "multiplotting"
 	bulk_material 								= ROI_parameter_string_2_values(ROI_definitions_parameter_list[7], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, false);					//bulk_material = bulk_material[0];
 	bulk_material_RSP 							= material_name_2_RSP(bulk_material, simulated_scan);
 	ROI_material_RSPs 							= ROI_material_names_2_RSPs(ROI_material_names, simulated_scan);
-	num_ROIs_2_analyze 							= ROI_material_names.length; 						// # of material ROI ROIs in phantom
-	//Ap(ROI_selection_radii);
-	//exit();
+	num_ROIs_2_analyze 							= ROI_material_names.length; 						// # of material ROIs in phantom
 	//***********************************************************************************************************************************************************************************************//
 	//************************************************************************************** Parameter value arrays *********************************************************************************//
 	//***********************************************************************************************************************************************************************************************//
@@ -817,7 +845,7 @@ macro "multiplotting"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	parameter_test_number						= 1;
 	parameter_test_info_filename				= PARAMETER_TEST_INFO_BASENAME + d2s(parameter_test_number, 0)  + TXT;
-	parameter_test_info 						= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, print_input_data_path);
+	parameter_test_info 						= file_2_array(RECON_DATA_DIR_D, parameter_test_info_filename, print_input_data_path);
 	num_parameters 								= parameter_test_info.length;
 	PVs 										= newArray();
 	num_PVs 									= newArray(num_parameters);
@@ -895,11 +923,11 @@ macro "multiplotting"
 	//PVT_output_dir						= TEST_BATCH_DIR;
 	PVTs_input_dir_parent					= TEST_BATCH_DIR;
 	PVTs_output_dir_parent					= TEST_BATCH_DIR;	
-	//current_PVT_output_dir 				= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
-	current_PVT_output_dir_parent 			= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
-	dir_created_successfully				= make_dir_recorded(current_PVT_output_dir_parent, DIRECTORIES_CREATED, print_directories_created);
-	//parameter_test_dir 					= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
-	//make_dir_recorded						(parameter_test_dir, DIRECTORIES_CREATED, print_directories_created);
+	////current_PVT_output_dir 				= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
+	//current_PVT_output_dir_parent 			= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
+	//dir_created_successfully				= make_dir_recorded(current_PVT_output_dir_parent, DIRECTORIES_CREATED, print_directories_created);
+	////parameter_test_dir 					= construct_valid_dir_path(TEST_BATCH_DIR, PVT_identifier);
+	////make_dir_recorded						(parameter_test_dir, DIRECTORIES_CREATED, print_directories_created);
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//***********************************************************************************************************************************************************************************************//
 	//******************************************* For each parameter test value combination, determine path/folder of reconstruction results value **************************************************//
@@ -1039,7 +1067,7 @@ macro "multiplotting"
 	
 	if(analyze_specific_data)
 	{
-		print_section_separator					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
+		print_section					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
 		//SPECIFIC_DATA_FOLDERS_FILENAME 		= "ROI_analysis_folders.txt";
 		specific_data_folders 					= file_2_array(TEST_BATCH_DIR, SPECIFIC_DATA_FOLDERS_FILENAME, PRINT_PATH);	
 		ROI_analysis_targets 					= Array.copy(specific_data_folders);
@@ -1047,24 +1075,35 @@ macro "multiplotting"
 	}
 	if(perform_all_missing_analyses)
 	{
-		print_section_separator					("Performing ROI analysis of all unprocessed reconstructed data sets", PRINT_MAJOR_SECTION);
+		print_section					("Performing ROI analysis of all unprocessed reconstructed data sets", PRINT_MAJOR_SECTION);
 		//RECON_FOLDERS_FILENAME 				= "reconstruction_folders.txt";
 		recon_data_folders 						= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
 		ROI_analysis_targets 					= Array.copy(recon_data_folders);
 		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
 	}
-	if(perform_MVP_analyses)
+	//analyze_all_dir_reconstructions								= true;
+	if(analyze_all_dir_reconstructions)
 	{
-		//print_section_separator					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
+		print_section					("Performing ROI analysis of all unprocessed reconstructed data sets in the specified directory: " + TEST_BATCH_DIR, PRINT_MAJOR_SECTION);
+		//RECON_FOLDERS_FILENAME 				= "reconstruction_folders.txt";
+		recon_data_folders 						= getDirList(TEST_BATCH_DIR, true);
+		ROI_analysis_targets 					= Array.copy(recon_data_folders);
+		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
+	}
+	//exit();
+	if(false)
+	//if(perform_MVP_analyses)
+	{
+		//print_section					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
 		for(i = 0; i < ROI_analysis_targets.length; i++)
 		//for(i = 0; i < 5; i++)
 		{
 			reconstructed_data_folder 			= ROI_analysis_targets[i];
-			print_section_separator				("Performing ROI analysis on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
+			print_section						("Performing ROI analysis # " + i + " on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
 			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, reconstructed_data_folder);
 			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
 			missing_ROI_analysis_data			= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
-			run_ROI_analysis					= recon_data_exists && (!ROI_analysis_exists || always_perform_analyses);			
+			run_ROI_analysis					= recon_data_exists && (missing_ROI_analysis_data || always_perform_analyses);			
 			//if(run_ROI_analysis)
 			if(recon_data_exists)
 			{
@@ -1087,12 +1126,235 @@ macro "multiplotting"
 			autobreak();
 		}
 		if(exit_after_ROI_analyses)
-			eprint("Exiting after ROI analyses as requested");	
+			endProgram("Exiting after ROI analyses as requested");	
+			//eprint("Exiting after ROI analyses as requested");	
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //***************************************************************************************************************************************************************************************************//
 //************************* User defined function definitions ***************************************************************************************************************************************//
 //***************************************************************************************************************************************************************************************************//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//------------------------------------------------------------------------------- Functions currently in development --------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+function listFiles(_dir) 
+{
+	_list = getFileList(_dir);
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (endsWith( _list[_i], "/") )
+			listFiles( "" + _dir +  _list[_i] );
+		else
+			print( (count++) + ": " + _dir + _list[_i] );
+	}
+}
+function getDirList(_dir, _print_path) 
+{
+	_list = getFileList(_dir);
+	_dirs = newArray();	
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (endsWith( _list[_i], "/") )
+			_dirs = Array.concat( _dirs, substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
+	}
+	if(_print_path)
+		App("getDirList ", _dirs);
+	return _dirs;
+}
+function printDirList(_dir) 
+{
+	_list = getDirList(_dir);
+	for (_i = 0; _i < _list.length; _i++) 
+		print( _i + ": " + _list[_i] );
+}
+function getDirFileList(_dir) 
+{
+	_list = getFileList(_dir);
+	_files = newArray();	
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (!endsWith( _list[_i], "/") )
+			_files = Array.concat( _files, _list[_i] );
+	}
+	return _files;
+}
+function printDirFileList(_dir) 
+{
+	_list = getDirFileList(_dir);
+	for (_i = 0; _i < _list.length; _i++) 
+		print( _i + ": " + _list[_i] );
+}
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+function cfg_parameter_string_2_values(_cfg_parameter_string, _cfg_parameter_list, _cfg_parameter_strings, _cfg_parameter_decodings, _force_array)
+{//simulated_scan 								= cfg_parameter_string_2_values(cfg_parameter_list[0], cfg_parameter_list, cfg_parameter_strings, cfg_parameter_decodings, RETURN_DONT_FORCE_ARRAY);
+	for											(__i = 0; __i < _cfg_parameter_list.length; __i++)
+		if										( matches(_cfg_parameter_list[__i], _cfg_parameter_string))
+			_cfg_parameter_string_index			= __i;			
+	_desired_cfg_parameter_string 				= _cfg_parameter_strings[_cfg_parameter_string_index];
+	_desired_cfg_parameter_string_elements 		= split(_desired_cfg_parameter_string, ",");
+	_num_desired_cfg_parameter_string_elements 	= _desired_cfg_parameter_string_elements.length;
+	_desired_cfg_PVs							= newArray(_num_desired_cfg_parameter_string_elements);
+	for											(__i = 0; __i < _num_desired_cfg_parameter_string_elements; __i++)
+		_desired_cfg_PVs[__i]					= decode_string( _desired_cfg_parameter_string_elements[__i], _cfg_parameter_decodings[_cfg_parameter_string_index]);
+	if											( _num_desired_cfg_parameter_string_elements == 1 && !_force_array)
+												return _desired_cfg_PVs[0];
+	else										return _desired_cfg_PVs;
+}
+function cfg_parameter_string_decoding(_cfg_parameter_string, _cfg_parameter_list, _cfg_parameter_strings, _cfg_parameter_decoding, _force_array)
+{//simulated_scan 								= cfg_parameter_string_decoding(cfg_parameter_list[0], cfg_parameter_list, cfg_parameter_strings, BOOL_DECODING_OP, RETURN_DONT_FORCE_ARRAY);
+	for											(__i = 0; __i < _cfg_parameter_list.length; __i++)
+		if										( matches(_cfg_parameter_list[__i], _cfg_parameter_string))
+			_cfg_parameter_string_index			= __i;			
+	//_desired_cfg_parameter_string 				= _cfg_parameter_strings[_cfg_parameter_string_index];
+	_desired_cfg_parameter_string_elements 		= split(_cfg_parameter_strings[_cfg_parameter_string_index], ",");
+	_num_desired_cfg_parameter_string_elements 	= _desired_cfg_parameter_string_elements.length;
+	_desired_cfg_PVs							= newArray(_num_desired_cfg_parameter_string_elements);
+	for											(__i = 0; __i < _num_desired_cfg_parameter_string_elements; __i++)
+		_desired_cfg_PVs[__i]					= decode_string( _desired_cfg_parameter_string_elements[__i], _cfg_parameter_decoding);
+	if											( _num_desired_cfg_parameter_string_elements == 1 && !_force_array )
+												return _desired_cfg_PVs[0];
+	else										return _desired_cfg_PVs;
+}
+function parse_analysis_cfg(_cfg_parameter_list, _cfg_parameter_decodings, _print_cfg_definitions_path)
+{
+	if											(_print_cfg_definitions_path)
+		print									("Reading/parsing ROI analysis configurations from:\n\t------->" + ANALYSIS_CFG_INFO_FILE_PATH);
+	_cfg_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_DIR, ANALYSIS_CFG_INFO_FILENAME, _cfg_parameter_list, DONT_PRINT_PATH);		
+	_cfg_parameter_values						= newArray(_cfg_parameter_strings.length);
+	for											(__i = 0; __i < _cfg_parameter_values.length; __i++)
+		_cfg_parameter_values[__i]				= decode_string( _cfg_parameter_strings[__i], _cfg_parameter_decodings[__i]);
+	return 										_cfg_parameter_values;
+}
+function print_analysis_cfgs(_cfg_parameter_list, _cfg_parameter_string_values, _cfg_parameter_decodings)
+{
+	for											(__i = 0; __i < _cfg_parameter_string_values.length; __i++)
+	{
+		if										(_cfg_parameter_decodings[__i] == BOOL_DECODING_OP)
+		{
+			if									( _cfg_parameter_string_values[__i] == true )
+												print(_cfg_parameter_list[__i] + " = (evaluates) true" );
+			else								print(_cfg_parameter_list[__i] + " = (evaluates) false" );
+		}
+		else									print(_cfg_parameter_list[__i] + " = " +  _cfg_parameter_string_values[__i]);
+	}
+}
+function parse_ROI_definitions(_ROI_parameter_list, _ROI_parameter_decodings, _print_ROI_definitions_path)
+{	//ROI_parameter_decodings					= newArray(ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP);		
+	//ROI_definitions_parameter_list			= newArray("ROI_material_names", "ROI_labels", "ROI_label_nicknames", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
+	if											(_print_ROI_definitions_path)
+		print									("Reading/parsing selected phantom ROI definitions from:\n\t------->" + ROI_DEFINITIONS_FILE_PATH);
+	_ROI_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_DIR, ROI_DEFINITIONS_FILENAME, _ROI_parameter_list, _print_ROI_definitions_path);		
+	_ROI_parameter_values						= newArray(_ROI_parameter_strings.length);
+	for											(__i = 0; __i < _ROI_parameter_values.length; __i++)
+		_ROI_parameter_values[__i]				= decode_string( _ROI_parameter_strings[__i], _ROI_parameter_decodings[__i]);
+	return 										_ROI_parameter_values;
+}
+function decode_string(_input_string, _decoding_op)
+{
+	_spaceless_input_string 				= strip_surrounding_spaces(_input_string);
+	if										(_decoding_op== FLOAT_DECODING_OP)
+											return parseFloat(_spaceless_input_string);
+	else if									(_decoding_op == INT_DECODING_OP)
+											return parseInt(_spaceless_input_string);
+	else if									(_decoding_op == BOOL_DECODING_OP)
+	{
+		if									( _spaceless_input_string == TRUE_STRING ) 		
+											return true;
+		else								return false;
+	}
+	else 									return _spaceless_input_string;
+}
+function cfg_parameter_string_2_values(_cfg_parameter_string, _cfg_parameter_list, _cfg_parameter_strings, _cfg_parameter_decodings, _force_array)
+{//simulated_scan 								= cfg_parameter_string_2_values(cfg_parameter_list[0], cfg_parameter_list, cfg_parameter_strings, cfg_parameter_decodings, RETURN_DONT_FORCE_ARRAY);
+	for											(__i = 0; __i < _cfg_parameter_list.length; __i++)
+		if										( matches(_cfg_parameter_list[__i], _cfg_parameter_string))
+			_cfg_parameter_string_index			= __i;			
+	//_desired_cfg_parameter_string 				= _cfg_parameter_strings[_cfg_parameter_string_index];
+	_desired_cfg_parameter_string_elements 		= split(_cfg_parameter_strings[_cfg_parameter_string_index], ",");
+	_num_desired_cfg_parameter_string_elements 	= _desired_cfg_parameter_string_elements.length;
+	_desired_cfg_PVs							= newArray(_num_desired_cfg_parameter_string_elements);
+	for											(__i = 0; __i < _num_desired_cfg_parameter_string_elements; __i++)
+		_desired_cfg_PVs[__i]					= decode_string( _desired_cfg_parameter_string_elements[__i], _cfg_parameter_decodings[_cfg_parameter_string_index]);
+	if											( _num_desired_cfg_parameter_string_elements == 1 && !_force_array)
+												return _desired_cfg_PVs[0];
+	else										return _desired_cfg_PVs;
+}
+function 
+
+
+function cfg_parameter_string_decoding(_cfg_parameter_string, _cfg_parameter_list, _cfg_parameter_strings, _cfg_parameter_decoding, _force_array)
+{//simulated_scan 								= cfg_parameter_string_decoding(cfg_parameter_list[0], cfg_parameter_list, cfg_parameter_strings, BOOL_DECODING_OP, RETURN_DONT_FORCE_ARRAY);
+	for											(__i = 0; __i < _cfg_parameter_list.length; __i++)
+		if										( matches(_cfg_parameter_list[__i], _cfg_parameter_string))
+			_cfg_parameter_string_index			= __i;			
+	//_desired_cfg_parameter_string 				= _cfg_parameter_strings[_cfg_parameter_string_index];
+	_desired_cfg_parameter_string_elements 		= split(_cfg_parameter_strings[_cfg_parameter_string_index], ",");
+	_num_desired_cfg_parameter_string_elements 	= _desired_cfg_parameter_string_elements.length;
+	_desired_cfg_PVs							= newArray(_num_desired_cfg_parameter_string_elements);
+	for											(__i = 0; __i < _num_desired_cfg_parameter_string_elements; __i++)
+		_desired_cfg_PVs[__i]					= decode_string( _desired_cfg_parameter_string_elements[__i], _cfg_parameter_decoding);
+	if											( _num_desired_cfg_parameter_string_elements == 1 && !_force_array )
+												return _desired_cfg_PVs[0];
+	else										return _desired_cfg_PVs;
+}
+function ROI_parameter_string_2_values(_ROI_definitions_parameter_string, _ROI_definitions_parameter_list, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_PV_parseFloat, _force_array)
+{
+	for											(__i = 0; __i < _ROI_definitions_parameter_list.length; __i++)
+		if										( matches(ROI_definitions_parameter_list[__i], _ROI_definitions_parameter_string))	
+			_ROI_parameter_string_index			= __i;			
+	//_desired_ROI_parameter_string 			= _ROI_parameter_strings[_ROI_parameter_string_index];
+	_desired_ROI_parameter_value_list 			= split(_ROI_parameter_strings[_ROI_parameter_string_index], ",");
+	_num_desired_ROI_parameter_values 			= _desired_ROI_parameter_value_list.length;
+	_desired_ROI_PVs							= newArray(_num_desired_ROI_parameter_values);
+	for											(__i = 0; __i < _num_desired_ROI_parameter_values; __i++)
+	{
+		__desired_ROI_PVs__						= decode_string(_desired_ROI_parameter_value_list[__i], _ROI_parameter_decodings[_ROI_parameter_string_index]);
+		_desired_ROI_PVs[__i]					= __desired_ROI_PVs__; 	
+	}
+	if											( _num_desired_ROI_parameter_values == 1 && !_force_array)
+												return _desired_ROI_PVs[0];
+	else										return _desired_ROI_PVs;
+}
+function ROI_parameter_string_2_values_old(_ROI_definitions_parameter_string, _ROI_definitions_parameter_list, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_PV_parseFloat, _force_array)
+{
+	for											(i = 0; i < _ROI_definitions_parameter_list.length; i++)
+		if										( matches(ROI_definitions_parameter_list[i], _ROI_definitions_parameter_string))
+			_ROI_parameter_string_index			= i;			
+	//_desired_ROI_parameter_string 			= _ROI_parameter_strings[_ROI_parameter_string_index];
+	_desired_ROI_parameter_string_elements 		= split(_ROI_parameter_strings[_ROI_parameter_string_index], ",");
+	_num_desired_ROI_parameter_string_elements 	= _desired_ROI_parameter_string_elements.length;
+	_desired_ROI_PVs							= newArray(_num_desired_ROI_parameter_string_elements);
+	for											(i = 0; i < _num_desired_ROI_parameter_string_elements; i++)
+	{
+		_spaceless_PV_string 					= strip_surrounding_spaces(_desired_ROI_parameter_string_elements[i]);
+		if										(_ROI_parameter_decodings[_ROI_parameter_string_index] == _ROI_PV_parseFloat)
+			_desired_ROI_PVs[i] 				= parseFloat(_spaceless_PV_string);
+		else
+			_desired_ROI_PVs[i] 				= _spaceless_PV_string;
+	}
+	if											( _num_desired_ROI_parameter_string_elements == 1 && !_force_array)
+												return _desired_ROI_PVs[0];
+	else
+												return _desired_ROI_PVs;
+}
+function file_2_key_value_pairs(_dir, _filename, _parameter_list, _print_path)
+{
+	_file_key_value_pairs						= file_2_array(_dir, _filename, _print_path);
+	_num_key_value_pairs						= _file_key_value_pairs.length;
+	_ordered_parameter_strings					= newArray(_num_key_value_pairs);
+	for											(i = 0; i < _num_key_value_pairs; i++)
+	{
+		separated_key_value_pair 				= split(_file_key_value_pairs[i], "=");
+		key_string 								= separated_key_value_pair[0];
+		_spaceless_key_string 					= strip_surrounding_spaces(key_string);
+		_PVs_string								= strip_surrounding_spaces(separated_key_value_pair[1]);
+		for										(j = 0; j < _parameter_list.length; j++)
+			if									(_spaceless_key_string == _parameter_list[j] )
+				_ordered_parameter_strings[j] 	= _PVs_string;
+	}	
+	return _ordered_parameter_strings;	
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //***************************************************************************************************************************************************************************************************//
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -1113,7 +1375,7 @@ function Appc					(_print_statement, _array)				{ cprint				("-----> " + _print_
 function Aps					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
 function Apsc					(_print_statement, _array)				{ cprint				(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	cprint(TAB_STRING + _array[i]);	}
 function Appexit				(_print_statement, _array)				{ App					(_print_statement, _array); 								Ap			(_array);								}
-function autobreak				()										{ autobreak_bool	 	= file_2_array(IJ_macro_directory, autobreak_filename, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
+function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
 function ceil					(value)									{ return 				conditional_return( (value - round(value) > 0), round(value + 1), round(value) ); 								}
 function clearResults			()										{ run					("Clear Results");																								}
 function Apc					(_array)								{ Array.print			(_array);																										}
@@ -1127,6 +1389,7 @@ function Kill					()										{ exit					("-----> Manual exit initiated");						
 function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();										}
 function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();										}
 function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();	}
+function exitSection			(_print_statement)						{ print_section			(_print_statement, PRINT_MAJOR_SECTION);					exit		();	}
 function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();										}
 function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);	}
 function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
@@ -1776,23 +2039,6 @@ function file_2_float_array(path, filename, print_path)
 	INPUT_FILE_LIST	= Array.concat(INPUT_FILE_LIST, file_path);			
 	return array;
 }
-function file_2_key_value_pairs(_ROI_definitions_dir, _ROI_definitions_filename, _phantom_basename, _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_PV_parseFloat, _print_ROI_definitions_path)
-{
-	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_dir, _ROI_definitions_filename, _print_ROI_definitions_path);
-	_num_ROI_key_value_pairs					= _ROI_definition_file_key_value_pairs.length;
-	_ordered_ROI_parameter_strings				= newArray(_num_ROI_key_value_pairs);
-	for(i = 0; i < _num_ROI_key_value_pairs; i++)
-	{
-		separated_key_value_pair 				= split(_ROI_definition_file_key_value_pairs[i], "=");
-		key_string 								= separated_key_value_pair[0];
-		_spaceless_key_string 					= strip_surrounding_spaces(key_string);
-		_ROI_PVs_string			= strip_surrounding_spaces(separated_key_value_pair[1]);
-		for(j = 0; j < _ROI_definitions_parameter_list.length; j++)
-			if(_spaceless_key_string == _ROI_definitions_parameter_list[j] )
-				_ordered_ROI_parameter_strings[j] = _ROI_PVs_string;
-	}	
-	return _ordered_ROI_parameter_strings;	
-}
 function find_array_extrema(data_array, tolerance, notify_equality)
 {
 	extrema 			= newArray(2);
@@ -1904,7 +2150,7 @@ function generate_all_PV_strings(_PVs, _num_PVs, _PV_offsets, _parameter_string_
 }
 function generate_averaged_data_CSV(_recon_data_dir, base_recon_folder, input_data_subdir, input_data_filename, input_CSV_columns, input_CSV_rows, ROIs_per_recon)
 {
-	print_section_separator("Generating average quality measures from the ROI analysis CSV files from each reconstruction performed with the current parameters", false);
+	print_section("Generating average quality measures from the ROI analysis CSV files from each reconstruction performed with the current parameters", false);
 	all_RSP_data 					= newArray();
 	current_test_input_dir 	= construct_valid_dir_path(_recon_data_dir, base_recon_folder);
 	while(startsWith(input_data_filename , File.separator))
@@ -1942,7 +2188,7 @@ function generate_averaged_data_CSV(_recon_data_dir, base_recon_folder, input_da
 }
 function generate_averaged_data_TXT(_recon_data_dir, base_recon_folder, input_data_filename, measurements_per_recon)
 {
-	print_section_separator("Generating average quality measures from the ROI analysis TXT files from each reconstruction performed with the current parameters", false);
+	print_section("Generating average quality measures from the ROI analysis TXT files from each reconstruction performed with the current parameters", false);
 	_print_input_data_path 			= true;
 	_MAKE_TOP_DIR 				= true;
 	_print_directories_created 		= true;
@@ -2914,14 +3160,14 @@ function print_by_ROI_data()
 }		
 function print_compared_data_subdir_info()
 {
-	print_section_separator("Printing compared data subdir info", PRINT_MAJOR_SECTION													);
+	print_section("Printing compared data subdir info", PRINT_MAJOR_SECTION													);
 	print("-------> MVP_compared_data_subdir 						=\n " 	+ MVP_compared_data_subdir				);	
 	print("-------> MVP_compared_RSP_data_subdir 					=\n " 	+ MVP_compared_RSP_data_subdir			);		
 	print("-------> MVP_compared_RSP_error_data_subdir 				=\n " 	+ MVP_compared_RSP_error_data_subdir	);	
 	print("-------> MVP_compared_std_dev_data_subdir 				=\n " 	+ MVP_compared_std_dev_data_subdir		);	
 	print("-------> MVP_compared_TV_data_subdir 					=\n " 	+ MVP_compared_TV_data_subdir			);		
 }
-function print_section_separator(section_heading, print_major_section)
+function print_section(section_heading, print_major_section)
 {
 	slash_section_separator 			= "///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////";
 	asterisk_section_separator 			= "//*************************************************************************************************************************************************************************************************************************************************************************************************";
@@ -3003,7 +3249,7 @@ function print_section_separator(section_heading, print_major_section)
 }
 function print_current_PVT_info()
 {
-	print_section_separator("Printing current parameter value test info", PRINT_MAJOR_SECTION											);
+	print_section("Printing current parameter value test info", PRINT_MAJOR_SECTION											);
 	print("-------> current_test_start_folder 								=\n " 	+ current_test_start_folder							);				
 	print("-------> current_test_end_folder 						 		=\n " 	+ current_test_end_folder							);				
 	print("-------> current_test_folder_basename							=\n " 	+ current_test_folder_basename						);
@@ -3017,7 +3263,7 @@ function print_current_PVT_info()
 }
 function print_current_PVT_MVP_info()
 {
-	print_section_separator("Printing current parameter value test multiplot info...", PRINT_MAJOR_SECTION									);
+	print_section("Printing current parameter value test multiplot info...", PRINT_MAJOR_SECTION									);
 	print("-------> current_test_MVP_start_folder 			 		=\n " 	+ current_test_MVP_start_folder					);	
 	print("-------> current_test_MVP_end_folder 			 			=\n " 	+ current_test_MVP_end_folder						);				
 	print("-------> current_test_MVP_folders					 		= 	" 															);	Array.print(current_test_MVP_folders);
@@ -3030,7 +3276,7 @@ function print_current_PVT_MVP_info()
 }
 function print_current_PVT_parent_dir_info()
 {	
-	print_section_separator("Printing current parameter test input/output directories, paths, and filenames", true																					);
+	print_section("Printing current parameter test input/output directories, paths, and filenames", true																					);
 	print		("------->\n PVT_identifier												=\n" 	+ PVT_identifier												); 					
 	print		("------->\n PVTs_input_dir_parent 									=\n" 	+ PVTs_input_dir_parent									);
 	print		("------->\n PVTs_output_dir_parent 									=\n"	+ PVTs_output_dir_parent									);
@@ -3067,7 +3313,7 @@ function print_current_PVT_parent_dir_info()
 }
 function print_ImageJ_info()
 {
-	print_section_separator("Printing ImageJ info", PRINT_MAJOR_SECTION);
+	print_section("Printing ImageJ info", PRINT_MAJOR_SECTION);
 	print("-------> IMAGEJ_PLUGINS_DIR =\n ", IMAGEJ_PLUGINS_DIR);
 	print("-------> IMAGEJ_MACRO_DIR =\n ", IMAGEJ_MACRO_DIR);
 	print("-------> IMAGEJ_LAUNCH_DIR =\n ", IMAGEJ_LAUNCH_DIR);
@@ -3086,7 +3332,7 @@ function print_ImageJ_info()
 }
 function print_MVP_parameter_info()
 {			
-	print_section_separator("Printing parameter test multiplot info", PRINT_MAJOR_SECTION								);
+	print_section("Printing parameter test multiplot info", PRINT_MAJOR_SECTION								);
 	print		("-------> MVP_parameter_index 					=\n " 	+ MVP_parameter_index				);
 	print		("-------> MVP_parameter	 						=\n " 	+ MVP_parameter					);
 	print		("-------> MVP_parameter_prefix 					=\n " 	+ MVP_parameter_prefix			);
@@ -3117,7 +3363,7 @@ function print_MVP_parameter_info()
 }
 function print_input_output_filenames()
 {
-	print_section_separator("Printing input/output filenames of ROI analysis, parameter value test comparisons, and parameter value test comparison multiplots", PRINT_MAJOR_SECTION);
+	print_section("Printing input/output filenames of ROI analysis, parameter value test comparisons, and parameter value test comparison multiplots", PRINT_MAJOR_SECTION);
 	print		("\n*ROI analysis input/output filenames----------------------------> "															);	
 	print		("-------> ROI_ANALYSIS_TV_IFNAME 							=\n " 	+ ROI_ANALYSIS_TV_IFNAME					);									// 
 	print		("-------> ROI_ANALYSIS_RSP_OFNAME 						=\n " 	+ ROI_ANALYSIS_RSP_OFNAME					);									// 
@@ -3133,7 +3379,7 @@ function print_input_output_filenames()
 }
 function print_test_parameter_file_info()
 {	
-	print_section_separator("Printing parameter value test info...", PRINT_MAJOR_SECTION											);
+	print_section("Printing parameter value test info...", PRINT_MAJOR_SECTION											);
 	print		("-------> parameter_test_number							=\n" 	+ parameter_test_number							);
 	print		("-------> parameter_test_info_filename						=\n" 	+ parameter_test_info_filename					);
 	print		("-------> num_TTP_tests					=\n"	+ num_TTP_tests				);
@@ -3149,7 +3395,7 @@ function print_test_parameter_file_info()
 }
 function print_TTP_info()
 {	
-	print_section_separator("Printing parameter value test info...", PRINT_MAJOR_SECTION											);
+	print_section("Printing parameter value test info...", PRINT_MAJOR_SECTION											);
 	print		("-------> TTP							=\n" 	+ TTP							);	
 	print		("-------> TTP_index						=\n" 	+ TTP_index					);	
 	print		("-------> TTP_prefix						=\n" 	+ TTP_prefix					);	
@@ -3174,7 +3420,7 @@ function print_TTP_info()
 	}
 function print_reconstructed_image_info()
 {	
-	print_section_separator("Printing reconstructed image(s) properties", PRINT_MAJOR_SECTION									);
+	print_section("Printing reconstructed image(s) properties", PRINT_MAJOR_SECTION									);
 	print		("\nReconstructed image(s) properties-------------------> "														);	
 	print		("-------> voxel_dimensions								: "														);	Array.print	(voxel_dimensions);	
 	print		("-------> voxel_width 									=\n " 	+ voxel_width									);									// 
@@ -3189,7 +3435,7 @@ function print_reconstructed_image_info()
 }
 function print_ROI_analysis_info()
 {	
-	print_section_separator("Printing reconstructed image(s)/ROI analysis configurations/parameters", PRINT_MAJOR_SECTION		);
+	print_section("Printing reconstructed image(s)/ROI analysis configurations/parameters", PRINT_MAJOR_SECTION		);
 	print		("\nImage analysis configuration/parameters-------------> "														);	
 	print		("-------> first_iteration_2_analyze					=\n " 	+ first_iteration_2_analyze						);
 	print		("-------> last_iteration_2_analyze						=\n " 	+ last_iteration_2_analyze						);
@@ -3214,7 +3460,7 @@ function print_ROI_analysis_info()
 }
 function print_ROI_definitions()
 {
-	print_section_separator("Printing ROI definitions and info", PRINT_MAJOR_SECTION				);
+	print_section("Printing ROI definitions and info", PRINT_MAJOR_SECTION				);
 	print	("-------> PHANTOM_BASENAME					= " 	+ PHANTOM_BASENAME					);
 	print	("-------> ROI_DEFINITIONS_FILENAME			= " 	+ ROI_DEFINITIONS_FILENAME			);
 	print	("-------> ROI_DEFINITIONS_FILE_PATH		= " 	+ ROI_DEFINITIONS_FILE_PATH			);
@@ -3363,30 +3609,6 @@ function ROI_material_names_2_RSPs(_ROI_material_names, _is_simulated_scan)
 	for(ROI = 0; ROI < _num_ROIs_2_analyze; ROI++)
 		_ROI_material_RSPs[ROI] 	= material_name_2_RSP(_ROI_material_names[ROI], _is_simulated_scan);
 	return _ROI_material_RSPs;
-}
-function ROI_parameter_string_2_values(_ROI_definitions_parameter_string, _ROI_definitions_parameter_list, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_PV_parseFloat, _force_array)
-{
-	for(i = 0; i < _ROI_definitions_parameter_list.length; i++)
-	{	
-		if( matches(ROI_definitions_parameter_list[i], _ROI_definitions_parameter_string))
-			_ROI_parameter_string_index			= i;			
-	}
-	_desired_ROI_parameter_string 				= _ROI_parameter_strings[_ROI_parameter_string_index];
-	_desired_ROI_parameter_string_elements 		= split(_desired_ROI_parameter_string, ",");
-	_num_desired_ROI_parameter_string_elements 	= _desired_ROI_parameter_string_elements.length;
-	_desired_ROI_PVs				= newArray(_num_desired_ROI_parameter_string_elements);
-	for(i = 0; i < _num_desired_ROI_parameter_string_elements; i++)
-	{
-		_spaceless_PV_string 		= strip_surrounding_spaces(_desired_ROI_parameter_string_elements[i]);
-		if(_ROI_parameter_decodings[_ROI_parameter_string_index] == _ROI_PV_parseFloat)
-			_desired_ROI_PVs[i] 	= parseFloat(_spaceless_PV_string);
-		else
-			_desired_ROI_PVs[i] 	= _spaceless_PV_string;
-	}
-	if( _num_desired_ROI_parameter_string_elements == 1 && !_force_array)
-		return _desired_ROI_PVs[0];
-	else
-		 return _desired_ROI_PVs;
 }
 function save_AVI(dir, filename, compression, frame_rate, overwrite_existing, print_path, close_stack_after_saving)
 {
@@ -3955,7 +4177,7 @@ function verify_ROI_analysis_output_files(_common_dir, _current_PVT_folder, _ROI
 function verify_ROI_analysis_output_file_set(_common_dir, _current_PVT_folders, _current_analysis_RSP_input_data_filenames, _current_analysis_RSP_error_input_data_filenames, _current_analysis_std_dev_input_data_filenames, _current_analysis_TV_input_data_filenames)
 {
 	missing_data_directories = newArray();
-	print_section_separator		("------->Verifying ROI analysis output data files exist for specified set of reconstructions:\n", PRINT_MAJOR_SECTION);
+	print_section		("------->Verifying ROI analysis output data files exist for specified set of reconstructions:\n", PRINT_MAJOR_SECTION);
 	for( i = 0; i < _current_PVT_folders.length; i++)
 	{
 		missing_data = false;

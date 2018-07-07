@@ -9,21 +9,16 @@ current_group=$(id -gn)
 user_folder="/${current_user}"
 recon_group="ionrecon"
 path_dirs=$(echo "${PATH//:/$'\n'}")
-###################################################################################################
-########################## Source pCT constant variable definition script #########################
-###################################################################################################
-#-------------------------------------------------------------------------------------------------#
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_constvars.sh
-#-------------------------------------------------------------------------------------------------#
+declare -a PCT_USERS
 ###################################################################################################
 ########################## Set current data & code value/choice variables #########################
 ###################################################################################################
 dindir="/input_Sensitom_CDH6/"
 doutdir="/output_Sensitom_CDH6/B_25600/"
-current_rcode="Baylor_rcode" 	# Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
-#current_rcode=$Baylor_rcode 	# Options: $Baylor_rcode, $pct_collab_rcode, $Blake_rcode, $old_rcode
-current_rcode_git='direct' 		# Options: user_git='user', direct_git='direct'
-#current_rcode_git=$direct_git 	# Options: user_git='user', direct_git='direct'
+current_rcode="Baylor_rcode"    # Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
+#current_rcode=$Baylor_rcode    # Options: $Baylor_rcode, $pct_collab_rcode, $Blake_rcode, $old_rcode
+current_rcode_git='direct'      # Options: user_git='user', direct_git='direct'
+#current_rcode_git=$direct_git  # Options: user_git='user', direct_git='direct'
 current_phantom="CTP404_Sensitom"
 current_phantom_ID="LMUDECT"
 current_phantom_name="LMU_DECT"
@@ -43,6 +38,12 @@ alias rm="rm -v"
 alias echo="echo -e"
 alias scp="scp -rCp -c blowfish"
 alias cp="cp -apv"
+###################################################################################################
+########################## Source pCT constant variable definition script #########################
+###################################################################################################
+#-------------------------------------------------------------------------------------------------#
+. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_constvars.sh
+#-------------------------------------------------------------------------------------------------#
 ###################################################################################################
 ############################## Source pCT function definition script ##############################
 ###################################################################################################
@@ -118,10 +119,6 @@ print_alias $(exe alias gomyrecon="cd ${user_home}${pct_data_folder}${recon_data
 print_alias $(exe alias gomycode="cd ${user_home}${pct_code_folder}"   )                          #
 print_alias $(exe alias gomypcode="cd ${user_home}${pcode_subdir_path}${user_folder}")            #
 print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_subdir_path}${user_folder}" )           #
-
-global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
-tardis_Blake_rcode_git_repo_path="${tardis_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
-Blake_rcode_git_repo_subdir_path="${Blake_git_account}/${Blake_rcode_git_repo}"
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Tardis data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
@@ -144,9 +141,6 @@ print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")        
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Currently used Kodiak/Tardis recon code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-#current_git_rcode="Baylor" # Options: Baylor, user, old
-# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
-
 #current_global_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
 print_alias $(exe alias gocgitcode="cd ${current_global_rcode_path}" )                                        #
 # /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
@@ -173,32 +167,6 @@ print_alias $(exe alias goclucode="cd ${current_tardis_user_rcode_path}" )      
 print_alias $(exe alias goclgcode="cd ${current_tardis_group_rcode_path}" )                                        #
 # /local/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
 
-#${old_rcode_git_repo_subdir_path}
-#${Baylor_rcode_git_repo_subdir_path}
-#${Blake_rcode_git_repo_subdir_path}
-# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${Baylor_rcode_git_repo_subdir_path}/")                         #
-# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${Blake_rcode_git_repo_subdir_path}/")                         #
-# print_alias $(exe alias golrcode="cd ${global_rcode_path}${user_folder}/${old_rcode_git_repo_subdir_path}/")                         #
-# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${Baylor_rcode_git_repo_subdir_path}/")                         #
-# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${Blake_rcode_git_repo_subdir_path}/")                         #
-# print_alias $(exe alias golrcode="cd ${tardis_rcode_path}${user_folder}/${old_rcode_git_repo_subdir_path}/")                         #
-
-# global_Baylor_rcode_git_repo_path="${global_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
-# tardis_Baylor_rcode_git_repo_path="${tardis_git_code_path}/${Baylor_rcode_git_repo_subdir_path}"
-
-# print_alias $(exe alias gogitrcode="cd ${global_Baylor_rcode_git_repo_path}" )                    #
-# print_alias $(exe alias golgitrcode="cd ${tardis_Baylor_rcode_git_repo_path}")                    #
-
-# global_Blake_rcode_git_repo_path="${global_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
-# tardis_Blake_rcode_git_repo_path="${tardis_git_code_path}/${Blake_rcode_git_repo_subdir_path}"
-# print_alias $(exe alias gogitmyrrcode="cd ${global_Blake_rcode_git_repo_path}" )                  #
-# print_alias $(exe alias golgitmyrrcode="cd ${tardis_Blake_rcode_git_repo_path}")                  #
-
-# old_rcode_git_repo_subdir_path="${pct_collab_git_account}/${old_rcode_git_repo}"
-# global_old_rcode_git_repo_path="${global_git_code_path}/${old_rcode_git_repo_subdir_path}"
-# tardis_old_rcode_git_repo_path="${tardis_git_code_path}/${old_rcode_git_repo_subdir_path}"
-# print_alias $(exe alias gogitorcode="cd ${global_old_rcode_git_repo_path}" )                      #
-# print_alias $(exe alias golgitorcode="cd ${tardis_old_rcode_git_repo_path}")                      #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Currently used Kodiak/Tardis recon IO data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
@@ -231,7 +199,6 @@ print_alias $(exe alias gogrecon="cd ${recon_group_home}${pct_data_folder}${reco
 print_alias $(exe alias gogcode="cd ${recon_group_home}${pct_code_folder}"   )                    #
 print_alias $(exe alias gogpcode="cd ${recon_group_home}${pcode_subdir_path}${user_folder}")      #
 print_alias $(exe alias gogrcode="cd ${recon_group_home}${rcode_subdir_path}${user_folder}")      #
-#alias goBlake=
 ###################################################################################################
 ################## Set up Kodiak modules, environment variables, and user prompt ##################
 ###################################################################################################
@@ -257,7 +224,7 @@ then
     #---------------------------------------------------------------------------------------------#
     login_dir="${current_global_rcode_path}"
     #---------------------------------------------------------------------------------------------#
-	###################################################################################################
+    ###################################################################################################
 ############### Set up Tardis node modules, environment variables, and user prompt ################
 ###################################################################################################
 #*************************************************************************************************#
@@ -426,9 +393,9 @@ else
      print_program_version "CUDA" "nvcc --version" "\n"
 fi
 print_program_version "bash" "echo -e $BASH_VERSION"
-###################################################################################################
-################################### Specify user prompt format ####################################
-###################################################################################################
+# ###################################################################################################
+# ################################### Specify user prompt format ####################################
+# ###################################################################################################
 PROMPT_COMMAND="find_git_branch; find_git_dirty; $PROMPT_COMMAND"
 if [[ ${EUID} == 0 ]] ; then
     export PS1=$'\[\[\033[0;33m\][\D{%T %Z (%a) %m-%d-%Y}] \[\033[35m\]$PWD\n\[\033[36m\][\u.\h/${current_node_alias}]\[\033[0m\] \\[\033[32m\\]\xe2\x9e\xa4\\[\033[37m\\] '

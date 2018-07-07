@@ -27,16 +27,18 @@ macro "merge_data"
 	//************************************************************************************ CSV file merging Booleans ************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//			
 	perform_data_merging												= true;	
-	merge_ROI_analysis_CSVs												= true;
-	merge_ROI_analysis_RSP_Error_CSVs									= true;
+	//merge_ROI_analysis_CSVs												= true;
+	merge_ROI_analysis_CSVs 					= false;
 	merge_ROI_analysis_RSP_CSVs											= true;
+	merge_ROI_analysis_RSP_Error_CSVs									= true;
 	merge_ROI_analysis_Std_Dev_CSVs										= true;
 	merge_TV_CSVs														= true;
-	merge_multiplot_CSVs												= true;
-	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
+	//merge_multiplot_CSVs												= true;
+	merge_multiplot_CSVs 						= false;
 	merge_multiplot_RSP_CSVs											= true && merge_multiplot_CSVs;
+	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
 	merge_multiplot_Std_Dev_CSVs										= true && merge_multiplot_CSVs;
-	merge_multiplot_TV_CSVs												= true  && merge_multiplot_CSVs;
+	merge_multiplot_TV_CSVs												= true && merge_multiplot_CSVs;
 	write_merged_data 													= true;
 	write_merged_CSV_data 												= true && write_merged_data;
 	write_merged_TXT_data 												= true && write_merged_data;
@@ -82,35 +84,37 @@ macro "merge_data"
 	overwrite_merged_multiplot_Std_Dev_TXT_data 						= true && overwrite_merged_multiplot_TXT_data;
 	overwrite_merged_multiplot_TV_TXT_data 								= true && overwrite_merged_multiplot_TXT_data;
 	merge_PVT_CSVs														= true;
-	merge_PVT_RSP_Error_CSVs											= true && merge_PVT_CSVs;
 	merge_PVT_RSP_CSVs													= true && merge_PVT_CSVs;
+	merge_PVT_RSP_Error_CSVs											= true && merge_PVT_CSVs;
 	merge_PVT_Std_Dev_CSVs												= true && merge_PVT_CSVs;
-	merge_PVT_TV_CSVs													= true  && merge_PVT_CSVs;
-	write_PVT_CSVs														= true;
-	write_PVT_RSP_Error_CSVs											= true && write_PVT_CSVs;
+	merge_PVT_TV_CSVs													= true && merge_PVT_CSVs;
+	//write_PVT_CSVs														= true;
+	write_PVT_CSVs														= false;
 	write_PVT_RSP_CSVs													= true && write_PVT_CSVs;
+	write_PVT_RSP_Error_CSVs											= true && write_PVT_CSVs;
 	write_PVT_Std_Dev_CSVs												= true && write_PVT_CSVs;
-	write_PVT_TV_CSVs													= true  && write_PVT_CSVs;
+	write_PVT_TV_CSVs													= true && write_PVT_CSVs;
 	overwrite_PVT_CSVs													= true;
-	overwrite_PVT_RSP_Error_CSVs										= true && overwrite_PVT_CSVs;
 	overwrite_PVT_RSP_CSVs												= true && overwrite_PVT_CSVs;
+	overwrite_PVT_RSP_Error_CSVs										= true && overwrite_PVT_CSVs;
 	overwrite_PVT_Std_Dev_CSVs											= true && overwrite_PVT_CSVs;
-	overwrite_PVT_TV_CSVs												= true  && overwrite_PVT_CSVs;
+	overwrite_PVT_TV_CSVs												= true && overwrite_PVT_CSVs;
 	merge_PVT_TXTs														= true;
-	merge_PVT_RSP_Error_TXTs											= true && merge_PVT_TXTs;
 	merge_PVT_RSP_TXTs													= true && merge_PVT_TXTs;
+	merge_PVT_RSP_Error_TXTs											= true && merge_PVT_TXTs;
 	merge_PVT_Std_Dev_TXTs												= true && merge_PVT_TXTs;
-	merge_PVT_TV_TXTs													= true  && merge_PVT_TXTs;
-	write_PVT_TXTs														= true;
-	write_PVT_RSP_Error_TXTs											= true && write_PVT_TXTs;
+	merge_PVT_TV_TXTs													= true && merge_PVT_TXTs;
+	//write_PVT_TXTs														= true;
+	write_PVT_TXTs														= false;
 	write_PVT_RSP_TXTs													= true && write_PVT_TXTs;
+	write_PVT_RSP_Error_TXTs											= true && write_PVT_TXTs;
 	write_PVT_Std_Dev_TXTs												= true && write_PVT_TXTs;
-	write_PVT_TV_TXTs													= true  && write_PVT_TXTs;
+	write_PVT_TV_TXTs													= true && write_PVT_TXTs;
 	overwrite_PVT_TXTs													= true;
-	overwrite_PVT_RSP_Error_TXTs										= true && overwrite_PVT_TXTs;
 	overwrite_PVT_RSP_TXTs												= true && overwrite_PVT_TXTs;
+	overwrite_PVT_RSP_Error_TXTs										= true && overwrite_PVT_TXTs;
 	overwrite_PVT_Std_Dev_TXTs											= true && overwrite_PVT_TXTs;
-	overwrite_PVT_TV_TXTs												= true  && overwrite_PVT_TXTs;
+	overwrite_PVT_TV_TXTs												= true && overwrite_PVT_TXTs;
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ Define Boolean constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
@@ -312,6 +316,7 @@ macro "merge_data"
 	TV_after_TVS_label 								= "TV: After TVS";
 	TV_reduction_label 								= "TVS TV Reduction";
 	TV_table_titles									= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
+	OTVS_row_header									= "OTVS";
 	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
 	ASK_KILL_DIALOG_TITLE							= "Continue or cancel execution?";
@@ -400,6 +405,7 @@ macro "merge_data"
 	// ImageJ macro & execution parameters/settings/configurations/logging file info
 	parameter_test_info_basename					= "Test_Parameters_";
 	ANALYSIS_LOG_FNAME 								= "AnalysisLog.nfo";
+	OTVS_dir_suffix									= "_OTVS";
 	ROI_definitions_filename_suffix					= "_ROIs" + TXT;	
 	ROI_definitions_filename						= phantom_basename + ROI_definitions_filename_suffix;
 	ROI_definitions_file_path						= github_macro_directory_pCT_Collaboration + FOLDER_SEPARATOR + ROI_definitions_filename;
@@ -807,6 +813,15 @@ macro "merge_data"
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//	
+	ROI_compared_table_rows						= num_TTP_values + 1;
+	ROI_compared_table_row_headers 				= Array.concat(ROI_table_row_headers, OTVS_row_header); 				
+	ROI_compared_table_dimensions				= newArray(ROI_table_first_column, 	ROI_table_columns, 	ROI_compared_table_rows, 		ROI_table_column_separation, ROI_table_row_separation, column_labels_row_separation);					
+	TV_compared_table_rows						= num_TTP_values + 1;
+	TV_compared_table_row_headers 				= Array.concat(ROI_table_row_headers, OTVS_row_header); 			
+	TV_compared_table_dimensions				= newArray(TV_table_first_column, 	TV_table_columns, 	TV_compared_table_rows, 		TV_table_column_separation, TV_table_row_separation, column_labels_row_separation);	
+	//*******************************************************************************************************************************************************************************************//
+	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
+	//*******************************************************************************************************************************************************************************************//	
 	ROI_analysis_TV_input_filename				= TV_measurements_basename 		+ TXT;	
 	ROI_analysis_RSP_output_filename			= RSP_data_files_basename 		+ CSV;
 	ROI_analysis_RSP_Error_output_filename		= RSP_error_data_files_basename	+ CSV;
@@ -1197,21 +1212,6 @@ macro "merge_data"
 							ROI_multiplot_table_title_dimensions		= newArray(title_start_column, 		title_start_row, 	title_row_separation, 	ROI_multiplot_table_total_columns);
 							ROI_multiplot_table_titles 					= table_grid_row_array_duplication( ROI_labels, num_ROI_multiplot_tables);
 							//exit();
-							function table_query_nColumns()
-							{
-								_last_column_index = 0;
-								//while(getResultString(_last_column_index++, _row) != "null");// && _loops < 125)
-								while( !isMember(getResultString(_last_column_index++, 0), MISSING_COLUMN_RESULTS, RETURN_MATCH_TF));
-								return _last_column_index - 1;
-							}
-							function table_add_Excel_code(_column, _row, _total_columns, _code)
-							{
-								_total_columns		= table_query_nColumns();
-								if					(_row >= nResults)
-									_current_row	= table_add_empty_rows			( _total_columns, nResults, _row - nResults + 1);								
-								setResult			(_column,  _row, EQUALS_STRING + _code);	
-								return _row;
-							}
 							//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 							if											(merge_ROI_analysis_RSP_CSVs)
 							{	//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
@@ -1373,11 +1373,23 @@ macro "merge_data"
 					lKill												(num_loops, KILL_LOOP_INDEX);
 					//lKill												(num_loops, 0);
 				}// END for( i = 0; i < lengthOf(all_reduced_path_strings); i+=num_input_directories_per_multiplot)	
-				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-				//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//***************************************************************************************************************************************************************************************************//
+//********************************************* Merge the multiplot + target test parameter value CSV files for each value of secondary parameter value *********************************************//
+//***************************************************************************************************************************************************************************************************//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+				//merge_ROI_analysis_CSVs = false;
+				//merge_multiplot_CSVs = false;
+				//write_PVT_RSP_CSVs
 				PVT_ROI_data_subdirectory					= PVT_output_multiplot_data_parent_directory 	+ FOLDER_SEPARATOR + current_analysis_shortest_subdirectory;
 				PVT_TV_data_subdirectory					= PVT_output_multiplot_data_parent_directory;
+				// OTVS_dir_suffix
+				//ROI_compared_table_rows			= num_TTP_values + 1;
+				//ROI_compared_table_row_headers 	= Array.concat(ROI_table_row_headers, OTVS_row_header); 				
+				//ROI_compared_table_dimensions		= newArray(ROI_table_first_column, ROI_table_columns, ROI_compared_table_rows, ROI_table_column_separation, ROI_table_row_separation, column_labels_row_separation);					
+				//TV_compared_table_rows			= num_TTP_values + 1;
+				//TV_compared_table_row_headers 	= Array.concat(ROI_table_row_headers, OTVS_row_header); 			
+				//TV_compared_table_dimensions		= newArray(TV_table_first_column, TV_table_columns, TV_compared_table_rows, TV_table_column_separation, TV_table_row_separation, column_labels_row_separation);	
 				if											(merge_PVT_RSP_CSVs)
 				{
 					PVT_RSP_data 							= newArray();
@@ -3769,6 +3781,21 @@ function table_max_row_label_length(_table_title, _row_labels)
 		if(lengthOf(_row_labels[i]) > _max_row_label_length)
 			_max_row_label_length	= lengthOf(_row_labels[i]);
 	return _max_row_label_length;
+}
+function table_query_nColumns()
+{
+	_last_column_index = 0;
+	//while(getResultString(_last_column_index++, _row) != "null");// && _loops < 125)
+	while( !isMember(getResultString(_last_column_index++, 0), MISSING_COLUMN_RESULTS, RETURN_MATCH_TF));
+	return _last_column_index - 1;
+}
+function table_add_Excel_code(_column, _row, _total_columns, _code)
+{
+	_total_columns		= table_query_nColumns();
+	if					(_row >= nResults)
+		_current_row	= table_add_empty_rows			( _total_columns, nResults, _row - nResults + 1);								
+	setResult			(_column,  _row, EQUALS_STRING + _code);	
+	return _row;
 }
 function table_row_order_index(_num_columns, _num_rows, _column_num, _row_num, _table_num)
 {
