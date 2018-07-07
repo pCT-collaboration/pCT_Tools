@@ -30,6 +30,7 @@ doc/*
 
 #---- Unorganized bash scripts ----#
 *.sh
+!bash/*.sh
 
 #---- Text files ----#
 *.bak

@@ -13,6 +13,17 @@ declare -a PCT_USERS
 ###################################################################################################
 ########################## Set current data & code value/choice variables #########################
 ###################################################################################################
+#-------------------------------------------------------------------------------------------------#
+version_CUDA_Kodiak=80
+version_CUDA_Tardis_Headnode=80
+version_CUDA_Tardis=80
+version_CUDA_workstation=80
+rcode_cu_file="/src/pCT_Reconstruction_Data_Segments_Blake.cu"
+rcode_compute="compute_35"
+rcode_sm="sm_35"
+rcode_object="pCT_Reconstruction.out"
+rcode_flags="-O3"
+#-------------------------------------------------------------------------------------------------#
 dindir="/input_Sensitom_CDH6/"
 doutdir="/output_Sensitom_CDH6/B_25600/"
 current_rcode="Baylor_rcode"    # Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
@@ -141,53 +152,23 @@ print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")        
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Currently used Kodiak/Tardis recon code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-#current_global_rcode_path="${global_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias gocgitcode="cd ${current_global_rcode_path}" )                                        #
-# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
-#current_global_git_rcode_path=${current_global_rcode_path}
-print_alias $(exe alias gocgitcode="cd ${current_global_git_rcode_path}" )                                        #
-# /ion/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
-#current_global_user_rcode_path="${global_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias gocucode="cd ${current_global_user_rcode_path}" )                                        #
-# /ion/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
-#current_global_group_rcode_path="${global_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias gocgcode="cd ${current_global_group_rcode_path}" )                                        #
-# /ion/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
-
-#current_tardis_rcode_path="${tardis_git_code_path}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias goclgitcode="cd ${current_tardis_rcode_path}" )                                        #
-# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
-#current_tardis_git_rcode_path=${current_tardis_rcode_path}
-print_alias $(exe alias goclgitcode="cd ${current_tardis_git_rcode_path}" )                                        #
-# /local/pCT_code/git/BaylorICTHUS/pCT_Reconstruction
-#current_tardis_user_rcode_path="${tardis_rcode_path}/${username}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias goclucode="cd ${current_tardis_user_rcode_path}" )                                        #
-# /local/pCT_code/Reconstruction/schultze/git/BaylorICTHUS/pCT_Reconstruction
-#current_tardis_group_rcode_path="${tardis_rcode_path}/${recon_group}${git_code_folder}/${current_rcode_account}/${current_rcode_repo}"
-print_alias $(exe alias goclgcode="cd ${current_tardis_group_rcode_path}" )                                        #
-# /local/pCT_code/Reconstruction/ionrecon/git/BaylorICTHUS/pCT_Reconstruction
-
+print_alias $(exe alias gocgitcode="cd ${current_global_rcode_path}" )                            #
+print_alias $(exe alias gocgitcode="cd ${current_global_git_rcode_path}" )                        #
+print_alias $(exe alias gocucode="cd ${current_global_user_rcode_path}" )                         #
+print_alias $(exe alias gocgcode="cd ${current_global_group_rcode_path}" )                        #
+print_alias $(exe alias goclgitcode="cd ${current_tardis_rcode_path}" )                           #
+print_alias $(exe alias goclgitcode="cd ${current_tardis_git_rcode_path}" )                       #
+print_alias $(exe alias goclucode="cd ${current_tardis_user_rcode_path}" )                        #
+print_alias $(exe alias goclgcode="cd ${current_tardis_group_rcode_path}" )                       #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Currently used Kodiak/Tardis recon IO data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
-#/ion/home/schultze/pCT_data/CTP404_Sensitom/Experimental/input_Sensitom_CDH6
-#user_current_data_path="${user_data_path}${current_phantom}${experimental_data_folder}${dindir}"
-print_alias $(exe alias gocudata="cd ${user_current_data_path}" )                                        #
-#########rgroup_current_data_path="${rgroup_recon_data_path}${recon_data_folder}"
-#/local/pCT_data/organized_data/input_Sensitom_CDH6
-#tardis_current_data_path="${tardis_org_data_path}${dindir}"
-print_alias $(exe alias gocldata="cd ${tardis_current_data_path}" )                                        #
-#/ion/home/schultze/pCT_data/reconstruction_data/output_Sensitom_CDH6/B_25600
-#user_current_recon_data_path="${user_recon_data_path}${doutdir}"
-print_alias $(exe alias gocurecon="cd ${user_current_recon_data_path}" )                                        #
-########rgroup_current_recon_data_path="${rgroup_recon_data_path}${recon_data_folder}"
-#/local/pCT_data/reconstruction_data/output_Sensitom_CDH6
-#tardis_current_recon_data_path="${tardis_recon_data_path}${doutdir}"
-print_alias $(exe alias goclurecon="cd ${tardis_current_recon_data_path}" )                                        #
-#-------------------------------------------------------------------------------------------------#
-print_section_header "Kodiak recon group directory change shortcut (alias) commands" 1,33 5,40
-#-------------------------------------------------------------------------------------------------#
-#print_alias $(exe alias gorgrpgit="cd ${pct_home}/${recon_group}/")                              #
+print_alias $(exe alias gocudata="cd ${user_current_data_path}" )                                 #
+#########rgroup_current_data_path="${rgroup_recon_data_path}${recon_data_folder}"                 #
+print_alias $(exe alias gocldata="cd ${tardis_current_data_path}" )                               #
+print_alias $(exe alias gocurecon="cd ${user_current_recon_data_path}" )                          #
+########rgroup_current_recon_data_path="${rgroup_recon_data_path}${recon_data_folder}"            #
+print_alias $(exe alias goclurecon="cd ${tardis_current_recon_data_path}" )                       #
 #-------------------------------------------------------------------------------------------------#
 print_section_header "Kodiak group data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
