@@ -26,7 +26,8 @@ alias rsyncn="rsync -aEHzvh --progress --size-only $1 $2"
 alias rmf='rm -rf $1'
 #alias deldir="rm -rf"
 alias deldir='rmdir -v --ignore-fail-on-non-empty $1'
-alias qstatu='qstat -t -u schultze'
+alias qstatu='qstat -t -u $username'
+alias qdelu='qselect -u $username | xargs qdel'
 alias nvcc11="nvcc -std=c++11 -gencode arch=${rcode_compute},code=${rcode_sm} ${rcode_flags}"
 #-------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------#
@@ -342,10 +343,10 @@ function cp2k()
     #
     #
 }
-function current_node_name()
+function get_current_node_alias()
 {
     node_ID=$HOSTNAME
-    if [ $node_ID == "n130" ]; then node_alias="Kodiak"
+    if [ $node_ID == "kodiak" -o $node_ID == "n130"  -o $node_ID == "login001" ]; then node_alias="Kodiak"
     elif [ $node_ID == "ecsn001" -o $node_ID == "whartnell" ]; then node_alias="WHartnell"
     elif [ $node_ID == "ecsn002" ]; then node_alias="PTroughton"
     elif [ $node_ID == "ecsn003" ]; then node_alias="JPertwee"
@@ -354,7 +355,7 @@ function current_node_name()
     elif [ $node_ID == "tardis-student1" ]; then node_alias="Workstation #1"
     elif [ $node_ID == "tardis-student2" ]; then node_alias="Workstation #2"
     fi
-    echo -e $node_alias
+    current_node_alias=${node_alias}
 }
 function node_info()
 {
@@ -492,10 +493,10 @@ function set_color()
     if [ -z "$3" ]; then
         underline_code="";
     else
-       underline_code="\033[4m";
+       underline_code="\e[4m";
     fi;
-    #echo -e "\033[${text_color_shade_code};${text_color_color_code};${background_color_shade_code};${background_color_color_code}m${underline_code}"
-    REPLY="\033[${text_color_shade_code};${text_color_color_code};${background_color_shade_code};${background_color_color_code}m${underline_code}"
+    #echo -e "\e[${text_color_shade_code};${text_color_color_code};${background_color_shade_code};${background_color_color_code}m${underline_code}"
+    REPLY="\e[${text_color_shade_code};${text_color_color_code};${background_color_shade_code};${background_color_color_code}m${underline_code}"
 }
 function color_text()
 {
@@ -511,7 +512,7 @@ function color_text()
   if [ -z "$4" ]; then
         underline_code="";
     else
-       underline_code="\033[4m";
+       underline_code="\e[4m";
     fi;
   color_cmd=${REPLY}
   REPLY="${color_cmd}${underline_code}${1}\e[m"
@@ -519,36 +520,98 @@ function color_text()
 }
 function print()
 {
-  if [ -z "$2" ]; then
-      set_color ${default_text_color} ${default_background_color}
-  else
-      if [ -z "$3" ]; then
-          set_color $2 ${default_background_color}
-      else
-          set_color $2 $3
-      fi
-  fi
-  if [ -z "$4" ]; then
+    if [ -z "$2" ]; then
+        set_color ${default_text_color} ${default_background_color}
+    else
+        if [ -z "$3" ]; then
+            set_color $2 ${default_background_color}
+        else
+            set_color $2 $3
+        fi
+    fi
+    if [ -z "$4" ]; then
         underline_code="";
     else
-       underline_code="\033[4m";
-    fi;
-  echo -e "${REPLY}${underline_code}${1}\e[m"
+        underline_code="\e[4m";
+    fi
+    echo -e "${REPLY}${underline_code}${1}\e[m"
+}
+function setfmt()
+{
+    textfmt "" $1
+    echo -e $REPLY
+}
+function fmtprint()
+{
+    textfmt "$1" $2
+    echo -e "$REPLY"
+}
+function textfmt()
+{
+    background_code="\e[6;40m"
+    text_code="\e[0;37m"
+    format_code=''
+    textraw=$1
+    color_code_arg=$2
+    fmt_suffix=${CLOSE_COLOR_ESCAPE_SEQ}
+    while getopts 'o' opt; do
+        case $opt in        
+            o) fmt_suffix=''; shift;;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done     
+    color_code_items=(${color_code_arg//,/ })                   # make array from simple string
+    for (( j=0; j<${#color_code_items[@]}; j+=2 ))
+    do  
+        if [ ${color_code_items[@]:$j:1} == 0 -o ${color_code_items[@]:$j:1} == 1 ]
+        then 
+            text_code="\e[${color_code_items[$j]};${color_code_items[$(($j+1))]}m"
+        elif [ ${color_code_items[@]:$j:1} == 5 -o ${color_code_items[@]:$j:1} == 6 ]
+        then 
+            background_code="\e[${color_code_items[$j]};${color_code_items[$(($j+1))]}m"
+        else 
+            format_code="\e[${color_code_items[$j]}m"
+            j=$(($j-1)) 
+        fi
+    done
+    REPLY="${text_code}${background_code}${format_code}${textraw}${fmt_suffix}"
 }
 function print_key_value()
 {
     local OPTIND
-    while getopts 'c:C:k:v:' opt; do
+    colstart=0
+    keyval_sep_fmt='c'
+    while getopts 'c:C:k:v:a:A:' opt; do
         case $opt in
             c) key_color_coding=${OPTARG};;
             C) value_color_coding=${OPTARG};;
             k) key=${OPTARG};;
             v) value=${OPTARG};;
+            a) colstart=${OPTARG}; keyval_sep_fmt='c';;
+            A) colstart=${OPTARG}; keyval_sep_fmt='C';;
             *) error "Unexpected option ${flag}";;
         esac
     done
-    color_text " $value" $value_color_coding; value_string=$REPLY
-    print "$key:$value_string" $key_color_coding
+    num_spaces=$(( $colstart > ${#key} + 2 ? $colstart - ${#key} - 2 : 1 ))
+    keyval_sep=$(charrep " " $num_spaces)
+    if [[ $keyval_sep_fmt == 'c' ]]
+    then
+        textfmt "${value}" ${value_color_coding}
+        textfmt "${key}:${keyval_sep}${REPLY}" ${key_color_coding}
+        #textfmt "${keyval_sep}" ${key_color_coding}
+    elif [[ $keyval_sep_fmt == 'C' ]]
+    then
+        textfmt "${keyval_sep}${value}" ${value_color_coding}
+        textfmt "${key}:${REPLY}" ${key_color_coding}
+        #textfmt "${keyval_sep}" ${value_color_coding}
+    else
+        textfmt "${value}" ${value_color_coding}
+        textfmt "${key}:${keyval_sep}${REPLY}" ${key_color_coding}
+        #textfmt "${keyval_sep}" ${key_color_coding}
+    fi
+    #textfmt "${REPLY}${value}" ${value_color_coding}
+    #textfmt "${key}:${REPLY}" ${key_color_coding}
+    echo -e "${REPLY}"
 }
 function print_alias()
 {
@@ -579,9 +642,15 @@ function print_section_header()
     num_dashes=$(expr $console_width - $heading_length - 2)
     num_front=$(expr $num_dashes / 2)
     num_back=$(expr $num_dashes - $num_front)
-    front_string=$(charrep $separator_char $num_front)
-    back_string=$(charrep $separator_char $num_back)
-    separator_string=$(charrep "-" $console_width)
+    if [ -z "$4" ]
+    then 
+        separator_char="${default_separator_char}"
+    else
+        separator_char="$4"
+    fi
+    front_string=$(charrep "${separator_char}" $num_front)
+    back_string=$(charrep "${separator_char}" $num_back)
+    separator_string=$(charrep "${separator_char}" $console_width)
     if [ -z "$2" ]; then
        print "${separator_string}" ${default_text_color} ${default_background_color}
        print "${front_string} $1 ${back_string}" ${default_text_color} ${default_background_color}
@@ -1419,15 +1488,16 @@ function load_CUDA_modules()
 {
     print "\nLoading modules required by selected version of CUDA..." 0,32
     #---------------------------------------------------------------------------------------------#
-    if [ $HOSTNAME == "whartnell" ]
+    node_ID=$HOSTNAME
+    if [ $node_ID == "whartnell" ]
     then
         load_CUDA=$version_CUDA_Tardis_Headnode
     #---------------------------------------------------------------------------------------------#
-    elif [ $HOSTNAME == "ecsn002" -o $HOSTNAME == "ecsn003" -o $HOSTNAME == "ecsn004" -o $HOSTNAME == "ecsn005" ]
+    elif [ $node_ID == "ecsn002" -o $node_ID == "ecsn003" -o $node_ID == "ecsn004" -o $node_ID == "ecsn005" ]
     then
         load_CUDA=$version_CUDA_Tardis
     #---------------------------------------------------------------------------------------------#
-    elif [ $HOSTNAME == "tardis-student1" -o $HOSTNAME == "tardis-student2" ]
+    elif [ $node_ID == "tardis-student1" -o $node_ID == "tardis-student2" ]
     then
         load_CUDA=$version_CUDA_Workstation
     else
@@ -1597,7 +1667,7 @@ function nvccgen()
         else
             if [ $1 -gt $2 ]
             then
-                heading_separator="\033[${Red}$separator_string\033[0m"
+                heading_separator="\e[${Red}$separator_string\e[0m"
                 echo -e $heading_separator
                 echo -e "${Red}ERROR:${LightRed} Incompatible code generation requested\n"
                 echo -e "${LightRed}\tThe selected target SM architecture (sm_$2) only supports code generation from compute_$2 or an older instruction set"
@@ -1847,6 +1917,7 @@ function print_users()
 function login_tasks()
 {
     print_info "Login Home" "${login_dir}"
+    get_current_node_alias
     pctusers
     print_info "Current git Access" "${current_rcode_git}"
     print_info "Current git Account" "${current_rcode_account}"

@@ -72,7 +72,7 @@ macro "ROI_Analysis_control"
 	ROI_analysis 												= true;
 	analyze_all_dir_reconstructions								= true;
 	analyze_specific_data 										= false;
-	only_perform_missing_analyses 								= false;
+	only_perform_missing_analyses 								= true;
 	always_perform_analyses 									= !only_perform_missing_analyses;
 	generate_averaged_data										= false;
 	generate_specific_averaged_data								= false;
@@ -570,7 +570,7 @@ macro "ROI_Analysis_control"
 	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
 	
 	//D:\pCT\pCT_data\reconstruction_data\CTP404_Sensitom\Experimental\B_25600\B_25600_L_0.000100_TV_1_A_0.750000_L0_0_Nk_4
-	TEST_BATCH_DIR 									= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR+ "07052018" + FOLDER_SEPARATOR;		
+	TEST_BATCH_DIR 									= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR; //+ "07072018" + FOLDER_SEPARATOR;		
 		
 	// Input/output info and data basenames/filenames
 	MATERIAL_RSP_DEFS_FILENAME 						= "material_RSP_defs.txt";
@@ -1042,61 +1042,59 @@ macro "ROI_Analysis_control"
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//	
-	if(check_all_paths_existence)
-		verify_paths_exist(all_path_strings, print_missing_paths);		
-	if(log_printing)
+	if											(check_all_paths_existence)
+		verify_paths_exist						(all_path_strings, print_missing_paths);		
+	if											(log_printing)
 	{				
-		print_ImageJ_info();		
-		if(printing_ROI_definitions)
-			print_ROI_definitions						();
-		if(printing_reconstructed_image_analysis_info)						
+		print_ImageJ_info						();		
+		if										(printing_ROI_definitions)
+			print_ROI_definitions				();
+		if										(printing_reconstructed_image_analysis_info)						
 		{
-			//print_reconstructed_image_analysis_info		();
-			print_reconstructed_image_info				();
-			print_ROI_analysis_info						();
+			print_reconstructed_image_info		();
+			print_ROI_analysis_info				();
 		}
-		if(printing_PVT_info)								
-			print_TTP_info				();
-		if(printing_MVP_parameter_info)							
-			print_MVP_parameter_info				();
-		if(printing_input_output_filenames)
-			print_input_output_filenames				();
+		if										(printing_PVT_info)								
+			print_TTP_info						();
+		if										(printing_MVP_parameter_info)							
+			print_MVP_parameter_info			();
+		if										(printing_input_output_filenames)
+			print_input_output_filenames		();
 	}
 
 	ROI_analysis_targets 						= Array.copy(all_folder_strings);
+	print_ROI_analysis_targets					= true;
+	//analyze_all_dir_reconstructions			= true;
 	
 	if(analyze_specific_data)
 	{
-		print_section					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
-		//SPECIFIC_DATA_FOLDERS_FILENAME 		= "ROI_analysis_folders.txt";
+		print_section							("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
 		specific_data_folders 					= file_2_array(TEST_BATCH_DIR, SPECIFIC_DATA_FOLDERS_FILENAME, PRINT_PATH);	
 		ROI_analysis_targets 					= Array.copy(specific_data_folders);
-		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, SPECIFIC_DATA_FOLDERS_FILENAME, PRINT_PATH);	
 	}
 	if(perform_all_missing_analyses)
 	{
-		print_section					("Performing ROI analysis of all unprocessed reconstructed data sets", PRINT_MAJOR_SECTION);
-		//RECON_FOLDERS_FILENAME 				= "reconstruction_folders.txt";
+		print_section							("Performing ROI analysis of all unprocessed reconstructed data sets", PRINT_MAJOR_SECTION);
 		recon_data_folders 						= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
 		ROI_analysis_targets 					= Array.copy(recon_data_folders);
-		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
 	}
-	//analyze_all_dir_reconstructions								= true;
 	if(analyze_all_dir_reconstructions)
 	{
-		print_section					("Performing ROI analysis of all unprocessed reconstructed data sets in the specified directory: " + TEST_BATCH_DIR, PRINT_MAJOR_SECTION);
-		//RECON_FOLDERS_FILENAME 				= "reconstruction_folders.txt";
+		print_section							("Performing ROI analysis of all unprocessed reconstructed data sets in the specified directory: " + TEST_BATCH_DIR, PRINT_MAJOR_SECTION);
 		recon_data_folders 						= getDirList(TEST_BATCH_DIR, true);
 		ROI_analysis_targets 					= Array.copy(recon_data_folders);
-		//ROI_analysis_targets 					= file_2_array(TEST_BATCH_DIR, RECON_FOLDERS_FILENAME, PRINT_PATH);	
+		if(print_ROI_analysis_targets)
+			Appsi( "Directories targeted for ROI analysis:", ROI_analysis_targets);
+		if(exit_after_ROI_analyses)
+			endProgram("Exiting after ROI analyses as requested");	
 	}
-	//exit();
-	if(false)
-	//if(perform_MVP_analyses)
+	//if(false)
+	if(perform_MVP_analyses)
 	{
-		//print_section					("Read list of specific reconstruction data output folders and perform ROI analysis on the corresponding data", PRINT_MAJOR_SECTION);
+		print_section							("Perform ROI analysis of ", PRINT_MAJOR_SECTION);
+		if(print_ROI_analysis_targets)
+			Appsi( "Directories targeted for ROI analysis:", ROI_analysis_targets);
 		for(i = 0; i < ROI_analysis_targets.length; i++)
-		//for(i = 0; i < 5; i++)
 		{
 			reconstructed_data_folder 			= ROI_analysis_targets[i];
 			print_section						("Performing ROI analysis # " + i + " on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
@@ -1104,11 +1102,9 @@ macro "ROI_Analysis_control"
 			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
 			missing_ROI_analysis_data			= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
 			run_ROI_analysis					= recon_data_exists && (missing_ROI_analysis_data || always_perform_analyses);			
-			//if(run_ROI_analysis)
 			if(recon_data_exists)
 			{
 				print("----->Reconstruction data exists...");
-				//if(!ROI_analysis_exists || always_perform_analyses)
 				if(missing_ROI_analysis_data)
 					runMacro						(ROI_ANALYSIS_MACRO_PATH, current_analysis_target);
 				else
@@ -1125,6 +1121,7 @@ macro "ROI_Analysis_control"
 			}
 			autobreak();
 		}
+		print("ROI analysis: COMPLETE");
 		if(exit_after_ROI_analyses)
 			endProgram("Exiting after ROI analyses as requested");	
 			//eprint("Exiting after ROI analyses as requested");	
@@ -1147,6 +1144,21 @@ function listFiles(_dir)
 			print( (count++) + ": " + _dir + _list[_i] );
 	}
 }
+function getSubDirList(_parentdir, _print_path, _dirs) 
+{
+	_sublist = getFileList(_parentdir);
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (endsWith( _sublist[_i], "/") )
+		{
+			_dirs = Array.concat( _dirs, _parentdir + substring(_sublist[_i], 0, lengthOf(_sublist[_i]) - 1) );
+			getSubDirList(_parentdir + _sublist[_i], _print_path, _dirs);
+		}
+	}
+	if(_print_path)
+		App("getDirList ", _dirs);
+	return _dirs;
+}
 function getDirList(_dir, _print_path) 
 {
 	_list = getFileList(_dir);
@@ -1154,7 +1166,10 @@ function getDirList(_dir, _print_path)
 	for (_i = 0; _i < _list.length; _i++) 
 	{
 		if (endsWith( _list[_i], "/") )
-			_dirs = Array.concat( _dirs, substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
+		{
+			_dirs = Array.concat( _dirs, _dir + substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
+			getSubDirList(_dir + _list[_i], _print_path, _dirs);
+		}
 	}
 	if(_print_path)
 		App("getDirList ", _dirs);
@@ -1369,62 +1384,66 @@ function file_2_key_value_pairs(_dir, _filename, _parameter_list, _print_path)
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //***************************************************************************************************************************************************************************************************//
 //showMessageWithCancel	("Array mismatch at: \n" + _array[i] + NEWLINE_CMD_STRING + _array_2_match[i]);
-function Ap						(_array)								{ Array.print			(_array);																										}
-function App					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);								}
-function Appc					(_print_statement, _array)				{ cprint				("-----> " + _print_statement + PADDED_EQUALS_STRING); 		printca		(_array);								}
-function Aps					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
-function Apsc					(_print_statement, _array)				{ cprint				(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	cprint(TAB_STRING + _array[i]);	}
-function Appexit				(_print_statement, _array)				{ App					(_print_statement, _array); 								Ap			(_array);								}
-function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
-function ceil					(value)									{ return 				conditional_return( (value - round(value) > 0), round(value + 1), round(value) ); 								}
-function clearResults			()										{ run					("Clear Results");																								}
-function Apc					(_array)								{ Array.print			(_array);																										}
-function Appc					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);								}
-function Apsc					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
-function askKill				(_message)								{ showMessageWithCancel	(ASK_KILL_DIALOG_TITLE, _message + NEWLINE_CMD_STRING + ASK_KILL_DIALOG_STATEMENT); 							}
-function dKill					()										{ dump					(); 														exit		();										}
-function errKill				(_err_statement)						{ exit					("ERROR: " + _err_statement);								exit		();										}
-function lKill					(_loop_variable, _loop_kill_index)		{ if					(_loop_variable >= _loop_kill_index) 						exit		("-----> Reached loop kill index"); 	}
-function Kill					()										{ exit					("-----> Manual exit initiated");																				}
-function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();										}
-function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();										}
-function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();	}
-function exitSection			(_print_statement)						{ print_section			(_print_statement, PRINT_MAJOR_SECTION);					exit		();	}
-function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();										}
-function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);	}
-function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
-function ifNaN					(_value, _ifNaN_true, _ifNaN_false)		{ return				conditional_return(isNaN(_value), _ifNaN_true, _ifNaN_false);													}
-function ifSkipIndex			(_index, _skip_indices)					{ return isMember		(i, _skip_indices_array, RETURN_MATCH_TF);																		}
-function IJROI_analysis_config_CSV()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_CSV);										}
-function IJROI_analysis_config_image()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_image);									}
-function insert_right_arrow		(_length, _prefix, _suffix, _type)		{ return 				_prefix + right_arrow(_length, _type) + _suffix;																}
-function isArray				(_value)								{ _array				= array_from_data(_value); 	return conditional_return		( (_array.length != 1), true, false);				}
-function isArrayType			(_array, _is_array_type)				{ _array_type			= array_type(_array);		return	conditional_return		( (_array_type == _is_array_type), true, false);	}
-function isEmptyArray			(_array)								{ return 				isArrayType(_array, IS_EMPTY_ARRAY);																			}
-function isNumberArray			(_array)								{ return 				isArrayType(_array, IS_NUMBER_ARRAY);																			}
-function isString				(_value)								{ return 				!( isNumber(_value) || isArray(_value) );																		}
-function isStringArray			(_array)								{ return 				isArrayType(_array, IS_STRING_ARRAY);																			}
-function isMixedArray			(_array)								{ return 				isArrayType(_array, IS_MIXED_ARRAY);																			}
-function peq					(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
+function Ap						(_array)								{ Array.print			(_array);																											}
+function App					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);									}
+function Appc					(_print_statement, _array)				{ printc				("-----> " + _print_statement + PADDED_EQUALS_STRING); 		printca		(_array);									}
+function Appi					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	printi(TAB_STRING + _array[i], i);	}
+function Appsi					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	printsi(TAB_STRING, _array[i], i);	}
+function Aps					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);		}
+function Apsc					(_print_statement, _array)				{ printc				(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	printc(TAB_STRING + _array[i]);		}
+function Appexit				(_print_statement, _array)				{ App					(_print_statement, _array); 								Ap			(_array);									}
+function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);						}
+function ceil					(value)									{ return 				conditional_return( (value - round(value) > 0), round(value + 1), round(value) ); 									}
+function clearResults			()										{ run					("Clear Results");																									}
+function Apc					(_array)								{ Array.print			(_array);																											}
+function Appc					(_print_statement, _array)				{ print					("-----> " + _print_statement + PADDED_EQUALS_STRING); 		Ap			(_array);									}
+function Apsc					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);		}
+function askKill				(_message)								{ showMessageWithCancel	(ASK_KILL_DIALOG_TITLE, _message + NEWLINE_CMD_STRING + ASK_KILL_DIALOG_STATEMENT); 								}
+function dKill					()										{ dump					(); 														exit		();											}
+function errKill				(_err_statement)						{ exit					("ERROR: " + _err_statement);								exit		();											}
+function lKill					(_loop_variable, _loop_kill_index)		{ if					(_loop_variable >= _loop_kill_index) 						exit		("-----> Reached loop kill index"); 		}
+function Kill					()										{ exit					("-----> Manual exit initiated");																					}
+function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();											}
+function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();											}
+function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();											}
+function exitSection			(_print_statement)						{ print_section			(_print_statement, PRINT_MAJOR_SECTION);					exit		();											}
+function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();											}
+function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);		}
+function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 													}
+function ifNaN					(_value, _ifNaN_true, _ifNaN_false)		{ return				conditional_return(isNaN(_value), _ifNaN_true, _ifNaN_false);														}
+function ifSkipIndex			(_index, _skip_indices)					{ return isMember		(i, _skip_indices_array, RETURN_MATCH_TF);																			}
+function IJROI_analysis_config_CSV()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_CSV);											}
+function IJROI_analysis_config_image()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_image);										}
+function insert_right_arrow		(_length, _prefix, _suffix, _type)		{ return 				_prefix + right_arrow(_length, _type) + _suffix;																	}
+function isArray				(_value)								{ _array				= array_from_data(_value); 	return conditional_return		( (_array.length != 1), true, false);					}
+function isArrayType			(_array, _is_array_type)				{ _array_type			= array_type(_array);		return	conditional_return		( (_array_type == _is_array_type), true, false);		}
+function isEmptyArray			(_array)								{ return 				isArrayType(_array, IS_EMPTY_ARRAY);																				}
+function isNumberArray			(_array)								{ return 				isArrayType(_array, IS_NUMBER_ARRAY);																				}
+function isString				(_value)								{ return 				!( isNumber(_value) || isArray(_value) );																			}
+function isStringArray			(_array)								{ return 				isArrayType(_array, IS_STRING_ARRAY);																				}
+function isMixedArray			(_array)								{ return 				isArrayType(_array, IS_MIXED_ARRAY);																				}
+function peq					(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 													}
 function printc					(_print_statement)						{ if					(PRINT_STATUS == PRINT_SEPVARS())								print		(_print_statement);						}
 function printca				(_array)								{ if					(PRINT_STATUS == PRINT_SEPVARS())								Array.print	(_array);								}
-function printcas				(_print_statement, _variable)			{ printc				(_print_statement); 										printca		(_array);								}
-function printn					(_print_statement, _variable)			{ print					(_print_statement +  NEWLINE_CMD_STRING  + _variable );															}
-function print_loop_status		(_statement, _loop_num, _section_type)	{ print_section			(_statement + _loop_num, _section_type);																		}
-function print_newline			()										{ print					(NEWLINE_CMD_STRING);																							}
-function printcvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appc		(_print_statement, _variable_array);	}
-function printvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								App			(_print_statement, _variable_array);	}
-function printvareq				(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 												}
-function pt						()										{ print					("=======> Debugging location marker print #" + debug_print_counter++);											}	
-function PRINT_ON				()										{ return 				PRINTING_ON;																									}
-function PRINT_OFF				()										{ return 				PRINTING_OFF;																									}
-function PRINT_GROUPVARS_ONLY	()										{ return 				PRINTING_GROUPS;																								}
-function PRINT_SEPVARS_ONLY		()										{ return 				PRINTING_VARS;																									}
-function PRINT_GROUPVARS		()										{ return 				(PRINT_STATUS == PRINTING_GROUPS	|| PRINT_STATUS == PRINTING_ON);													}
-function PRINT_SEPVARS			()										{ return 				(PRINT_STATUS == PRINTING_SEPVARS 	|| PRINT_STATUS == PRINTING_ON);													}
-function sequential_value_array	(_start_index, _end_index)				{ return 				Array.slice(SEQUENTIAL_VALUES_ARRAY, _start_index, _end_index);													}
-function string_2_array			(string) 								{ return 				split(string); 																									}
-function string_cut_last_N_chars(_string, _N)							{ return 				substring(_string, 0, lengthOf(_string) - _N);																	}
+function printcas				(_print_statement, _variable)			{ printc				(_print_statement); 										printca		(_array);									}
+function printi					(_variable, _index)						{ print					(_index + " : " + TAB_STRING + _variable );																						}
+function printsi				(_print_statement, _variable, _index)	{ print					(_print_statement + _index + " : " + TAB_STRING + _variable );																	}
+function printn					(_print_statement, _variable)			{ print					(_print_statement +  NEWLINE_CMD_STRING  + _variable );																}
+function print_loop_status		(_statement, _loop_num, _section_type)	{ print_section			(_statement + _loop_num, _section_type);																			}
+function print_newline			()										{ print					(NEWLINE_CMD_STRING);																								}
+function printcvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appc		(_print_statement, _variable_array);		}
+function printvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								App			(_print_statement, _variable_array);		}
+function printvareq				(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 													}
+function pt						()										{ print					("=======> Debugging location marker print #" + debug_print_counter++);												}	
+function PRINT_ON				()										{ return 				PRINTING_ON;																										}
+function PRINT_OFF				()										{ return 				PRINTING_OFF;																										}
+function PRINT_GROUPVARS_ONLY	()										{ return 				PRINTING_GROUPS;																									}
+function PRINT_SEPVARS_ONLY		()										{ return 				PRINTING_VARS;																										}
+function PRINT_GROUPVARS		()										{ return 				(PRINT_STATUS == PRINTING_GROUPS	|| PRINT_STATUS == PRINTING_ON);												}
+function PRINT_SEPVARS			()										{ return 				(PRINT_STATUS == PRINTING_SEPVARS 	|| PRINT_STATUS == PRINTING_ON);												}
+function sequential_value_array	(_start_index, _end_index)				{ return 				Array.slice(SEQUENTIAL_VALUES_ARRAY, _start_index, _end_index);														}
+function string_2_array			(string) 								{ return 				split(string); 																										}
+function string_cut_last_N_chars(_string, _N)							{ return 				substring(_string, 0, lengthOf(_string) - _N);																		}
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//

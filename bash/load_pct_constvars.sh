@@ -1,29 +1,69 @@
 #!/bin/bash
 ###################################################################################################
-######################## Define variables for console output formatting ###########################
+########################## Define text printing formatting codes/setting ##########################
 ###################################################################################################
 console_width=90
-NoColor="\033[0m"
-Black="\033[0;30m"
-DarkGray="\033[1;30m"
-Red="\033[0;31m"
-LightRed="\033[1;31m"
-Green="\033[0;32m"
-LightGreen="\033[1;32m"
-Brown="\033[1;33m"
-Yellow="\033[0;33m"
-Blue="\033[0;34m"
-LightBlue="\033[1;34m"
-Purple="\033[0;35m"
-LightPurple="\033[1;35m"
-Cyan="\033[0;36m"
-LightCyan="\033[1;36m"
-LightGray="\033[0;37m"
-White="\033[1;37m"
 separator_char="-"
+default_separator_char="-"
 default_background_color="6,40"
 default_text_color="0,37"
-reset_color="\033[0;37;6;40m"
+reset_color="\e[0;37;6;40m"
+FMTRESET="\e[0m"
+FMTDEFAULT="\e[0;37;6;40m"
+OPEN_COLOR_ESCAPE_SEQ="\e["         
+CLOSE_COLOR_ESCAPE_SEQ="\e[m"       
+NoColor="\e[0m"
+Black="\e[0;30m"
+DarkGray="\e[1;30m"
+Red="\e[0;31m"
+LightRed="\e[1;31m"
+Green="\e[0;32m"
+LightGreen="\e[1;32m"
+Brown="\e[1;33m"
+Yellow="\e[0;33m"
+Blue="\e[0;34m"
+LightBlue="\e[1;34m"
+Purple="\e[0;35m"
+LightPurple="\e[1;35m"
+Cyan="\e[0;36m"
+LightCyan="\e[1;36m"
+LightGray="\e[0;37m"
+White="\e[1;37m"
+GRAY_BACKGROUND="\e[5;40"
+BLACK_BACKGROUND="\e[40"
+LIGHT_RED_BACKGROUND="\e[5;41"
+RED_BACKGROUND="\e[6;41"
+LIGHT_GREEN_BACKGROUND="\e[5;42"    
+GREEN_BACKGROUND="\e[6;42"      
+BROWN_BACKGROUND="\e[5;43"          
+YELLOW_BACKGROUND="\e[6;43"         
+LIGHT_BLUE_BACKGROUND="\e[5;44" 
+BLUE_BACKGROUND="\e[6;44"   
+LIGHT_PURPLE_BACKGROUND="\e[5;45"           
+PURPLE_BACKGROUND="\e[6;45"         
+LIGHT_CYAN_BACKGROUND="\e[5;46"         
+CYAN_BACKGROUND="\e[6;46"           
+WHITE_BACKGROUND="\e[5;47"          
+LIGHT_GRAY_BACKGROUND="\e[6;47"     
+UNDERLINE_TEXT="\e[;4"          
+DONT_UNDERLINE_TEXT=""                  
+###################################################################################################
+######################### Prompt Assignments: Unicode Symbol Definitions ##########################
+###################################################################################################
+cdate='\D{%T %Z (%a) %m-%d-%Y}'
+git_query="${LightBlue}${git_branch}${git_dirty}"
+#arrow_prompt=$(echo -e '\u2794\u279B\u279C\u279D\u279E\u27A4\u27A5')
+ARROW_KEYCHARS="-> "
+ARROWHEAD=$(echo -e '\u27A4') #\xe2\x9e\xa4
+ARROWHEAD_EQUIL=$(echo -e '\u2B9E') # U+2B9E    ⮞   e2 ae 9e    BLACK RIGHTWARDS EQUILATERAL ARROWHEAD
+ARROW_HOOKED=$(echo -e '\u21AA') ##↪    \xe2\x86\xaa    RIGHTWARDS ARROW WITH HOOK
+ARROW_DASHED=$(echo -e '\u21E2') #⇢ \xe2\x87\xa2    RIGHTWARDS DASHED ARROW
+ARROW_OPEN=$(echo -e '\u21FE') #⇾   \xe2\x87\xbe    RIGHTWARDS OPEN-HEADED ARROW
+ARROW_HOLLOW=$(echo -e '\u27A9') # U+27A9   ➩   e2 9e a9    RIGHT-SHADED WHITE RIGHTWARDS ARROW
+ARROW_BENT=$(echo -e '\u2BA1') #⮡   \xe2\xae\xa1    DOWNWARDS TRIANGLE-HEADED ARROW WITH LONG TIP RIGHTWARDS
+ARROW_WIDE=$(echo -e '\u2794') ## U+2794    ➔   e2 9e 94    HEAVY WIDE-HEADED RIGHTWARDS ARROW
+ARROW_WIDE_ROUNDED=$(echo -e '\u279C') # U+279C ➜   e2 9e 9c    HEAVY ROUND-TIPPED RIGHTWARDS ARROW
+# echo -e $ARROWHEAD$ARROWHEAD_EQUIL$ARROW_HOOKED$ARROW_DASHED$ARROW_OPEN$ARROW_HOLLOW$ARROW_BENT$ARROW_WIDE$ARROW_WIDE_ROUNDED
 ###################################################################################################
 ################################ Setting current data/code paths ##################################
 ###################################################################################################
@@ -97,27 +137,28 @@ load_pct_functions_script="load_pct_functions.sh"
 ###################################################################################################
 ############### Define variables for git commands, accounts, repos, branches, etc. ################
 ###################################################################################################
-user_git='user'
-direct_git='direct'
-direct_git_flag='-g'
-Baylor_rcode="Baylor_rcode"
-pct_collab_rcode="pct_collab_rcode"
-Blake_rcode="Blake_rcode"
-old_rcode="old_rcode"
 
 git_clone_addr_base="git@github.com:"
 git_clone_addr_suffix=".git"
-# pCT-collaboration account
+#----------------- pCT-collaboration account -------------------#
 pct_collab_git_account="pCT-collaboration"
 pct_collab_rcode_git_repo="Kodiak-Reconstruction"
 pct_tools_git_repo="pCT_Tools"
 pcode_git_repo="Preprocessing"
 old_rcode_git_repo="pct-recon-copy"
 geant4_git_repo="Geant4"
-# BaylorICTHUS account
+#-------------------- BaylorICTHUS account ---------------------#
 Baylor_git_account="BaylorICTHUS"
 Baylor_rcode_git_repo="pCT_Reconstruction"
-# BlakeSchultze account
+pct_configs_path=pct_configs/
+pct_jobs_path=pct_jobs/
+pct_configs_basename=pct_config
+pct_jobs_basename=pct_job
+cfggen_fname=pct_cfggen.sh
+cfgdefs_fname=pct_cfgdef.sh
+params_fname=pct_params.txt
+testparams_fname=pct_testparams.txt
+#------------------- BlakeSchultze account ------------------------#
 Blake_git_account="BlakeSchultze"
 Blake_rcode_git_repo="pCT_Reconstruction"
 Blake_doc_git_repo="pCT_Documentation"
@@ -267,6 +308,14 @@ tardis_user_paths=( $tardis_rcode_path $tardis_pcode_path $tardis_user_data_path
 ###################################################################################################
 ################################ Setting current data/code paths ##################################
 ###################################################################################################
+#--------------- Repo selection/interaction: nicknames and selection controls -------------------#
+user_git='user'
+direct_git='direct'
+direct_git_flag='-g'
+Baylor_rcode="Baylor_rcode"
+pct_collab_rcode="pct_collab_rcode"
+Blake_rcode="Blake_rcode"
+old_rcode="old_rcode"
 #--------------- Set current reconstruction source git account/repo/branch   -------------------#
 if [[ "$current_rcode" == "$Baylor_rcode" ]] # BaylorICTHUS/pCT_Reconstruction
 then

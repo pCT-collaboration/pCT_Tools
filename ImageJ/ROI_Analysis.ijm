@@ -637,7 +637,7 @@ macro "ROI_Analysis [F2]"
 	//***********************************************************************************************************************************************************************************************************//
 	parameter_test_number						= 1;
 	parameter_test_info_filename				= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
-	parameter_test_info 						= file_2_array(test_batch_directory, parameter_test_info_filename, print_input_data_path);
+	parameter_test_info 						= file_2_array(reconstruction_data_directory_D, parameter_test_info_filename, print_input_data_path);
 	//Ap(parameter_test_info);
 	num_parameters 								= parameter_test_info.length;
 	parameter_values 							= newArray();
