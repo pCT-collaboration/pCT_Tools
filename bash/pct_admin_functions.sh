@@ -12,7 +12,7 @@ then
     exit
 fi
 
-print_section_header "Loading bash functions useful to pCT administrators for user/code/data  management"  1,33 5,40
+print_section "Loading bash functions useful to pCT administrators for user/code/data  management"  1,33 5,40
 function pctusers()
 {
     users=$(find /ion/home -maxdepth 1 -type d -printf "%f\n")
@@ -232,15 +232,15 @@ function init_tardis_node()
     # /local/pCT_data/reconstruction_data/                  #tardis_recon_data_path
     # /local/pCT_data/organized_data/                       #tardis_org_data_path
     
-    mkpdir -pv ${tardis_code_path} 755
-    mkpdir -pv ${tardis_git_clones_dir} 755
-    mkpdir -pv ${tardis_Baylor_dir} 755
-    mkpdir -pv ${tardis_Baylor_rcode_git_repo_path} 755
+    mkpdir -p ${tardis_code_path} 755
+    mkpdir -p ${tardis_git_clones_dir} 755
+    mkpdir -p ${tardis_Baylor_dir} 755
+    mkpdir -p ${tardis_Baylor_rcode_git_repo_path} 755
     
-    mkpdir -pv ${tardis_data_path} 755
-    mkpdir -pv ${tardis_user_data_path} 755
-    mkpdir -pv ${tardis_recon_data_path} 755
-    mkpdir -pv ${tardis_org_data_path} 755
+    mkpdir -p ${tardis_data_path} 755
+    mkpdir -p ${tardis_user_data_path} 755
+    mkpdir -p ${tardis_recon_data_path} 755
+    mkpdir -p ${tardis_org_data_path} 755
 }
 function tardis_default_cloning()
 {

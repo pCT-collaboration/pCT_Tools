@@ -13,6 +13,11 @@ macro "merge_data_control"
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ Define Boolean constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
+	PROMPT_TEST_BATCH_DIR							= true;
+	PROMPT_TEST_BATCH_DIR_CONTROLLED							= true;
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ Define Boolean constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
 	ALL_BOOL 										= false;
 	NONE_BOOL 										= true;
 	COLUMN_MAJOR									= true;
@@ -42,18 +47,18 @@ macro "merge_data_control"
 	ImageJ_program_directory						= getDirectory("imagej") ;
 	ImageJ_launch_directory							= getDirectory("startup");
 	ImageJ_previous_macro							= getInfo("macro.filepath");
-	github_macro_directory							= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
+	GITHUB_MACRO_DIR							= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
  	github_collab_macro_directory					= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
  	reconstruction_data_directory_C					= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	reconstruction_data_directory_D					= "D:\\pCT\\pCT_data\\reconstruction_data";
 	ROI_analysis_macro_filename 					= "ROI_Analysis.ijm";
-	ROI_analysis_macro_path 						= github_macro_directory + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
+	ROI_analysis_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
 	merge_analysis_macro_filename 					= "merge_data.ijm";
 	merge_ROI_analysis_files_macro_path 			= github_collab_macro_directory + FOLDER_SEPARATOR + merge_analysis_macro_filename;
 	multiplotting_macro_filename 					= "Multiplotting.ijm";
-	multiplotting_macro_path 						= github_macro_directory + FOLDER_SEPARATOR + multiplotting_macro_filename;
+	multiplotting_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + multiplotting_macro_filename;
 	test_result_comparison_macro_filename 			= "Test_Result_Comparison.ijm";
-	test_result_comparison_macro_path 				= github_macro_directory + FOLDER_SEPARATOR + test_result_comparison_macro_filename;
+	test_result_comparison_macro_path 				= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + test_result_comparison_macro_filename;
 	reconstruction_data_folder						= FOLDER_SEPARATOR + "reconstruction_data";
 	simulated_data_folder							= FOLDER_SEPARATOR + "Simulated";
 	experimental_data_folder						= FOLDER_SEPARATOR + "Experimental";
@@ -69,7 +74,7 @@ macro "merge_data_control"
 	preprocess_date_folder							= FOLDER_SEPARATOR + "15-05-24";
 	//preprocess_date								= FOLDER_SEPARATOR + "14-12-11";
 	
-	// Options controlling construction of reconstruction_data_directory/test_batch_directory
+	// Options controlling construction of reconstruction_data_directory/TEST_BATCH_DIR
 	simulated_data									= "Simulated";
 	experimental_data								= "Experimental";	
 	drive_C											= "C";
@@ -79,12 +84,15 @@ macro "merge_data_control"
 	
 	if(current_reconstruction_data_drive == drive_C)				reconstruction_data_directory 	= reconstruction_data_directory_C;
 	else if(current_reconstruction_data_drive == drive_D)			reconstruction_data_directory 	= reconstruction_data_directory_D;
-	if(current_reconstruction_data_type == simulated_data) 			test_batch_directory 			= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
-	else if(current_reconstruction_data_type == experimental_data)	test_batch_directory 			= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
+	if(current_reconstruction_data_type == simulated_data) 			TEST_BATCH_DIR 			= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
+	else if(current_reconstruction_data_type == experimental_data)	TEST_BATCH_DIR 			= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
 
-	//TEST_BATCH_DIR 								= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-	test_batch_directory 							= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-
+	//PROMPT_TEST_BATCH_DIR							= false;
+	if(PROMPT_TEST_BATCH_DIR)
+		TEST_BATCH_DIR 						= getDirectory("Choose a Directory");
+	else
+		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	
 	// Image/data filename and directory prefixes, file extensions, and results table column headings
 	TXT 											= ".txt";
 	CSV 											= ".csv";
@@ -107,12 +115,12 @@ macro "merge_data_control"
 	// Input/output info and data basenames/filenames
 	ROI_definitions_filename_suffix					= "_ROIs" + TXT;	
 	ROI_definitions_filename						= phantom_basename + ROI_definitions_filename_suffix;
-	ROI_definitions_file_path						= github_macro_directory + FOLDER_SEPARATOR + ROI_definitions_filename;
+	ROI_definitions_file_path						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_definitions_filename;
 	reconstructed_image_file_basenames 				= "x_";
 	reconstructed_image_file_short_basenames 		= "x";
 	initial_iterate_filename 						= reconstructed_image_file_basenames + "0" + TXT;	
-	auto_break_filename 							= "autobreak.txt";
-	auto_break_path 								= ImageJ_macro_directory + auto_break_filename;
+	AUTO_BREAK_FILENAME 							= "autobreak.txt";
+	AUTO_BREAK_PATH 								= ImageJ_macro_directory + AUTO_BREAK_FILENAME;
 	parameter_test_info_basename					= "Test_Parameters_";
 	specific_data_folders_filename 					= "ROI_analysis_folders.txt";
 	reconstruction_folders_filename 				= "reconstruction_folders.txt";
@@ -140,7 +148,7 @@ macro "merge_data_control"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	parameter_test_number						= 1;
 	parameter_test_info_filename				= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
-	parameter_test_info 						= file_2_array(test_batch_directory, parameter_test_info_filename, false);
+	parameter_test_info 						= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, false);
 	num_parameters 								= parameter_test_info.length;
 	parameter_values 							= newArray();
 	num_parameter_values 						= newArray(num_parameters);
@@ -161,37 +169,39 @@ macro "merge_data_control"
 	parameter_value_strings 					= generate_all_parameter_value_strings(parameter_values, num_parameter_values, parameter_value_offsets, parameter_string_precisions);
 	modulo_values 								= generate_modulo_values(num_parameter_values);
 	total_combinations 							= series_product(num_parameter_values);
+	//***********************************************************************************************************************************************************************************************************//
+	//***********************************************************************************************************************************************************************************************************//
+	//************************************************************ Iteratively run merge_data.ijm macro for each parameter value combination  *************************************************************************//
+	//***********************************************************************************************************************************************************************************************************//
+	//***********************************************************************************************************************************************************************************************************//
 	allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A");
-	App("parameter_string_prefixes", parameter_string_prefixes);
-	App("num_parameter_values", num_parameter_values);
-	print(num_parameters);
-	print(parameter_string_prefixes.length);
-	//exit();
+	App("", parameter_values);
 	for(i = 0; i < num_parameters - 1; i++)
 	{
 		if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
-		//if(num_parameter_values[i] > 1)
 		{
-			//print("parameter_string_prefixes[i] = " + parameter_string_prefixes[i]);
-			print_section_separator				("Merging data for multiplot parameter w/ prefix = \n ----------> " + parameter_string_prefixes[i], true);
-			runMacro							(merge_ROI_analysis_files_macro_path, parameter_string_prefixes[i]);
-			//exit();
+			print_section_separator				("Merging data for multiplot parameter w/ prefix = " + allowed_parameter_string_prefixes[i], true);
+			macroargs							= allowed_parameter_string_prefixes[i] + "-" + TEST_BATCH_DIR;
+			runMacro							(merge_ROI_analysis_files_macro_path, macroargs);
+			autobreak();					
 		}
 	}
-	//print("parameter_string_prefixes[i]" + parameter_string_prefixes[i]);
-	//print("parameter_string_prefixes[4]" + parameter_string_prefixes[4]);
-	//runMacro										(merge_ROI_analysis_files_macro_path, parameter_string_prefixes[5]);
-	//runMacro										(merge_ROI_analysis_files_macro_path, "A");
-	//runMacro										(merge_ROI_analysis_files_macro_path, "L");
-//	runMacro		(ROI_ANALYSIS_MACRO_PATH, TEST_BATCH_DIR+ compared_folders[0]  + FOLDER_SEPARATOR );	
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //***************************************************************************************************************************************************************************************************//
 //************************* User defined function definitions ***************************************************************************************************************************************//
 //***************************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);						}
+function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();											}
+function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();											}
+function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();											}
+function exitSection			(_print_statement)						{ print_section			(_print_statement, PRINT_MAJOR_SECTION);					exit		();											}
+function eprint					(_print_statement)						{ print					(_print_statement); 										exit		();											}
+function eprintvar				(_print_statement, _variable)			{ _variable_array		= array_from_data(_variable);								Appexit		(_print_statement, _variable_array);		}
+function eprintvareq			(_print_statement, _variable)			{ print					(_print_statement + PADDED_EQUALS_STRING + toString(_variable)); 													}
 function Ap(arg)
 {
 	Array.print(arg);
@@ -362,9 +372,9 @@ function generate_combined_parameter_value_range_string(_parameter_values, _num_
 	_parameter_value_test_identifier			= substring(_parameter_value_test_identifier, 0, lengthOf(_parameter_value_test_identifier) - 1);
 	return _parameter_value_test_identifier;						
 }
-function generate_current_parameter_value_test_multiplot_output_directory(_test_batch_directory, _multiplot_parameter_index, _current_parameter_value_test_value_strings, _multiplot_suffix_string, _target_test_parameter_range_suffix, _parameter_string_prefixes, _parameter_string_precisions)
+function generate_current_parameter_value_test_multiplot_output_directory(_TEST_BATCH_DIR, _multiplot_parameter_index, _current_parameter_value_test_value_strings, _multiplot_suffix_string, _target_test_parameter_range_suffix, _parameter_string_prefixes, _parameter_string_precisions)
 {
-	_current_parameter_value_test_multiplot_output_directory 		= _test_batch_directory;
+	_current_parameter_value_test_multiplot_output_directory 		= _TEST_BATCH_DIR;
 	_num_parameters					= _parameter_string_prefixes.length;		
 	for(parameter = 0; parameter < _multiplot_parameter_index; parameter++)	
 		_current_parameter_value_test_multiplot_output_directory	+= parameter_string_prefixes[parameter] + "_" + _current_parameter_value_test_value_strings[parameter] + "_";	
@@ -780,9 +790,9 @@ function image_set_2_stack(image_type, directory, filenames, image_names_matchin
 			close		(image_set[i]);
 	return stack_dimensions;
 }	
-function import_multiplot_comparison_data(_test_batch_directory, _source_subdirectory, _source_filename, _file_extension, _CSV_column_headings, _CSV_num_rows)
+function import_multiplot_comparison_data(_TEST_BATCH_DIR, _source_subdirectory, _source_filename, _file_extension, _CSV_column_headings, _CSV_num_rows)
 {
-	_path 						= construct_valid_directory_path(_test_batch_directory, _source_subdirectory);
+	_path 						= construct_valid_directory_path(_TEST_BATCH_DIR, _source_subdirectory);
 	_file_path 					= construct_valid_file_path(_path, _source_filename);
 	if(File.exists(_file_path))
 	{	
@@ -805,9 +815,9 @@ function import_multiplot_comparison_data(_test_batch_directory, _source_subdire
 		return newArray();		
 	}
 }
-function import_multiplot_comparison_data_CSV(_test_batch_directory, _CSV_source_subdirectory, _CSV_source_filename, _CSV_column_headings, _CSV_num_rows)
+function import_multiplot_comparison_data_CSV(_TEST_BATCH_DIR, _CSV_source_subdirectory, _CSV_source_filename, _CSV_column_headings, _CSV_num_rows)
 {
-	_path 								= construct_valid_directory_path(_test_batch_directory, _CSV_source_subdirectory);
+	_path 								= construct_valid_directory_path(_TEST_BATCH_DIR, _CSV_source_subdirectory);
 	_file_path 							= construct_valid_file_path(_path, _CSV_source_filename);
 	if(File.exists(_file_path))
 	{	
@@ -822,9 +832,9 @@ function import_multiplot_comparison_data_CSV(_test_batch_directory, _CSV_source
 		return newArray();		
 	}
 }
-function import_multiplot_comparison_data_TXT(_test_batch_directory, _TXT_source_subdirectory, _TXT_source_filename)
+function import_multiplot_comparison_data_TXT(_TEST_BATCH_DIR, _TXT_source_subdirectory, _TXT_source_filename)
 {
-	_path 								= construct_valid_directory_path(_test_batch_directory, _TXT_source_subdirectory);
+	_path 								= construct_valid_directory_path(_TEST_BATCH_DIR, _TXT_source_subdirectory);
 	_file_path 							= construct_valid_file_path(_path, _TXT_source_filename);
 	if(File.exists(_file_path))
 	{	

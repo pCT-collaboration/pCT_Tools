@@ -4,11 +4,25 @@
 ###################################################################################################
 TRUE=true
 FALSE=false
+TRUE_VAL=0
+FALSE_VAL=1
 TRUE_STRING='TRUE'
 FALSE_STRING='FALSE'
 BOOL_TYPE='bool'
 STRING_TYPE='string'
 NUMERIC_TYPE='numeric'
+ON=true
+OFF=false
+ON_VAL=true
+OFF_VAL=1
+ON_STRING='ON'
+OFF_STRING='OFF'
+YES=true
+NO=false
+YES_VAL=0
+NO_VAL=1
+YES_STRING='YES'
+NO_STRING='NO'
 ###################################################################################################
 ################################ Define character/string constants ################################
 ###################################################################################################
@@ -20,6 +34,8 @@ COLON_CHAR=':'
 UNDERSCORE_CHAR='_'                  
 SEPARATOR_CHAR="-"
 DEFAULT_SEPARATOR_CHAR="-"
+FROM_LEADER='\t\b\b\bfrom: '
+TO_LEADER='\t\bto: '
 ###################################################################################################
 ################################ Define escape sequences/characters ###############################
 ###################################################################################################
@@ -32,22 +48,12 @@ BACKSPACE='\b'
 ESCAPECHAR='\E'
 SUPPRESS='\c'
 BELL='\a'
-ESCAPE_SEQUENCES=('\e[' '\033[' '\x1b[')
-ESCAPE_SEQUENCE=${ESCAPE_SEQUENCES[0]}
 #-------------------------------------------------------------------------------------------------#
 CONSOLE_WIDTH=$(tput cols)
+ESCAPE_SEQUENCES=('\e[' '\033[' '\x1b[')
+ESCAPE_SEQUENCE=${ESCAPE_SEQUENCES[0]}
 OPEN_COLOR_ESCAPE_SEQ="${ESCAPE_SEQUENCE}"         
 CLOSE_COLOR_ESCAPE_SEQ="${ESCAPE_SEQUENCE}m"       
-FMTRESET="${ESCAPE_SEQUENCE}0m"
-CLRATTR="${ESCAPE_SEQUENCE}10m"
-DEFAULT_BACKGROUND_COLOR="6,49"
-DEFAULT_TEXT_COLOR="0,37"
-DEFAULT_FORMAT="10"
-DEFAULT_BACKGROUND_CODE="6;49"
-DEFAULT_TEXT_CODE="0;37"
-DEFAULT_FORMAT_CODE="10"
-DEFAULT_ESCAPE_CODE="${DEFAULT_TEXT_CODE};${DEFAULT_BACKGROUND_CODE};${DEFAULT_FORMAT_CODE}m"
-DEFAULT_PRINT_SEQUENCE="${ESCAPE_SEQUENCE}${DEFAULT_ESCAPE_CODE}"
 #-------------------------------------------------------------------------------------------------#
 NOCOLOR="${ESCAPE_SEQUENCE}0m"
 BLACK="${ESCAPE_SEQUENCE}0;30m"
@@ -68,6 +74,7 @@ LIGHTGRAY="${ESCAPE_SEQUENCE}0;37m"
 WHITE="${ESCAPE_SEQUENCE}1;37m"
 #-------------------------------------------------------------------------------------------------#
 BLACK_BACKGROUND="${ESCAPE_SEQUENCE}6;49"
+LIGHT_GRAY_BACKGROUND="${ESCAPE_SEQUENCE}5;40"
 GRAY_BACKGROUND="${ESCAPE_SEQUENCE}6;40"
 LIGHT_RED_BACKGROUND="${ESCAPE_SEQUENCE}5;41"
 RED_BACKGROUND="${ESCAPE_SEQUENCE}6;41"
@@ -87,7 +94,28 @@ UNDERLINE_TEXT="${ESCAPE_SEQUENCE}4"
 INVERT_COLOR="${ESCAPE_SEQUENCE}7"          
 DONT_UNDERLINE_TEXT=""                  
 #-------------------------------------------------------------------------------------------------#
+DEFAULT_BACKGROUND_COLOR="6,49"
+DEFAULT_TEXT_COLOR="0,37"
+DEFAULT_FORMAT="10"
+DEFAULT_BACKGROUND_CODE="6;49"
+DEFAULT_TEXT_CODE="0;37"
+DEFAULT_FORMAT_CODE="10"
+DEFAULT_ESCAPE_CODE="${DEFAULT_TEXT_CODE};${DEFAULT_BACKGROUND_CODE};${DEFAULT_FORMAT_CODE}m"
+DEFAULT_PRINT_SEQUENCE="${ESCAPE_SEQUENCE}${DEFAULT_ESCAPE_CODE}"
+DEFAULT_SECTION_SEQUENCE="${ESCAPE_SEQUENCE}${BROWN};${GRAY_BACKGROUND};${DEFAULT_FORMAT_CODE}m"
+DEFAULT_KEY_SEQUENCE="${ESCAPE_SEQUENCE}${LIGHTGREEN};${GRAY_BACKGROUND};${DEFAULT_FORMAT_CODE}m"
+DEFAULT_VALUE_SEQUENCE="${ESCAPE_SEQUENCE}${YELLOW};${BLACK_BACKGROUND};${DEFAULT_FORMAT_CODE}m"
+DEFAULT_HEADING_SEQUENCE="${ESCAPE_SEQUENCE}${BROWN};${BLACK_BACKGROUND};${DEFAULT_FORMAT_CODE}m"
+DEFAULT_LABEL_SEQUENCE="${ESCAPE_SEQUENCE}${GREEN};${BLACK_BACKGROUND};${DEFAULT_FORMAT_CODE}m"
+CLRCOLOR="${ESCAPE_SEQUENCE}0m"
+COLOROFF="${ESCAPE_SEQUENCE}0m"
+FMTRESET="${ESCAPE_SEQUENCE}0m"
+CLRATTR="${ESCAPE_SEQUENCE}10m"
+#-------------------------------------------------------------------------------------------------#
 FMTLIST="${LIGHTRED}-> ${BROWN}"
+#-------------------------------------------------------------------------------------------------#
+UNAVAILABLE_NODE_STATES=( *state-unknown* *offline* *down* various)
+#-------------------------------------------------------------------------------------------------#
 ###################################################################################################
 ######################### Prompt Assignments: Unicode Symbol Definitions ##########################
 ###################################################################################################

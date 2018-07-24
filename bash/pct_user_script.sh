@@ -1,15 +1,18 @@
 #!/bin/bash
 ###################################################################################################
-############################### Define global variables ####################################
+################################### Define constants variables ####################################
 ###################################################################################################
-IFS_DEFAULT=$IFS
-DEFAULT_IFS=' '
+###################################################################################################
+##################################### Define global variables #####################################
+###################################################################################################
 current_host=$(hostname)
 current_user=$(id -un)
 current_group=$(id -gn)
 user_folder="/${current_user}"
 recon_group="ionrecon"
 path_dirs=$(echo "${PATH//:/$'\n'}")
+login_dir=~
+USERS=$( users )
 declare -a PCT_USERS
 ###################################################################################################
 ########################## Set current data & code value/choice variables #########################
@@ -51,38 +54,47 @@ alias echo="echo -e"
 alias scp="scp -rCp -c blowfish"
 alias cp="cp -apv"
 ###################################################################################################
-########################## Source pCT constant variable definition script #########################
+############### Source pCT (1) constant variable and (2) function definition scripts ##############
 ###################################################################################################
 #-------------------------------------------------------------------------------------------------#
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_constvars.sh
-#-------------------------------------------------------------------------------------------------#
+#source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_constvars.sh
+source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/bashvars.sh
+#source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
+source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/bash_tools.sh
+source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/pct_tools.sh
 ###################################################################################################
-############################## Source pCT function definition script ##############################
+####################################### PBS Queue Info ############################################
 ###################################################################################################
+allnodes=( $(getpbsnodearray) )      
+tardisnodes=( $(pbstardisnodes) )      
+availtardisnodes=( $(pbsavailtardisnodes) )      
+tardis_node_query=()
+avail_tardis_node_query=()
+tardis_nodes=()
+avail_tardis_nodes=()
+tardis_node_states=()
+avail_tardis_node_states=()
+tardis_node_pcpus=()
+avail_tardis_node_pcpus=()
 #-------------------------------------------------------------------------------------------------#
-. /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
+get_current_node_alias
 #-------------------------------------------------------------------------------------------------#
 ###################################################################################################
 ######### Console output written on login before subsequent cluster/node dependent output #########
 ###################################################################################################
-#CLUSTER NODE SYSTEMS
-#   [1] ecsn001 - whartnell  - 192.168.225.1
-#   [2] ecsn002 - ptroughton - 192.168.225.2
-#   [3] ecsn003 - jpertwee   - 192.168.225.3
-#   [4] ecsn004 - tbaker     - 192.168.225.4 ${Brown}
-#   [5] ecsn005 - pdavison   - 192.168.225.5
-print_section_header "CLUSTER NODE SYSTEMS" 1,33  5,40
-echo -e "${LightRed}-> ${Brown}[1] ${Green}${tardis_head_node_ID} - ${LightBlue}${tardis_head_node_alias}  - ${LightPurple}${tardis_head_node_IP}"
-echo -e "${LightRed}-> ${Brown}[2] ${Green}${tardis_compute_node1_ID} - ${LightBlue}${tardis_compute_node1_alias}  - ${LightPurple}${tardis_compute_node1_IP}"
-echo -e "${LightRed}-> ${Brown}[3] ${Green}${tardis_compute_node2_ID} - ${LightBlue}${tardis_compute_node2_alias}  - ${LightPurple}${tardis_compute_node2_IP}"
-echo -e "${LightRed}-> ${Brown}[4] ${Green}${tardis_compute_node3_ID} - ${LightBlue}${tardis_compute_node3_alias}  - ${LightPurple}${tardis_compute_node3_IP}"
-echo -e "${LightRed}-> ${Brown}[5] ${Green}${tardis_compute_node4_ID} - ${LightBlue}${tardis_compute_node4_alias}  - ${LightPurple}${tardis_compute_node4_IP}"
-###################################################################################################
-############################### Establish ssh connection shortcuts ################################
-###################################################################################################
-# ssh aliases
 #-------------------------------------------------------------------------------------------------#
-print_section_header "ssh shortcut (alias) commands" 1,33 5,40
+print_section "Tardis node info" 1,33  5,40
+#-------------------------------------------------------------------------------------------------#
+print_tardis_node_info 0
+print_tardis_node_info 1
+print_tardis_node_info 2
+print_tardis_node_info 3
+print_tardis_node_info 4
+###################################################################################################
+########################### Establish ssh connection aliases (shortcuts) ##########################
+###################################################################################################
+#-------------------------------------------------------------------------------------------------#
+print_section "ssh shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gokodiak="ssh ${current_user}@kodiak.baylor.edu")
 print_alias $(exe alias gowhartnell="ssh ${current_user}@whartnell")
@@ -97,7 +109,7 @@ print_alias $(exe alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu")
 ########################### Define shortcut directory change commands #############################
 ###################################################################################################
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Kodiak data directory change shortcut (alias) commands" 1,33 5,40
+print_section "Kodiak data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias goinc="cd ${incoming_path}")                                              #
 print_alias $(exe alias gostage="cd ${staging_path}")                                             #
@@ -110,7 +122,7 @@ print_alias $(exe alias gorecon="cd ${recon_data_path}")                        
 #print_alias $(exe alias gonewrecon="cd ${current_rdata}")                                        #
 print_alias $(exe alias godocs="cd ${pct_data_path}${pct_docs_folder}" )                          #
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Kodiak code directory change shortcut (alias) commands" 1,33 5,40
+print_section "Kodiak code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gocode="cd ${global_code_path}" )                                         #
 print_alias $(exe alias gogitcode="cd ${global_git_code_path}" )                                  #
@@ -122,7 +134,7 @@ print_alias $(exe alias gogitorcode="cd ${global_old_rcode_git_repo_path}" )    
 print_alias $(exe alias gogittools="cd ${global_pct_tools_git_repo_path}" )                       #
 print_alias $(exe alias gotools="cd ${pct_functions_git_repo_path}")
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Kodiak user data/code directory change shortcut (alias) commands" 1,33 5,40
+print_section "Kodiak user data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gomyinc="cd ${incoming_path}${user_folder}"  )                            #
 print_alias $(exe alias gomystage="cd ${staging_path}${user_folder}" )                            #
@@ -133,7 +145,7 @@ print_alias $(exe alias gomycode="cd ${user_home}${pct_code_folder}"   )        
 print_alias $(exe alias gomypcode="cd ${user_home}${pcode_subdir_path}${user_folder}")            #
 print_alias $(exe alias gomyrcode="cd ${user_home}${rcode_subdir_path}${user_folder}" )           #
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Tardis data/code directory change shortcut (alias) commands" 1,33 5,40
+print_section "Tardis data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias golpct="cd ${tardis_pct_folder}" )                                        #
 print_alias $(exe alias golcode="cd ${tardis_code_path}")                                         #
@@ -152,7 +164,7 @@ print_alias $(exe alias goltempin="cd ${tardis_temp_input_data_path}")          
 print_alias $(exe alias goltempout="cd ${tardis_temp_output_data_path}")                          #
 #print_alias $(exe alias golnewrecon="cd ${current_lrdata}")                                      #
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Currently used Kodiak/Tardis recon code directory change shortcut (alias) commands" 1,33 5,40
+print_section "Currently used Kodiak/Tardis recon code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gocgitcode="cd ${current_global_rcode_path}" )                            #
 print_alias $(exe alias gocgitcode="cd ${current_global_git_rcode_path}" )                        #
@@ -163,7 +175,7 @@ print_alias $(exe alias goclgitcode="cd ${current_tardis_git_rcode_path}" )     
 print_alias $(exe alias goclucode="cd ${current_tardis_user_rcode_path}" )                        #
 print_alias $(exe alias goclgcode="cd ${current_tardis_group_rcode_path}" )                       #
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Currently used Kodiak/Tardis recon IO data directory change shortcut (alias) commands" 1,33 5,40
+print_section "Currently used Kodiak/Tardis recon IO data directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gocudata="cd ${user_current_data_path}" )                                 #
 #########rgroup_current_data_path="${rgroup_recon_data_path}${recon_data_folder}"                 #
@@ -172,7 +184,7 @@ print_alias $(exe alias gocurecon="cd ${user_current_recon_data_path}" )        
 ########rgroup_current_recon_data_path="${rgroup_recon_data_path}${recon_data_folder}"            #
 print_alias $(exe alias goclurecon="cd ${tardis_current_recon_data_path}" )                       #
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Kodiak group data/code directory change shortcut (alias) commands" 1,33 5,40
+print_section "Kodiak group data/code directory change shortcut (alias) commands" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 print_alias $(exe alias gorgrp="cd ${pct_home}/${recon_group}")                                   #
 print_alias $(exe alias goghome="cd ${pct_home}/${recon_group}")                                  #
@@ -193,8 +205,8 @@ then
     #---------------------------------------------------------------------------------------------#
     #------------------------------------- Load modules ------------------------------------------#
     #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32 6,40 on
+    print_section "Loading of program and compiler modules" 1,33 5,40
+    print "Loading modules..." 0,32 6,49 on
     modules=("unload gcc" "load gcc/4.8.4" "load geant4/10.1.1" "load openmpi/1.8.1" "load root" )
     num_modules=$(expr ${#kodiak_modules[@]} - 1)
     for i in "${kodiak_modules[@]}"    
@@ -202,12 +214,12 @@ then
       print_module_load "$i"    
     done
     #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
+    print "\nCurrently loaded modules:" 0,32 6,49 on
     print_module_load "-l list"
     #---------------------------------------------------------------------------------------------#
     login_dir="${current_global_rcode_path}"
     #---------------------------------------------------------------------------------------------#
-    ###################################################################################################
+###################################################################################################
 ############### Set up Tardis node modules, environment variables, and user prompt ################
 ###################################################################################################
 #*************************************************************************************************#
@@ -215,117 +227,31 @@ then
 #*************************************************************************************************#
 elif [ $current_host == "whartnell" -o $current_host == "ecsn001" ]
 then
-    #---------------------------------------------------------------------------------------------#
-    #------------------------------------- Load modules ------------------------------------------#
-    #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32
-    num_modules=$(expr ${#tardis_modules[@]} - 1)
-    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
-    for i in "${tardis_modules[@]}"    
-    do  
-      print_module_load "$i"    
-    done
-    load_CUDA_modules
-    #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
-    print_module_load "-l list"
-    #---------------------------------------------------------------------------------------------#
-    login_dir=${user_home}
-    #---------------------------------------------------------------------------------------------#
+    tardis_login_tasks 0
 #*************************************************************************************************#
 #********************************** PTRoughton login procedure ***********************************#
 #*************************************************************************************************#
 elif [ $current_host == "ptroughton" -o $current_host == "ecsn002" ]
 then
-#---------------------------------------------------------------------------------------------#
-    #------------------------------------- Load modules ------------------------------------------#
-    #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32
-    num_modules=$(expr ${#tardis_modules[@]} - 1)
-    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
-    for i in "${tardis_modules[@]}"    
-    do  
-      print_module_load "$i"    
-    done
-    load_CUDA_modules
-    #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
-    print_module_load "-l list"
-    #---------------------------------------------------------------------------------------------#
-    login_dir="${current_tardis_rcode_path}"
-    #---------------------------------------------------------------------------------------------#
+    tardis_login_tasks 1
 #*************************************************************************************************#
 #*********************************** JPertwee login procedure ************************************#
 #*************************************************************************************************#
 elif [ $current_host == "jpertwee" -o $current_host == "ecsn003" ]
 then
-    #---------------------------------------------------------------------------------------------#
-    #------------------------------------- Load modules ------------------------------------------#
-    #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32
-    num_modules=$(expr ${#tardis_modules[@]} - 1)
-    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
-    for i in "${tardis_modules[@]}"    
-    do  
-      print_module_load "$i"    
-    done
-    load_CUDA_modules
-    #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
-    print_module_load "-l list"
-    #---------------------------------------------------------------------------------------------#
-    login_dir="${current_tardis_rcode_path}"
-    #---------------------------------------------------------------------------------------------#
+    tardis_login_tasks 2
 #*************************************************************************************************#
 #************************************ TBaker login procedure *************************************#
 #*************************************************************************************************#
 elif [ $current_host == "tbaker" -o $current_host == "ecsn004" ]
 then
-    #---------------------------------------------------------------------------------------------#
-    #------------------------------------- Load modules ------------------------------------------#
-    #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32
-    num_modules=$(expr ${#tardis_modules[@]} - 1)
-    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
-    for i in "${tardis_modules[@]}"    
-    do  
-      print_module_load "$i"    
-    done
-    load_CUDA_modules
-    #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
-    print_module_load "-l list"
-    #---------------------------------------------------------------------------------------------#
-    login_dir="${current_tardis_rcode_path}"
-    #---------------------------------------------------------------------------------------------#
+    tardis_login_tasks 3
 #*************************************************************************************************#
 #*********************************** PDavison login procedure ************************************#
 #*************************************************************************************************#
 elif [ $current_host == "pdavison" -o $current_host == "ecsn005" ]
 then
-    #---------------------------------------------------------------------------------------------#
-    #------------------------------------- Load modules ------------------------------------------#
-    #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
-    print "Loading modules..." 0,32
-    num_modules=$(expr ${#tardis_modules[@]} - 1)
-    #for i in `seq 0 $num_modules`; do print_module_load "${tardis_modules[$i]}" ; done
-    for i in "${tardis_modules[@]}"    
-    do  
-      print_module_load "$i"    
-    done
-    load_CUDA_modules
-    #---------------------------------------------------------------------------------------------#
-    print "\nCurrently loaded modules:" 0,32
-    print_module_load "-l list"
-    #---------------------------------------------------------------------------------------------#
-    current_global_rcode_path=${current_global_git_rcode_path}
-    login_dir="${current_tardis_rcode_path}"
-    #---------------------------------------------------------------------------------------------#
+    tardis_login_tasks 4
 #*************************************************************************************************#
 #****************************** Workstation #1/#2 login procedure ********************************#
 #*************************************************************************************************#
@@ -340,7 +266,7 @@ then
     #---------------------------------------------------------------------------------------------#
     #------------------------------------- Load modules ------------------------------------------#
     #---------------------------------------------------------------------------------------------#
-    print_section_header "Loading of program and compiler modules" 1,33 5,40
+    print_section "Loading of program and compiler modules" 1,33 5,40
     print "Loading modules..." 0,32
     print_module_load "load make/make-4.1"
     #---------------------------------------------------------------------------------------------#
@@ -351,7 +277,7 @@ fi
 ############################ Query/print host information and status ##############################
 ###################################################################################################
 #-------------------------------------------------------------------------------------------------#
-print_section_header "Currently loaded program/compiler versions" 1,33 5,40
+print_section "Currently loaded program/compiler versions" 1,33 5,40
 #-------------------------------------------------------------------------------------------------#
 if [ $current_host == "tardis-student1" -o $current_host == "tardis-student2" ]
 then
@@ -376,18 +302,6 @@ else
      print_program_version "CUDA" "nvcc --version" "\n"
 fi
 print_program_version "bash" "echo -e $BASH_VERSION"
-# ###################################################################################################
-# ################################### Specify user prompt format ####################################
-# ###################################################################################################
-PROMPT_COMMAND="find_git_branch; find_git_dirty; $PROMPT_COMMAND"
-if [[ ${EUID} == 0 ]] ; then
-    export PS1=$"${Yellow}[\D{%T %Z (%a) %m-%d-%Y}] ${Purple}${PWD}\n${Cyan}[\u.\h/${current_node_alias}] ${Green}${ARROWHEAD}${White} "
-else
-    export PS1=$"${Yellow}[${cdate}] ${Purple}${PWD} ${LightBlue}${git_branch}${git_dirty}\n${Cyan}[\u.\h/${current_node_alias}] ${Green}${ARROWHEAD}${White} "
-fi
-export PS2="$ARROW_HOOKED "
-export PS3="$ARROW_DASHED "
-export PS4="$ARROW_WIDE "
 ###################################################################################################
 ############################ Query/print host information and status ##############################
 ###################################################################################################
@@ -398,31 +312,11 @@ else
     aliases=$(hostname -a)
     host_ID=$current_host
     host_name=${aliases[$(echo ${#aliases[@]})-1]}
+    if [[ -z $host_name ]]; then host_name=$(hostname -s); fi
 fi
-print_section_header "Host Information" 1,33 5,40
-print_info "Hostname" "${host_ID} ${LightBlue}(${host_name})"
-print_info "Host IP" "$(hostname -i) ${LightBlue}($(hostname -I))"
-print_info "Host Users/Activity" "\n$(w)\n"
-#print_info "Host computational load" "\n$(top)\n"
-###################################################################################################
-####################### Query/print operating system information/properties #######################
-###################################################################################################
-print_info "OS" "$(uname -o) ${LightBlue}($(uname -m))"
-print_info "$(uname -s) Kernel Version" "$(uname -v)"
-print_info "$(uname -s) Kernel Release" "$(uname -r)"
-###################################################################################################
-######################### Query/print user/group information and status ###########################
-###################################################################################################
-#cd "${login_dir}"
-print_section_header "User Information" 1,33 5,40
-print_info "Username" "$(id -un) ${LightBlue}($(id -u))"
-print_info "User Group(s)" "$(id -Gn) ${LightBlue}($(id -G))"
-print_info "Current Group" "$(id -gn) ${LightBlue}($(id -g))"
-print_info "User Home" "${user_home}"
-print_info "User Data Home" "${user_home}${pct_data_folder}"
-print_info "User Code Home" "${user_home}${pct_code_folder}"
-#top
+#-------------------------------------------------------------------------------------------------#
+login_tasks
+#-------------------------------------------------------------------------------------------------#
 ###################################################################################################
 ########################################### END OF FILE ###########################################
 ###################################################################################################
-login_tasks

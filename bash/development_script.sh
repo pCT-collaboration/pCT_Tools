@@ -4,6 +4,7 @@
 ###################################################################################################
 echo -e "hello script world, my name is $(basename --  $0)"
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+caller
 #source "$DIR/../includes/setup.sh"
 #"\[$(tput bold)$(tput setb 4)$(tput setaf 7)\]\u@\h:\w $ \[$(tput sgr0)\]"
 # tput setab [1-7] – Set a background color using ANSI escape
@@ -26,6 +27,8 @@ DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 echo $DIR
 function testfunc() 
 { 
+    caller
+    caller 0
     echo -e "hello script function world, my name is $(basename --  $0)"
 }
 testfunc

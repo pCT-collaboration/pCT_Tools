@@ -263,8 +263,8 @@ macro "ROI_Analysis [F2]"
 			write_profile_data 							= bool_control(true, write_all_data, write_no_data, false);//true;
 				overwrite_profile_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, false);//true;	
 		perform_region_analysis							= true;
-			write_regions_data 							= bool_control(true, write_all_data, write_no_data, false);//true;
-				overwrite_regions_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, false);//true;			
+			write_regions_data 							= bool_control(true, write_all_data, write_no_data, true);//true;
+				overwrite_regions_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, true);//true;			
 		gradient_profile_on 							= true;
 			write_gradient_plot 						= bool_control(true, write_all_plots, write_no_plots, false);//true;
 				overwrite_gradient_plot 				= bool_control(true, overwrite_all_plots, overwrite_no_plots, false);//true;			
@@ -274,12 +274,12 @@ macro "ROI_Analysis [F2]"
 	true_if_task 										= bool_dependence(true, (perform_selection_analysis && perform_region_analysis), AND_LOGIC);
 	false_if_task 										= bool_dependence(false, (perform_selection_analysis && perform_region_analysis), AND_LOGIC);
 	//*****************************************************************************************************************************************************************************
-		write_RSP_CSV									= bool_control(true_if_task, write_all_data, write_no_data, false);//true && perform_selection_analysis && perform_region_analysis;
-			overwrite_RSP_CSV							= bool_control(true, overwrite_all_data, overwrite_no_data, false);//true;	
-		write_RSP_error_CSV								= bool_control(true_if_task, write_all_data, write_no_data, false);//true  && perform_selection_analysis && perform_region_analysis;
-			overwrite_RSP_error_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, false);//true;	
-		write_std_dev_CSV								= bool_control(true_if_task, write_all_data, write_no_data, false);//true  && perform_selection_analysis && perform_region_analysis;
-			overwrite_std_dev_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, false);//true;
+		write_RSP_CSV									= bool_control(true_if_task, write_all_data, write_no_data, true);//true && perform_selection_analysis && perform_region_analysis;
+			overwrite_RSP_CSV							= bool_control(true, overwrite_all_data, overwrite_no_data, true);//true;	
+		write_RSP_error_CSV								= bool_control(true_if_task, write_all_data, write_no_data, true);//true  && perform_selection_analysis && perform_region_analysis;
+			overwrite_RSP_error_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, true);//true;	
+		write_std_dev_CSV								= bool_control(true_if_task, write_all_data, write_no_data, true);//true  && perform_selection_analysis && perform_region_analysis;
+			overwrite_std_dev_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, true);//true;
 		perform_vs_predicted_RSP_analysis				= task_only_bool_dependence(true, tasksof_perform_vs_predicted_RSP_analysis, write_none);//true;
 			//for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)			
 			plot_measured_vs_predicted_RSP				= bool_control(true_if_task, write_all_plots, write_no_plots, false);//true  && perform_selection_analysis && perform_region_analysis;						
@@ -345,7 +345,7 @@ macro "ROI_Analysis [F2]"
 	else
 	{
 		macro_called_externally							= true;
-		printing_ROI_definitions						= false;		
+		printing_ROI_definitions						= true;		
 		printing_reconstructed_image_analysis_info		= false;
 		printing_parameter_value_test_info				= false;
 		printing_multiplot_parameter_info				= false;	
@@ -843,6 +843,9 @@ macro "ROI_Analysis [F2]"
 								by_ROI_index 								= iteration * num_ROIs_2_analyze + ROI;					// Grouping all measurements for each iteration together  	
 								by_iteration_index 							= ROI * images_per_reconstruction + iteration;	// Grouping all measurements for each ROI together 
 								mean_RSP_val 								= List.getValue("Mean");
+								//peq("x center = ", selection_center_x);
+								//peq("y center = ", selection_center_y);
+								//peq("mean_RSP_val", mean_RSP_val);
 								RSPs_by_ROI[by_ROI_index] 					= mean_RSP_val;	
 								RSPs_by_iteration[by_iteration_index] 		= mean_RSP_val;	
 								RSP_error									= (mean_RSP_val - ROI_material_RSPs[ROI]) / ROI_material_RSPs[ROI] * 100;

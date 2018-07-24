@@ -5,6 +5,8 @@ macro "merge_data"
 	//***************************************************************************************************************************************************************************************************//
 	//************* Execution control Booleans and general parameter value test and multiplot behavior Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
+	PROMPT_TEST_BATCH_DIR							= true;
+	//PROMPT_TEST_BATCH_DIR_CONTROLLED							= true;
 	simulated_scan 														= false;
 	experimental_scan 													= !simulated_scan;
 	log_printing														= true;			
@@ -28,18 +30,18 @@ macro "merge_data"
 	//***************************************************************************************************************************************************************************************************//			
 	perform_data_merging												= true;	
 	//merge_ROI_analysis_CSVs												= true;
-	merge_ROI_analysis_CSVs 					= false;
+	merge_ROI_analysis_CSVs 											= true;
 	merge_ROI_analysis_RSP_CSVs											= true;
 	merge_ROI_analysis_RSP_Error_CSVs									= true;
 	merge_ROI_analysis_Std_Dev_CSVs										= true;
 	merge_TV_CSVs														= true;
 	//merge_multiplot_CSVs												= true;
-	merge_multiplot_CSVs 						= false;
+	merge_multiplot_CSVs 								= true;
 	merge_multiplot_RSP_CSVs											= true && merge_multiplot_CSVs;
 	merge_multiplot_RSP_Error_CSVs										= true && merge_multiplot_CSVs;
 	merge_multiplot_Std_Dev_CSVs										= true && merge_multiplot_CSVs;
 	merge_multiplot_TV_CSVs												= true && merge_multiplot_CSVs;
-	write_merged_data 													= true;
+	write_merged_data 									= true;
 	write_merged_CSV_data 												= true && write_merged_data;
 	write_merged_TXT_data 												= true && write_merged_data;
 	write_merged_RSP_CSV_data 											= true && write_merged_CSV_data;
@@ -89,7 +91,7 @@ macro "merge_data"
 	merge_PVT_Std_Dev_CSVs												= true && merge_PVT_CSVs;
 	merge_PVT_TV_CSVs													= true && merge_PVT_CSVs;
 	//write_PVT_CSVs														= true;
-	write_PVT_CSVs														= false;
+	write_PVT_CSVs														= true;
 	write_PVT_RSP_CSVs													= true && write_PVT_CSVs;
 	write_PVT_RSP_Error_CSVs											= true && write_PVT_CSVs;
 	write_PVT_Std_Dev_CSVs												= true && write_PVT_CSVs;
@@ -105,7 +107,7 @@ macro "merge_data"
 	merge_PVT_Std_Dev_TXTs												= true && merge_PVT_TXTs;
 	merge_PVT_TV_TXTs													= true && merge_PVT_TXTs;
 	//write_PVT_TXTs														= true;
-	write_PVT_TXTs														= false;
+	write_PVT_TXTs														= true;
 	write_PVT_RSP_TXTs													= true && write_PVT_TXTs;
 	write_PVT_RSP_Error_TXTs											= true && write_PVT_TXTs;
 	write_PVT_Std_Dev_TXTs												= true && write_PVT_TXTs;
@@ -382,7 +384,7 @@ macro "merge_data"
 	preprocess_date_folder							= FOLDER_SEPARATOR + "15-05-24";
 	//preprocess_date								= FOLDER_SEPARATOR + "14-12-11";
 	
-	// Options controlling construction of reconstruction_data_directory/test_batch_directory
+	// Options controlling construction of reconstruction_data_directory/TEST_BATCH_DIR
 	simulated_data									= "Simulated";
 	experimental_data								= "Experimental";	
 	drive_C											= "C";
@@ -395,13 +397,18 @@ macro "merge_data"
 	else if											(current_reconstruction_data_drive == drive_D)			
 		reconstruction_data_directory 				= reconstruction_data_directory_drive_D;
 	if												(current_reconstruction_data_type == simulated_data) 			
-		test_batch_directory 						= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
+		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
 	else if											(current_reconstruction_data_type == experimental_data)	
-		test_batch_directory 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
+		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
 	
 	//TEST_BATCH_DIR 								= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-	test_batch_directory 							= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-
+	TEST_BATCH_DIR 							= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	PROMPT_TEST_BATCH_DIR=false;
+	if(PROMPT_TEST_BATCH_DIR)
+		TEST_BATCH_DIR 						= getDirectory("Choose a Directory");
+	else
+		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	
 	// ImageJ macro & execution parameters/settings/configurations/logging file info
 	parameter_test_info_basename					= "Test_Parameters_";
 	ANALYSIS_LOG_FNAME 								= "AnalysisLog.nfo";
@@ -452,10 +459,14 @@ macro "merge_data"
 	//************************* Close all windows and clear results table *******************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	internal_macro_caller			= macro_caller();
-	//multiplot_parameter_prefix 		= macro_caller_variable("TV");
-	//multiplot_parameter_prefix 		= macro_caller_variable("L");
-	multiplot_parameter_prefix 		= macro_caller_variable("A");
+	macroargs									= process_macro_args();
+	internal_macro_caller 						= macroargs[0];
+	if( lengthOf(macroargs) >= 2 )
+		multiplot_parameter_prefix				= macroargs[1];
+	if( lengthOf(macroargs) >= 3 )
+		TEST_BATCH_DIR							= macroargs[2];
+	else if(PROMPT_TEST_BATCH_DIR)
+		TEST_BATCH_DIR 							= getDirectory("Choose a Directory");
 	DONT_KILL_LOOP					= true;
 	//DONT_KILL_LOOP					= false;
 	DEBUG_LOOP_KILL_INDEX			= 0;
@@ -583,7 +594,7 @@ macro "merge_data"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	parameter_test_number							= 1;
 	parameter_test_info_filename					= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
-	parameter_test_info 							= file_2_array(test_batch_directory, parameter_test_info_filename, print_input_data_path);
+	parameter_test_info 							= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, print_input_data_path);
 	num_parameters 									= parameter_test_info.length;
 	parameter_values 								= newArray();
 	num_parameter_values 							= newArray(num_parameters);
@@ -670,8 +681,8 @@ macro "merge_data"
 	no_multiplot_parameter_indices				= array_remove_indices(all_parameter_indices, multiplot_parameter_index);
 	no_multiplot_TTP_parameter_indices			= array_remove_indices(all_parameter_indices, test_parameter_indices);
 	PVT_identifier 								= generate_parameter_values_string(parameter_string_prefixes, parameter_string_prefixes, parameter_values, num_parameter_values, parameter_string_precisions, UNDERSCORE_STRING, UNDERSCORE_STRING, STRING_DONT_ADD_SPACES, REMOVE_TRAILING_ZEROS, MULTIVALUE_ONLY_OFF, ARRAY_VALUES_RANGE_TYPE_BRACKETED, ARRAY_VALUES_RANGE_BRACKET_SINGLE_VALUE, EMPTY_ARRAY, all_parameter_indices);	
-	PVTs_input_directory_parent					= test_batch_directory;
-	PVTs_output_directory_parent				= test_batch_directory;	
+	PVTs_input_directory_parent					= TEST_BATCH_DIR;
+	PVTs_output_directory_parent				= TEST_BATCH_DIR;	
 	PVT_output_data_directory_parent 			= extend_path(PVTs_output_directory_parent, 	PVT_identifier);
 	directory_created_successfully				= make_directory_recorded(PVT_output_data_directory_parent, 											DIRECTORIES_CREATED, PRINTING_ON				);//print_directories_created);
 	PVT_output_data_parent_directory			= make_subdirectory	(PVTs_output_directory_parent, 				PVT_identifier, 						DIRECTORIES_CREATED, PRINTING_ON				);//print_directories_created);
@@ -1007,9 +1018,9 @@ macro "merge_data"
 //********************************************************* Merge ROI Analysis CSV Files from Each Target Test Parameter Value **********************************************************//
 //***************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////																	
-					// INPUT: 	test_batch_directory//current_test_folders[i]//current_ROI_analysis_subdirectory//ROI_analysis_RSP_Error_output_filename 
+					// INPUT: 	TEST_BATCH_DIR//current_test_folders[i]//current_ROI_analysis_subdirectory//ROI_analysis_RSP_Error_output_filename 
 					//		  	= D://...//B_3200_..._L0_Nk_#//Slice_10//d7//RSP_Error.csv
-					// OUTPUT: 	test_batch_directory//PVT_output_data_parent_directory//current_ROI_analysis_subdirectory//merged_RSP_Error_CSV_filename  
+					// OUTPUT: 	TEST_BATCH_DIR//PVT_output_data_parent_directory//current_ROI_analysis_subdirectory//merged_RSP_Error_CSV_filename  
 					merged_RSP_CSV_filename								= RSP_data_files_basename 			+ UNDERSCORE_STRING + TTP_range_filenaming + CSV;
 					merged_RSP_Error_CSV_filename						= RSP_error_data_files_basename 	+ UNDERSCORE_STRING + TTP_range_filenaming + CSV;
 					merged_Std_Dev_CSV_filename							= Std_Dev_data_files_basename 		+ UNDERSCORE_STRING + TTP_range_filenaming + CSV;
@@ -1086,7 +1097,7 @@ macro "merge_data"
 							merged_PVT_Std_Dev_CSV_path					= merged_PVT_ROI_analysis_CSV_folder 	+ FOLDER_SEPARATOR + merged_PVT_Std_Dev_CSV_filename;
 							merged_PVT_TV_CSV_path						= merged_PVT_CSV_folder 				+ FOLDER_SEPARATOR + merged_PVT_TV_CSV_filename;
 							
-							merged_CSV_folder							= test_batch_directory 	+ merge_ROI_analysis_folders_basename + TTP_range_suffix;
+							merged_CSV_folder							= TEST_BATCH_DIR 	+ merge_ROI_analysis_folders_basename + TTP_range_suffix;
 							merged_RSP_CSV_folder						= merged_CSV_folder 	+ current_ROI_analysis_subdirectory;
 							merged_RSP_Error_CSV_folder					= merged_CSV_folder 	+ current_ROI_analysis_subdirectory;
 							merged_Std_Dev_CSV_folder					= merged_CSV_folder 	+ current_ROI_analysis_subdirectory;							
@@ -1111,7 +1122,7 @@ macro "merge_data"
 							for											(N = 0; N < num_TTP_values; N++)
 							{
 								//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-								import_CSV_folder						= test_batch_directory 			+  merge_ROI_analysis_folders_basename + UNDERSCORE_STRING + d2s(N + 1, 0);
+								import_CSV_folder						= TEST_BATCH_DIR 			+  merge_ROI_analysis_folders_basename + UNDERSCORE_STRING + d2s(N + 1, 0);
 								import_RSP_CSV_folder					= import_CSV_folder 			+ current_ROI_analysis_subdirectory;
 								import_RSP_Error_CSV_folder				= import_CSV_folder 			+ current_ROI_analysis_subdirectory;
 								import_Std_Dev_CSV_folder				= import_CSV_folder 			+ current_ROI_analysis_subdirectory;
@@ -1133,7 +1144,6 @@ macro "merge_data"
 								RSP_error_data 							= csv_2_array(import_RSP_Error_CSV_folder, 	ROI_analysis_RSP_Error_output_filename, iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, 	true);
 								Std_Dev_data 							= csv_2_array(import_Std_Dev_CSV_folder, 	ROI_analysis_Std_Dev_output_filename, 	iterations_2_analyze_strings, num_ROIs_2_analyze, ROW_MAJOR, 	true);
 								TV_data 								= file_2_float_array(import_TV_CSV_folder, 	ROI_analysis_TV_input_filename, 																		print_input_TXT_path);
-								Aps("TV_data", TV_data);
 								merged_RSP_data 						= Array.concat(merged_RSP_data, 			RSP_data);																							
 								merged_RSP_Error_data 					= Array.concat(merged_RSP_Error_data, 		RSP_error_data);																							
 								merged_Std_Dev_data 					= Array.concat(merged_Std_Dev_data, 		Std_Dev_data);		
@@ -1667,6 +1677,22 @@ function macro_caller()
 	else
 		return 				_EXTERNAL_MACRO_CALLER;
 }
+function process_macro_args()
+{		
+	_macro_arg 				= getArgument();
+	_macroargs				= newArray();
+	if						(_macro_arg == EMPTY_STRING )	
+	{
+		_macroargs			= Array.concat(_macroargs, INTERNAL_MACRO_CALLER);
+		return 				_macroargs;
+	}
+	else
+	{
+		_macroargs			=split(_macro_arg,"-");
+		_macroargs			= Array.concat(EXTERNAL_MACRO_CALLER,_macroargs);
+	}
+	return 					_macroargs;
+}
 function macro_caller_config(_internal_kill_loop_index, _dont_kill_loop)
 {
 	_NO_KILL_LOOP_INDEX				= 99999999999;
@@ -2198,9 +2224,9 @@ function float_array_2_TXT(_path, _filename, _data_array, _overwrite_existing_TX
 }
 function float_array_2_TXT_if(_path, _filename, _data_array, _write_ON, _overwrite_existing_TXT, _print_path)	
 {
+	_TXT_filename 			= extend_path(_path, _filename);		
 	if(_write_ON)
 	{
-		_TXT_filename 			= extend_path(_path, _filename);		
 		if(_print_path)
 			print				("Writing to TXT at:\n------->" + _TXT_filename);
 		if(!File.exists(_TXT_filename) || _overwrite_existing_TXT)
@@ -2579,9 +2605,9 @@ function results_table_2_CSV(_directory, _filename, _overwrite_existing, _print_
 }
 function results_table_2_CSV_if(_directory, _filename, _write_ON, _overwrite_existing, _print_path, _clear_results)
 {
+	_filepath 				= extend_path(_directory, _filename);	
 	if							(_write_ON)
 	{
-		_filepath 				= extend_path(_directory, _filename);	
 		if						(_print_path)
 			print				("Writing contents of results table to CSV at:\n------->" + _filepath);
 		if						(!File.exists(_filepath) || _overwrite_existing)

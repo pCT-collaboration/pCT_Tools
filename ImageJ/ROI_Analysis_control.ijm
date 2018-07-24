@@ -73,6 +73,7 @@ macro "ROI_Analysis_control"
 	analyze_all_dir_reconstructions								= true;
 	analyze_specific_data 										= false;
 	only_perform_missing_analyses 								= true;
+	overwrite_ROI_analyses		 								= false;
 	always_perform_analyses 									= !only_perform_missing_analyses;
 	generate_averaged_data										= false;
 	generate_specific_averaged_data								= false;
@@ -570,7 +571,11 @@ macro "ROI_Analysis_control"
 	else if(CURRENT_RECON_DATA_TYPE == EXPERIMENTAL_DATA)	TEST_BATCH_DIR 	= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR;		
 	
 	//D:\pCT\pCT_data\reconstruction_data\CTP404_Sensitom\Experimental\B_25600\B_25600_L_0.000100_TV_1_A_0.750000_L0_0_Nk_4
-	TEST_BATCH_DIR 									= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR; //+ "07072018" + FOLDER_SEPARATOR;		
+	PROMPT_TEST_BATCH_DIR							= true;
+	if(PROMPT_TEST_BATCH_DIR)
+			TEST_BATCH_DIR 									= getDirectory("Choose a Directory");
+	else
+		TEST_BATCH_DIR 									= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR; //+ "07072018" + FOLDER_SEPARATOR;		
 		
 	// Input/output info and data basenames/filenames
 	MATERIAL_RSP_DEFS_FILENAME 						= "material_RSP_defs.txt";
@@ -1065,6 +1070,7 @@ macro "ROI_Analysis_control"
 	ROI_analysis_targets 						= Array.copy(all_folder_strings);
 	print_ROI_analysis_targets					= true;
 	//analyze_all_dir_reconstructions			= true;
+	//always_perform_analyses
 	
 	if(analyze_specific_data)
 	{
@@ -1081,13 +1087,12 @@ macro "ROI_Analysis_control"
 	if(analyze_all_dir_reconstructions)
 	{
 		print_section							("Performing ROI analysis of all unprocessed reconstructed data sets in the specified directory: " + TEST_BATCH_DIR, PRINT_MAJOR_SECTION);
-		recon_data_folders 						= getDirList(TEST_BATCH_DIR, true);
+		recon_data_folders 						= getDirFolderList(TEST_BATCH_DIR, true);
 		ROI_analysis_targets 					= Array.copy(recon_data_folders);
 		if(print_ROI_analysis_targets)
 			Appsi( "Directories targeted for ROI analysis:", ROI_analysis_targets);
-		if(exit_after_ROI_analyses)
-			endProgram("Exiting after ROI analyses as requested");	
 	}
+	//exit();
 	//if(false)
 	if(perform_MVP_analyses)
 	{
@@ -1098,28 +1103,30 @@ macro "ROI_Analysis_control"
 		{
 			reconstructed_data_folder 			= ROI_analysis_targets[i];
 			print_section						("Performing ROI analysis # " + i + " on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
-			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, reconstructed_data_folder);
-			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, DONT_PRINT_PATH);
+			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, reconstructed_data_folder );
+			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, PRINT_PATH);
 			missing_ROI_analysis_data			= verify_ROI_analysis_output_files(TEST_BATCH_DIR, reconstructed_data_folder, ROI_ANALYSIS_RSP_OFNAME, ROI_ANALYSIS_RSP_ERROR_OFNAME, ROI_ANALYSIS_STD_DEV_OFNAME, ROI_ANALYSIS_TV_IFNAME, ROI_analysis_slices_2_analyze_folders, ROI_selection_diameter_folders, DONT_PRINT_PATH);		
-			run_ROI_analysis					= recon_data_exists && (missing_ROI_analysis_data || always_perform_analyses);			
 			if(recon_data_exists)
 			{
 				print("----->Reconstruction data exists...");
 				if(missing_ROI_analysis_data)
+				{
 					runMacro						(ROI_ANALYSIS_MACRO_PATH, current_analysis_target);
+					autobreak();
+				}
 				else
 				{
 					print("----->ROI analysis was previously performed on this reconstruction data..." );
-					if(always_perform_analyses)
+					if(overwrite_ROI_analyses)
 					{
 						print("Repeating ROI analysis, overwriting the previous ROI analysis data" );
 						runMacro						(ROI_ANALYSIS_MACRO_PATH, current_analysis_target);
+						autobreak();
 					}
 					else
 						print("----->ROI analysis overwriting is turned off..." );
 				}
 			}
-			autobreak();
 		}
 		print("ROI analysis: COMPLETE");
 		if(exit_after_ROI_analyses)
@@ -1147,7 +1154,7 @@ function listFiles(_dir)
 function getSubDirList(_parentdir, _print_path, _dirs) 
 {
 	_sublist = getFileList(_parentdir);
-	for (_i = 0; _i < _list.length; _i++) 
+	for (_i = 0; _i < _sublist.length; _i++) 
 	{
 		if (endsWith( _sublist[_i], "/") )
 		{
@@ -1156,28 +1163,56 @@ function getSubDirList(_parentdir, _print_path, _dirs)
 		}
 	}
 	if(_print_path)
-		App("getDirList ", _dirs);
+		App("getDir_sublist ", _dirs);
 	return _dirs;
 }
 function getDirList(_dir, _print_path) 
+{
+	_list = getFileList(""+_dir);
+	_dirs = newArray();	
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (endsWith( _list[_i], "/") )
+		{
+			_dirs = Array.concat( _dirs, ""+_dir + substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
+			//getSubDirList(_dir + _list[_i], _print_path, _dirs);
+		}
+	}
+	//if(_print_path)
+	//	App("getDirList ", _dirs);
+	return _dirs;
+}
+function getDirFolderList(_dir, _print_path) 
+{
+	_list = getFileList(""+_dir);
+	_dirs = newArray();	
+	for (_i = 0; _i < _list.length; _i++) 
+	{
+		if (endsWith( _list[_i], "/") )
+		{
+			_dirs = Array.concat( _dirs, substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
+			//getSubDirList(_dir + _list[_i], _print_path, _dirs);
+		}
+	}
+	//if(_print_path)
+	//	App("getDirList ", _dirs);
+	return _dirs;
+}
+function getDirsList(_dir) 
 {
 	_list = getFileList(_dir);
 	_dirs = newArray();	
 	for (_i = 0; _i < _list.length; _i++) 
 	{
 		if (endsWith( _list[_i], "/") )
-		{
-			_dirs = Array.concat( _dirs, _dir + substring(_list[_i], 0, lengthOf(_list[_i]) - 1) );
-			getSubDirList(_dir + _list[_i], _print_path, _dirs);
-		}
+			_dirs = Array.concat( _dirs, _list[_i] );
 	}
-	if(_print_path)
-		App("getDirList ", _dirs);
 	return _dirs;
 }
+
 function printDirList(_dir) 
 {
-	_list = getDirList(_dir);
+	_list = getDirList(_dir,true);
 	for (_i = 0; _i < _list.length; _i++) 
 		print( _i + ": " + _list[_i] );
 }
@@ -1198,7 +1233,17 @@ function printDirFileList(_dir)
 	for (_i = 0; _i < _list.length; _i++) 
 		print( _i + ": " + _list[_i] );
 }
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+  
+  function listFiles(dir) {
+      list = getFileList(dir);
+     for (i=0; i<list.length; i++) {
+        if (endsWith(list[i], "/"))
+           listFiles(""+dir+list[i]);
+        else
+           print((count++) + ": " + dir + list[i]);
+     }
+  }
+  //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 function cfg_parameter_string_2_values(_cfg_parameter_string, _cfg_parameter_list, _cfg_parameter_strings, _cfg_parameter_decodings, _force_array)
