@@ -56,8 +56,6 @@ End Function
 Sub createTitledChart(plotTypeTitleLabel As String, iterations As Variant, materialDependency As String, titleSuffix As String, titleFontSize As Integer, suffixOnlyLine As Boolean, outputCell As Range)
     'Application.ScreenUpdating = False
     'Application.EnableEvents = False
-    'Set CurrentSheet = ActiveSheet
-    'CurrentSheet.Activate
     Dim iterationString
     Dim chartName As String: chartName = createChart()
     Dim chartHandle As Chart: Set chartHandle = ActiveChart
@@ -66,6 +64,10 @@ Sub createTitledChart(plotTypeTitleLabel As String, iterations As Variant, mater
     Selection.Top = Range(outputCell.Address).Top
     Selection.Left = Range(outputCell.Address).Left
     iterationString = IIf(iterations = 1, iterations & " Iteration ", iterations & " Iterations ")
+    'ActiveChart.Parent.Width = 382.24 '3.92 * ptsPerInch
+    'ActiveChart.Parent.Height = 229.68 '3.19 * ptsPerInch
+    'ActiveChart.ChartTitle.Text = plotTypeTitleLabel
+    'ActiveChart.ChartTitle.Left = 0
     ActiveChart.ChartTitle.Text = plotTypeTitleLabel & " vs. N" & materialDependency & IIf(suffixOnlyLine, Chr(13) & "After " & iterationString & titleSuffix, " After " & iterationString & Chr(13) & titleSuffix)
     ActiveChart.ChartTitle.Font.Size = titleFontSize
 End Sub
@@ -221,27 +223,33 @@ Sub setAxesFormat(axisType As XlAxisType, axisTitle As String, fontSize As Integ
     End With
 End Sub
 Sub setTVcheckChartSizing(titleLeftPos As Double)
-    ActiveChart.Parent.Width = 282.24 '3.92 * ptsPerInch
+    'ActiveChart.Parent.Width = 282.24 '3.92 * ptsPerInch
+    ActiveChart.Parent.Width = 300#  '3.92 * ptsPerInch
     ActiveChart.Parent.Height = 229.68 '3.19 * ptsPerInch
     ActiveChart.PlotArea.Top = 34.18
     ActiveChart.PlotArea.Height = 146.846
-    ActiveChart.PlotArea.Width = 251.846
-    ActiveChart.PlotArea.Left = 105.18
+    ActiveChart.PlotArea.Width = 269.846
+    ActiveChart.PlotArea.Left = 83.18
     ActiveChart.Axes(xlCategory).axisTitle.Top = 180.224
     ActiveChart.Axes(xlValue).axisTitle.Left = 0
     ActiveChart.ChartTitle.Left = titleLeftPos
     ActiveChart.ChartTitle.Top = -1
     ActiveChart.Legend.Left = 0.989
-    ActiveChart.Legend.Width = 270.26
+    ActiveChart.Legend.Width = 288.26
     ActiveChart.Legend.Height = 20.846
     ActiveChart.Legend.Top = 203
 End Sub
 Sub setTVvsKChartSizing(titleLeftPos As Double)
     Call setTVcheckChartSizing(titleLeftPos)
     ActiveChart.ChartTitle.Left = titleLeftPos
+    ActiveChart.ChartTitle.Top = -5
+    ActiveChart.PlotArea.Top = 31.18
+    ActiveChart.PlotArea.Height = 143.846
+    ActiveChart.Axes(xlCategory).axisTitle.Top = 175.224
     ActiveChart.Legend.Width = 250.26
     ActiveChart.Legend.Left = 10.989
-    ActiveChart.Legend.Top = 208
+    ActiveChart.Legend.Height = 20.846
+    ActiveChart.Legend.Top = 198
 End Sub
 Sub setLChartSizing(titleLeftPos As Double)
     ActiveChart.Parent.Width = 282.24 '3.92 * ptsPerInch
@@ -280,11 +288,11 @@ Sub setChartSizing(plotType As String, plotTitle As String)
     Dim ChartSizingFunction As String, titleLeftPos As Double, titleLeftPosArray() As Variant
     '------------------------------------------------------------------------------------------------------------------------------------------
     If plotTitle = "Total Variation" Then
-        titleLeftPosArray = Array(25.467, 35.467, 56.467, 50.467)
+        titleLeftPosArray = Array(35.467, 35.467, 56.467, 50.467)
     ElseIf plotTitle = "RSP % Error" Then
         titleLeftPosArray = Array(35.467, 45.467, 61.467, 85.467)
     ElseIf plotTitle = "Standard Deviation" Then
-        titleLeftPosArray = Array(58.467, 45.467, 55.467, 76.467)
+        titleLeftPosArray = Array(57.467, 45.467, 55.467, 76.467)
     Else
         titleLeftPosArray = Array(35.467, 45.467, 45.467, 85.467)
     End If
@@ -365,7 +373,7 @@ Function queryPlotRange(plotTitle As String, plotDataRange As Range, roundingTo 
         Call echoAssign(ActiveChart.Axes(xlValue).MajorUnit, newMajorAxisUnits, "newMajorAxisUnits", False)
     Loop
     
-    Exit Function
+    'Exit Function
 End Function
 '******************************************************************************************************************************************
 '------------------------------------------------------------------------------------------------------------------------------------------
@@ -423,36 +431,44 @@ Function configVsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As R
     Set ser2 = popIterationsVal(ser2, xVals)
 End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
-Sub CreateVsTVCheckChart(plotTypeTitleLabel As String, plotTypeAxisLabel As String, xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, iterations As Variant, lambda As Variant, material As Variant, outputCell As Range)
-    lambda = parseParameterString(lambda, "L")
-    '------------------------------------------------------------------------------------------------------------------------------------------
+Function setVsTVCheckTitleParamString(paramValCells As Range) As Variant
+    setVsTVCheckTitleParamString = ChrW(945) & "=" & parseParameterString(paramValCells.Item(1), "A") & ", "
+    setVsTVCheckTitleParamString = setVsTVCheckTitleParamString & ChrW(955) & "=" & parseParameterString(paramValCells.Item(1), "L")
+End Function
+'------------------------------------------------------------------------------------------------------------------------------------------
+Sub CreateVsTVCheckChart(plotTypeTitleLabel As String, plotTypeAxisLabel As String, xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, iterations As Variant, paramValCells As Range, material As Variant, outputCell As Range)
+    Dim paramString As Variant: paramString = setVsTVCheckTitleParamString(paramValCells)
+    Dim iterationString: iterationString = IIf(iterations = 1, "After " & iterations & " Iteration ", "After " & iterations & " Iterations ")
     If plotTypeTitleLabel = "Total Variation" Then
-        Call createTitledChart(plotTypeTitleLabel, iterations, "", "(" & ChrW(955) & "=" & lambda & ")", 14, False, outputCell)
+        Call createTitledChart(plotTypeTitleLabel, iterations, "", "(" & paramString & ")", 14, False, outputCell)
     Else
-        Call createTitledChart(plotTypeTitleLabel, iterations, "in " & material, "(" & ChrW(955) & "=" & lambda & ")", 14, True, outputCell)
+        Call createTitledChart(plotTypeTitleLabel, iterations, " in " & material, "(" & paramString & ")", 14, True, outputCell)
+        'ActiveChart.ChartTitle.Text = plotTypeTitleLabel & " vs. N" & materialDependency & IIf(suffixOnlyLine, Chr(13) & "After " & iterationString & titleSuffix, " After " & iterationString & Chr(13) & titleSuffix)
+        'ActiveChart.ChartTitle.Text = plotTypeTitleLabel & " vs. N " & " in "
     End If
     Call fillTVcheckSeries(xVals, ser1, ser2, OTVS)
     Call setAxesFormat(xlValue, plotTypeAxisLabel, 12, False)
     Call setAxesFormat(xlCategory, "N", 12, False)
     Call addChartLegend
     Call setChartSizing("TVcheck", plotTypeTitleLabel)
+    '    ActiveChart.ChartTitle.Text = plotTypeTitleLabel & " vs. N " & " in " & material & Chr(13) & iterationString & "(" & paramString & ")"
     Dim plotDataRange As Range: Set plotDataRange = Union(ser1, ser2, OTVS)
     Call setPlotDataRanging("TVcheck", plotTypeTitleLabel, plotDataRange)
 End Sub
 '------------------------------------------------------------------------------------------------------------------------------------------
-Function plotTVvsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, lambda As Variant, outputCell As Range, Optional iterations As Variant)
+Function plotTVvsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, paramValCells As Range, outputCell As Range, Optional iterations As Variant)
     iterations = configVsTVCheck(xVals, ser1, ser2, OTVS)
-    Call CreateVsTVCheckChart("Total Variation", "Total Variation (TV)", xVals, ser1, ser2, OTVS, iterations, lambda, "", outputCell)
+    Call CreateVsTVCheckChart("Total Variation", "Total Variation (TV)", xVals, ser1, ser2, OTVS, iterations, paramValCells, "", outputCell)
 End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
-Function plotRSPerrorVsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, lambda As Variant, material As Variant, outputCell As Range, Optional iterations As Variant)
+Function plotRSPerrorVsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, paramValCells As Range, material As Variant, outputCell As Range, Optional iterations As Variant)
     iterations = configVsTVCheck(xVals, ser1, ser2, OTVS)
-    Call CreateVsTVCheckChart("RSP % Error", "RSP Error (%)", xVals, ser1, ser2, OTVS, iterations, lambda, material, outputCell)
+    Call CreateVsTVCheckChart("RSP % Error", "RSP Error (%)", xVals, ser1, ser2, OTVS, iterations, paramValCells, material, outputCell)
 End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
-Function plotStdDevVsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, lambda As Variant, material As Variant, outputCell As Range, Optional iterations As Variant)
+Function plotStdDevVsTVCheck(xVals As Range, ser1 As Range, ser2 As Range, OTVS As Range, paramValCells As Range, material As Variant, outputCell As Range, Optional iterations As Variant)
     iterations = configVsTVCheck(xVals, ser1, ser2, OTVS)
-    Call CreateVsTVCheckChart("Standard Deviation", "Standard Deviation", xVals, ser1, ser2, OTVS, iterations, lambda, material, outputCell)
+    Call CreateVsTVCheckChart("Standard Deviation", "Standard Deviation", xVals, ser1, ser2, OTVS, iterations, paramValCells, material, outputCell)
 End Function
 '******************************************************************************************************************************************
 '------------------------------------------------------------------------------------------------------------------------------------------
@@ -461,14 +477,11 @@ End Function
 '******************************************************************************************************************************************
 '------------------------------------------------------------------------------------------------------------------------------------------
 Function configVsK(xVals As Range, ser1 As Range, OTVS As Range, Optional iterations As Variant) As Variant
-    If IsMissing(iterations) Then
-        configVsK = querySeriesIterations(xVals, ser1, OTVS)
-    Else
-        configVsK = iterations
-    End If
+    configVsK = IIf(IsMissing(iterations), querySeriesIterations(xVals, ser1, OTVS), iterations)
     Set OTVS = parseOTVSdata(OTVS, xVals)
     Set ser1 = popIterationsVal(ser1, xVals)
 End Function
+'------------------------------------------------------------------------------------------------------------------------------------------
 Function createTVvsKTable(plotTypeTitleLabel As String, plotTypeAxisLabel As String, xVals As Range, ser1 As Range, OTVS As Range, iterations As Variant, lambda As Variant, outputCell As Range)
     lambda = parseParameterString(lambda, "L")
     Call createTitledChart(plotTypeTitleLabel, iterations, "", ChrW(955) & "=" & lambda, 14, False, outputCell)
@@ -492,11 +505,7 @@ End Function
 '******************************************************************************************************************************************
 '------------------------------------------------------------------------------------------------------------------------------------------
 Function configVsL(xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, Optional iterations As Variant) As Variant
-    If IsMissing(iterations) Then
-        configVsL = querySeriesIterations(xVals, ser1, ser2, ser3)
-    Else
-        configVsL = iterations
-    End If
+    configVsL = IIf(IsMissing(iterations), querySeriesIterations(xVals, ser1, ser2, ser3), iterations)
     Set ser1 = popIterationsVal(ser1, xVals)
     Set ser2 = popIterationsVal(ser2, xVals)
     Set ser3 = popIterationsVal(ser3, xVals)
@@ -508,6 +517,7 @@ Function setVsLTitleParamString(lambdaVals As Range) As Variant
     setVsLTitleParamString = setVsLTitleParamString & "," & parseParameterString(lambdaVals.Item(2), "L")
     setVsLTitleParamString = setVsLTitleParamString & "," & parseParameterString(lambdaVals.Item(3), "L")
 End Function
+'------------------------------------------------------------------------------------------------------------------------------------------
 Function createVsLChart(plotTypeTitleLabel As String, plotTypeAxisLabel As String, xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, iterations As Variant, paramString As Variant, material As Variant, reverseValOrder As Boolean, outputCell As Range)
     If plotTypeTitleLabel = "Total Variation" Then
         Call createTitledChart(plotTypeTitleLabel, iterations, "", "(" & paramString & ")", 14, False, outputCell)
@@ -541,13 +551,13 @@ End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
 '------------------------------------------------------------------------------------------------------------------------------------------
 '******************************************************************************************************************************************
-
+'------------------------------------------------------------------------------------------------------------------------------------------
 Sub createVsAlphaChart(plotTypeTitleLabel As String, plotTypeAxisLabel As String, xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, ser4 As Range, ser5 As Range, OTVS As Range, iterations As Variant, lambda As Variant, material As Variant, reverseValOrder As Boolean, outputCell As Range)
     lambda = parseParameterString(lambda, "L")
     If plotTypeTitleLabel = "Total Variation" Then
         Call createTitledChart(plotTypeTitleLabel, iterations, "", "(" & ChrW(955) & "=" & lambda & ")", 18, False, outputCell)
     Else
-        Call createTitledChart(plotTypeTitleLabel, iterations, "in " & material, "(" & ChrW(955) & "=" & lambda & ")", 18, True, outputCell)
+        Call createTitledChart(plotTypeTitleLabel, iterations, " in " & material, "(" & ChrW(955) & "=" & lambda & ")", 18, True, outputCell)
     End If
     Call fillAlphaSeries(xVals, ser1, ser2, ser3, ser4, ser5, OTVS)
     Call setAxesFormat(xlValue, plotTypeAxisLabel, 13, reverseValOrder)
@@ -557,12 +567,9 @@ Sub createVsAlphaChart(plotTypeTitleLabel As String, plotTypeAxisLabel As String
     Dim plotDataRange As Range: Set plotDataRange = Union(ser1, ser2, ser3, ser4, ser5, OTVS)
     Call setPlotDataRanging("Alpha", plotTypeTitleLabel, plotDataRange)
 End Sub
+'------------------------------------------------------------------------------------------------------------------------------------------
 Function configVsAlpha(xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, ser4 As Range, ser5 As Range, OTVS As Range, Optional iterations As Variant) As Variant
-    If IsMissing(iterations) Then
-        configVsAlpha = querySeriesIterations(xVals, ser1, ser2, ser3, ser4, ser5, OTVS)
-    Else
-        configVsAlpha = iterations
-    End If
+    configVsAlpha = IIf(IsMissing(iterations), querySeriesIterations(xVals, ser1, ser2, ser3, ser4, ser5, OTVS), iterations)
     Set OTVS = parseOTVSdata(OTVS, xVals)
     Set ser1 = popIterationsVal(ser1, xVals)
     Set ser2 = popIterationsVal(ser2, xVals)
@@ -577,11 +584,13 @@ Function plotTVVsAlpha(xVals As Range, ser1 As Range, ser2 As Range, ser3 As Ran
 End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
 Function plotRSPerrorVsAlpha(xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, ser4 As Range, ser5 As Range, OTVS As Range, lambda As Variant, material As String, reverseValOrder As Boolean, outputCell As Range, Optional iterations As Variant)
+    'lambda = parseParameterString(lambda, "L")
     iterations = configVsAlpha(xVals, ser1, ser2, ser3, ser4, ser5, OTVS, iterations)
     Call createVsAlphaChart("RSP % Error", "RSP Error (%)", xVals, ser1, ser2, ser3, ser4, ser5, OTVS, iterations, lambda, material, reverseValOrder, outputCell)
 End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
 Function plotStdDevVsAlpha(xVals As Range, ser1 As Range, ser2 As Range, ser3 As Range, ser4 As Range, ser5 As Range, OTVS As Range, lambda As Variant, material As String, outputCell As Range, Optional iterations As Variant)
+    'lambda = parseParameterString(lambda, "L")
     iterations = configVsAlpha(xVals, ser1, ser2, ser3, ser4, ser5, OTVS, iterations)
     Call createVsAlphaChart("Standard Deviation", "Standard Deviation", xVals, ser1, ser2, ser3, ser4, ser5, OTVS, iterations, lambda, material, False, outputCell)
 End Function
@@ -590,7 +599,7 @@ End Function
 '------------------------------------------------------------------------------------------------------------------------------------------
 '------------------------------------------------------------------------------------------------------------------------------------------
 '******************************************************************************************************************************************
-Call Workbook_Open
+
 
 
 

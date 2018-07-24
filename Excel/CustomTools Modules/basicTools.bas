@@ -6,6 +6,12 @@ Attribute VB_Name = "basicTools"
 '----------------------------------------------------------- Generic Functions ------------------------------------------------------------
 '------------------------------------------------------------------------------------------------------------------------------------------
 '******************************************************************************************************************************************
+Option Explicit
+Public Enum RoundingDirection
+    Nearest
+    Up
+    Down
+End Enum
 '------------------------------------------------------------------------------------------------------------------------------------------
 Private Sub Workbook_Open()
     Application.Calculation = xlCalculationManual
@@ -105,11 +111,6 @@ End Function
 '------------------------------------------------------------- Math Functions -------------------------------------------------------------
 '------------------------------------------------------------------------------------------------------------------------------------------
 '******************************************************************************************************************************************
-Public Enum RoundingDirection
-    Nearest
-    Up
-    Down
-End Enum
 '------------------------------------------------------------------------------------------------------------------------------------------
 Function GetRoundedNumber(ByVal number As Variant, ByVal multiplier As Variant, ByVal direction As RoundingDirection) As Variant
     Dim nearestValue As Variant: nearestValue = (CInt(number / multiplier) * multiplier)
@@ -175,7 +176,7 @@ Public Function CSVparse(CSVtext As Range, outputCell As Range)
     theString = CSVtext.value
     CSVparse = ""
     strRight = -1
-    If currentRowOffset > CSVitems(CSVtext.value, ", ") Then Exit Function
+    If currentRowOffset > CountOccurrences(CSVtext.value, ", ") Then Exit Function
     For i = 0 To currentRowOffset
         strLeft = strRight + 2
         strRight = InStr(strLeft, theString, ", ")
@@ -378,6 +379,9 @@ End Function
 '----------------------------------------------------- Shape/DrawingObject Functions ------------------------------------------------------
 '------------------------------------------------------------------------------------------------------------------------------------------
 '******************************************************************************************************************************************
+Public Sub RecalculateSelection()
+    If TypeName(Selection) = "Range" Then Selection.Calculate
+End Sub
 '------------------------------------------------------------------------------------------------------------------------------------------
 Sub deleteAllCharts()
     Dim sht As Worksheet
@@ -399,6 +403,17 @@ Sub deleteActiveSheetCharts()
     Dim chtObj As ChartObject
     For Each chtObj In ActiveSheet.ChartObjects
         chtObj.Delete
+    Next
+End Sub
+'------------------------------------------------------------------------------------------------------------------------------------------
+Sub deleteActiveSheetChartRange()
+    Dim chtObj As ChartObject
+    Dim index As Integer: index = 0
+    For Each chtObj In ActiveSheet.ChartObjects
+        If index > 50 Then
+            chtObj.Delete
+        End If
+        index = index + 1
     Next
 End Sub
 '------------------------------------------------------------------------------------------------------------------------------------------
