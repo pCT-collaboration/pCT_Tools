@@ -44,6 +44,7 @@ macro "ROI_Analysis_control"
 	printing_input_output_filenames								= true;	
 	print_ROI_definitions_path									= false;		
 	PRINT_ANALYSIS_CFG_PATH										= true;
+	PRINT_ROI_DEFINITIONS_PATH									= true;		
 	print_directories_created									= false;	
 	print_input_data_path										= false;
 	print_input_CSV_path										= false;
@@ -65,6 +66,12 @@ macro "ROI_Analysis_control"
 	specify_MVP_parameter_index									= true && !specify_MVP_parameter_prefix && !specify_MVP_parameter_number;
 	write_folder_strings 										= false;
 	write_path_strings 											= false;		
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ROI_DEBUGGING 												= false;
+	PRINT_ROI_EXTRACTION 										= false || ROI_DEBUGGING;
+	PRINT_ROI_SLICES 											= true && PRINT_ROI_EXTRACTION;
+	PRINT_ROI_COORDINATES 										= true && PRINT_ROI_EXTRACTION;
+	PRINT_ROI_PARAMETERS 										= true && PRINT_ROI_EXTRACTION;
 	//***************************************************************************************************************************************************************************************************//
 	//************* Parameter value test Booleans ************************************************************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//	
@@ -278,6 +285,8 @@ macro "ROI_Analysis_control"
 	AND_LOGIC 										= true;
 	OR_LOGIC 										= false;
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	RETURN_STRING									= true;
+	RETURN_ARRAY									= false;
 	FORCE_VALUE_2_ARRAY								= true;
 	DONT_FORCE_VALUE_2_ARRAY						= false;
 	ARRAY_FILL_CYCLIC								= true;
@@ -331,6 +340,11 @@ macro "ROI_Analysis_control"
 	PRINTING_OFF									= 1;	
 	PRINTING_GROUPS									= 2;	
 	PRINTING_VARS									= 3;	
+	PRINT_MAJOR_SECTION								= 0;
+	PRINT_MINOR_SECTION								= 1;	
+	PRINT_STAR_SEP									= 2;
+	PRINT_DASH_SEP									= 3;	
+	PRINT_SLASH_SEP									= 4;
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	MULTIPLICATION									= 0;
 	DIVISION										= 1;
@@ -348,7 +362,8 @@ macro "ROI_Analysis_control"
 	RETURN_MIN										= 0;
 	RETURN_MAX 										= 1;
 	RETURN_ALL										= 2;
-	RETURN_MINMAX									= 3;
+	RETURN_COUNT									= 3; 
+	RETURN_MINMAX									= 4;
 	PRINT_MATCH										= 0;
 	DONT_PRINT_MATCH								= 1;
 	THROW_MISMATCH_ERROR							= 2;
@@ -390,19 +405,78 @@ macro "ROI_Analysis_control"
 	RETURN_YCOORDINATES								= 1;
 	RETURN_COORDINATE_PAIRS							= 2;
 	RETURN_COORDINATE_PAIR_STRING					= 3;
-	RETURN_EQUALS_STRINGS							= 4;
+	RETURN_XPARAMETERS								= 0;
+	RETURN_YPARAMETERS								= 1;
+	RETURN_PARAMETERS								= 2;
+	RETURN_PARAMETERS_STRING						= 3;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ROI_MATERIAL_NAMES_LINENUM						= 0;
+	ROI_LABELS_LINENUM								= 1;
+	ROI_LABEL_NICKNAMES_LINENUM						= 2;
+	ROI_TYPES_LINENUM								= 3;
+	ROI_DIAMETERS_LINENUM							= 4;
+	XPARAMS_LINENUM									= 5;
+	YPARAMS_OFFSETS_LINENUM							= 6;
+	ROI_SLICES_LINENUM								= 7;
+	ROI_SELECTION_RADII_LINENUM						= 8;
+	ROI_PROFILE_RADIUS_LINENUM						= 9;
+	BULK_MATERIAL_LINENUM							= 10;
+	SLICES_ZERO_INDEXED								= 0;
+	SLICES_NUM_INDEXED								= 1;
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	RECTANGLE 										= 0;
 	OVAL 											= 1;
 	POLYGON 										= 2;
 	FREEHAND 										= 3;
 	TRACED 											= 4;
-	STRAIGHT LINE 									= 5;
-	SEGMENTED LINE 									= 6;
-	FREEHAND LINE 									= 7;
+	STRAIGHT_LINE 									= 5;
+	SEGMENTED_LINE 									= 6;
+	FREEHAND_LINE 									= 7;
 	ANGLE 											= 8;
 	COMPOSITE 										= 9;
 	POINT 											= 10;
+	MULTIPOINT 										= 11;
+	ROUNDRECT 										= 12;
+	ROTRECT 										= 13;
+	CIRCLE 											= 14;
+	ELLIPSE 										= 15;
+	WAND 											= 16;
+	BRUSH 											= 17;
+	ARROW 											= 18;
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	MEDIAN_MEAS_INDEX 								= 0;	
+	MODE_MEAS_INDEX 								= 1;	
+	MIN_MEAS_INDEX 									= 2;	
+	MAX_MEAS_INDEX 									= 3;	
+	CENTROIDX_MEAS_INDEX 							= 4;	
+	CENTROIDY_MEAS_INDEX 							= 5;	
+	COM_X_MEAS_INDEX 								= 6;	
+	COM_Y_MEAS_INDEX 								= 7;	
+	BOUNDINGX_MEAS_INDEX 							= 8;	
+	BOUNDINGY_MEAS_INDEX 							= 9;	
+	BOUNDING_WIDTH_MEAS_INDEX 						= 10;	
+	BOUNDING_HEIGHT_MEAS_INDEX 						= 11;	
+	INT_DENSITY_MEAS_INDEX 							= 12;	
+	RAWINT_DENSITY_MEAS_INDEX 						= 13;	
+	PERIMETER_MEAS_INDEX 							= 14;	
+	AREA_MEAS_INDEX 								= 15;	
+	LABEL_MEAS_INDEX 								= 16;	
+	//***************************************************************************************************************************************************************************************************//
+	//************************************************************************************ Define numeric constants *************************************************************************************//
+	//***************************************************************************************************************************************************************************************************//
+	LOOP_LOWER_BOUND								= 0;
+	LOOP_UPPER_BOUND								= 1;
+	DASHES_PER_CHAR 								= 1.3;										// Average width of a character in terms of the width of a dash character 
+	NUM_TAB_SPACES 									= 8;
+	MIN_SUM_ARROW_LENGTH							= 3;
+	TOLERANCE										= 0.0000001;								// Tolerance separating min/max values of array used in findMinima/findMaxima
+	FLOAT_ARRAY_2_FILE_PRECISION					= 6;										// Precision to use for writing TV reduction values to CSV files
+	ITERATIONS_STRING_PRECISION 					= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
+	SLICES_STRING_PRECISION 						= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
+	ROI_SELECTION_DIAMETER_STRING_PRECISION			= 0;										// # of digits after decimal point to use in conversion of an ROI selection diameter value to string	
+	TV_REDUCTION_STRING_PRECISION					= 6;										// Precision to use for writing TV reduction values to CSV files
+	ROI_SELECTION_DELAY 							= 100;
+	ROI_LABEL_FONTSIZE 								= 4;
 	//**************************************************************************************************************************************************************************************************//
 	//***************************************************************************** Set reconstruction data dir/file info ******************************************************************************//
 	//**************************************************************************************************************************************************************************************************//
@@ -456,6 +530,16 @@ macro "ROI_Analysis_control"
 	RSP_ERROR_COLUMN_LABEL 							= "% Error";
 	MEAN_COLUMN_LABEL 								= "Mean";	
 	//----------------------------------------------------------------
+	CFG_ELEMENT_SEP									= ",";	
+	CFG_PAIR_SEP									= "+";	
+	CFG_GROUP_SEP									= ";";	
+	ROI_COORDINATE_SEP								= ",";	
+	ROI_COORDINATE_PAIR_SEP							= "+";	
+	ROI_COORDINATE_GROUP_SEP						= ";";	
+	ROI_PARAMETER_SEP								= ",";	
+	ROI_PARAMETER_PAIR_SEP							= "+";	
+	ROI_PARAMETER_GROUP_SEP							= ";";	
+	//----------------------------------------------------------------
 	FOLDER_SEPARATOR								= File.separator;
 	CFG 											= ".cfg";
 	TXT 											= ".txt";
@@ -464,6 +548,9 @@ macro "ROI_Analysis_control"
 	GIF 											= ".gif";
 	AVI 											= ".avi";
 	IJM 											= ".ijm";
+	//----------------------------------------------------------------
+	SHIFT_KEY										= "shift";
+	ALT_KEY											= "alt";
 	EMPTY_STRING 									= "";										// String constant: empty string
 	SPACE_STRING 									= " ";										// String constant: space character string
 	UNDERSCORE_STRING 								= "_";										// String constant: underscore character string
@@ -502,6 +589,47 @@ macro "ROI_Analysis_control"
 	ROI_material_RSP_column_label 					= "Predicted RSP";
 	RSP_error_column_label 							= "% Error";
 	mean_column_label 								= "Mean";	
+	ROI_DEFINITION_NUMBERS_DECODING_OP				= "parseFloat";	
+	ROI_DEFINITION_STRINGS_DECODING_OP				= "none";	
+	ROIDEF_NUMBER									= "parseFloat";	
+	ROIDEF_STRING									= "none";	
+	FLOAT_DECODING_OP								= "parseFloat";	
+	INT_DECODING_OP									= "parseInt";	
+	STRING_DECODING_OP								= "none";	
+	BOOL_DECODING_OP								= "parseBool";	
+	MEAN_COLUMN_LABEL 								= "Mean";	
+	MEDIAN_COLUMN_LABEL 							= "Median";	
+	MODE_COLUMN_LABEL 								= "Mode";	
+	MIN_COLUMN_LABEL 								= "Min";	
+	MAX_COLUMN_LABEL 								= "Max";	
+	STDDEV_COLUMN_LABEL 							= "StdDev";	
+	CENTROIDX_COLUMN_LABEL 							= "X";	
+	CENTROIDY_COLUMN_LABEL 							= "Y";	
+	COM_X_COLUMN_LABEL 								= "XM";	
+	COM_Y_COLUMN_LABEL 								= "YM";	
+	BOUNDINGX_COLUMN_LABEL 							= "BX";	
+	BOUNDINGY_COLUMN_LABEL 							= "BY";	
+	BOUNDING_WIDTH_COLUMN_LABEL 					= "Width";	
+	BOUNDING_HEIGHT_COLUMN_LABEL 					= "Height";	
+	INT_DENSITY_COLUMN_LABEL 						= "IntDen";	
+	RAWINT_DENSITY_COLUMN_LABEL 					= "RawIntDen";	
+	PERIMETER_COLUMN_LABEL 							= "Perim.";	
+	AREA_COLUMN_LABEL 								= "Area";	
+	LABEL_COLUMN_LABEL 								= "Label";	
+	MEAN_MEAS_FLAG 									= "mean";	
+	MEDIAN_MEAS_FLAG 								= "median";	
+	MODE_MEAS_FLAG 									= "modal";	
+	MINMAX_MEAS_FLAG 								= "min";	
+	STDDEV_MEAS_FLAG 								= "standard";	
+	CENTROID_MEAS_FLAG 								= "centroid";	
+	COM_MEAS_FLAG 									= "center";	
+	BOUNDING_MEAS_FLAG 								= "bounding";	
+	INT_DENSITY_MEAS_FLAG 							= "integrated";	
+	PERIMETER_MEAS_FLAG 							= "perimeter";	
+	AREA_MEAS_FLAG 									= "area";	
+	LABEL_MEAS_FLAG 								= "display add";	
+	ROI_MATERIAL_RSP_COLUMN_LABEL 					= "Predicted RSP";
+	RSP_ERROR_COLUMN_LABEL 							= "% Error";
 	COLUMN_SUM_ROW_LABEL 							= "Sum";	
 	TV_BEFORE_TVS_LABEL 							= "TV: Before TVS";	
 	TV_AFTER_TVS_LABEL 								= "TV: After TVS";
@@ -511,12 +639,32 @@ macro "ROI_Analysis_control"
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
 	ASK_KILL_DIALOG_TITLE							= "Continue or cancel execution?";
 	ASK_KILL_DIALOG_STATEMENT						= "Select 'OK' to continue or 'Cancel' to halt execution";
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	CFG_PARAMETER_DECODINGS							= newArray(BOOL_DECODING_OP,  INT_DECODING_OP, 	 INT_DECODING_OP, INT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, BOOL_DECODING_OP, 	BOOL_DECODING_OP,  INT_DECODING_OP, 		INT_DECODING_OP, 			INT_DECODING_OP				);		
+	CFG_PARAMETER_LIST								= newArray("simulated_scan", "x_columns", 		"x_rows", 		 "x_slices", 	  "voxel_width", "voxel_height", 	"voxel_thickness", "voxels_per_mm",   "flip_horizontally",  "flip_vertically", "num_recon_iterations",  "first_iteration_2_analyze", "last_iteration_2_analyze" );
+	ROI_MEAS_FLAGS									= newArray(AREA_MEAS_FLAG, MEAN_MEAS_FLAG, STDDEV_MEAS_FLAG, MODE_MEAS_FLAG, MINMAX_MEAS_FLAG, CENTROID_MEAS_FLAG, COM_MEAS_FLAG, PERIMETER_MEAS_FLAG, BOUNDING_MEAS_FLAG, INT_DENSITY_MEAS_FLAG, MEDIAN_MEAS_FLAG, LABEL_MEAS_FLAG );
+	ROI_PARAMETER_DECODINGS							= newArray(STRING_DECODING_OP,    STRING_DECODING_OP,  STRING_DECODING_OP,    STRING_DECODING_OP,  FLOAT_DECODING_OP,  FLOAT_DECODING_OP,  FLOAT_DECODING_OP,  INT_DECODING_OP, FLOAT_DECODING_OP,     FLOAT_DECODING_OP,               STRING_DECODING_OP);		
+	ROI_DEFINITIONS_PARAMETER_LIST					= newArray("ROI_material_names", "ROI_labels",        "ROI_label_nicknames", "ROI_shapes",        "ROI_diameters",    "ROI_xparams",         "ROI_yparams", "ROI_slices",    "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
+	ROI_SELECTION_SHAPES							= newArray("rectangle", "oval", "polygon", "freehand", "traced", "straight_line", "segmented_line", "freehand_line", "angle",  "composite", "point", "multipoint", "roundrect", "rotrect", "circle", "ellipse", "wand", "brush", "arrow" );
+	ROI_SELECTION_SHAPE_IDS							= newArray(RECTANGLE, 	 OVAL,	 POLYGON, 	FREEHAND, 	TRACED,   STRAIGHT_LINE,   SEGMENTED_LINE, 	 FREEHAND_LINE,   ANGLE, 	COMPOSITE, 	 POINT,   MULTIPOINT, ROUNDRECT, ROTRECT, CIRCLE, ELLIPSE, WAND, BRUSH, ARROW	);
+	MAKE_SELECTION_TYPE_SPECIFIERS					= newArray(RECTANGLE, 	 OVAL,	 POLYGON, 	FREEHAND, 	TRACED,   STRAIGHT_LINE,   SEGMENTED_LINE, 	 FREEHAND_LINE,   ANGLE, 	COMPOSITE, 	 POINT				);
+	MATERIAL_NAMES									= newArray("air", 	"PMP", 	"LDPE", "epoxy", "polystyrene", "PMMA", "acrylic", 	"delrin", "teflon", "soft tissue", 				  "brain tissue", 				  "spinal disk", 									"trabecular bone", 											"cortical bone", 									"dentin", 	"enamel"		);
+	MATERIAL_ALIASES								= newArray("empty", 						 "poly",         		"acryl",    "del",    "tef", 	"soft",        "softTissue",  "brain",        "brainTissue",  "spinal", 		"spinalDisk", 	"disk", 		"trabecular",    	"trabecularBone", 	"trabec",			"cortical", 	 "corticalBone",  "cort",    		"den", 	  	"enam"			);
+	MATERIAL_ALIAS_NAMES							= newArray("air", 							 "polystyrene", 		"acrylic", 	"delrin", "teflon", "soft tissue", "soft tissue", "brain tissue", "brain tissue", "spinal disk", 	"spinal disk", 	"spinal disk", 	"trabecular bone", 	"trabecular bone",	"trabecular bone", 	"cortical bone", "cortical bone", "cortical bone", 	"dentin", 	"enamel"		);
+	MATERIAL_ALIAS_LUT								= Array.concat(MATERIAL_NAMES, MATERIAL_ALIASES		);
+	MATERIAL_NAME_LUT								= Array.concat(MATERIAL_NAMES, MATERIAL_ALIAS_NAMES	);
+	MATERIAL_NAMES_LCASE							= all_2_lowercase(MATERIAL_NAMES	);
+	MATERIAL_ALIAS_LUT_LCASE						= all_2_lowercase(MATERIAL_ALIAS_LUT);
+	MATERIAL_NAME_LUT_LCASE							= all_2_lowercase(MATERIAL_NAME_LUT	);
+	SIMULATED_MATERIAL_RSPS							= newArray(0.0013, 	0.877, 	0.9973, 1.024,   1.0386, 1.144,  1.155,	1.356,	1.828, 1.037, 1.047, 1.060, 1.108, 1.585, 1.513, 1.788	);
+	EXPERIMENTAL_MATERIAL_RSPS						= newArray(0.0013, 	0.883, 	0.979,  1.144,   1.024,	 1.160,  1.160,	1.359,	1.79,  1.037, 1.047, 1.060, 1.108, 1.585, 1.513, 1.788	); 	
 	//***********************************************************************************************************************************************************************************************************//
 	//******************************************************* Execution status/progress logging variables and printing properties, settings, and control ********************************************************//
 	//***********************************************************************************************************************************************************************************************************//
 	//PRINT_STATUS									= PRINT_ON();
 	//PRINT_STATUS									= PRINT_OFF();
 	//PRINT_STATUS									= PRINT_GROUPVARS_ONLY();
+	x_magnification 							= 5;										// Factor by which extracted slices are magnified before saving as PNG
 	PRINT_STATUS									= PRINT_SEPVARS_ONLY();
 	num_input_data_sets 							= 0;
 	num_loops 										= 0;
@@ -559,8 +707,9 @@ macro "ROI_Analysis_control"
 	EXPERIMENTAL_DATA_FOLDER						= FOLDER_SEPARATOR + EXPERIMENTAL_DATA;
 	OUTPUT_FOLDER									= FOLDER_SEPARATOR + "Output";
 	GEANT4_DATA_FOLDER_BASENAME						= FOLDER_SEPARATOR + "G_";
-	PHANTOM_BASENAME								= "CTP404_Sensitom";
-	//PHANTOM_BASENAME								= "CTP404_Sensitom_4M";
+	//PHANTOM_BASENAME									= "CTP404_Sensitom";
+	//PHANTOM_BASENAME									= "CTP404_Sensitom_4M";
+	PHANTOM_BASENAME									= "HN715_PedHead_0";
 	PHANTOM_NAME_FOLDER								= FOLDER_SEPARATOR + PHANTOM_BASENAME;
 	RUN_DATE										= "15-05-24";
 	//RUN_DATE 										= "14-12-11";
@@ -667,147 +816,6 @@ macro "ROI_Analysis_control"
 	ROI_ANALYSIS_RSP_ERROR_OFNAME					= RSP_ERROR_DATA_FILE_BASENAMES	+ CSV;
 	ROI_ANALYSIS_STD_DEV_OFNAME						= STD_DEV_DATA_FILE_BASENAMES  	+ CSV;
 	ROI_ANALYSIS_TV_OFNAME							= TV_DATA_FILE_BASENAMES		+ TXT;
-	//***********************************************************************************************************************************************************************************************************//
-	//********************************************************************************** Log Printing Properties and Settings ***********************************************************************************//
-	//***********************************************************************************************************************************************************************************************************//
-	num_tab_spaces 										= 8;
-	String.resetBuffer; 
-	for(i = 0; i < num_tab_spaces; i++)
-		String.append(" ");
-	//print_newline										= "\n";
-	tab_string											= "\t";
-	//tab_as_spaces_string								= "    ";
-	tab_as_spaces_string								= String.buffer;
-	if(exporting_log)
-		print_tab										= tab_string;
-	else
-		print_tab										= tab_as_spaces_string;
-	//***********************************************************************************************************************************************************************************************//
-	//****************************************************** Parse the externally specified ROI analysis configurations from analysis.cfg file ******************************************************//
-	//***********************************************************************************************************************************************************************************************//
-	cfg_parameter_decodings						= newArray(BOOL_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, FLOAT_DECODING_OP, BOOL_DECODING_OP, BOOL_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP, INT_DECODING_OP);		
-	cfg_parameter_list							= newArray("simulated_scan", "voxel_width", "voxel_height", "voxel_thickness", "voxels_per_mm", "flip_horizontally", "flip_vertically", "num_recon_iterations", "first_iteration_2_analyze", "last_iteration_2_analyze", "first_slice_2_analyze", "last_slice_2_analyze" );
-	//cfg_parameter_value_strings				= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ANALYSIS_CFG_INFO_FILENAME, 	cfg_parameter_list, DONT_PRINT_PATH);		
-	cfg_parameter_values 						= parse_analysis_cfg(cfg_parameter_list, cfg_parameter_decodings, PRINT_ANALYSIS_CFG_PATH);
-	SIMULATED_SCAN 								= cfg_parameter_values[0];
-	voxel_width 								= cfg_parameter_values[1];
-	voxel_height 								= cfg_parameter_values[2];
-	voxel_thickness 							= cfg_parameter_values[3];
-	voxels_per_mm 								= cfg_parameter_values[4];
-	flip_horizontally 							= cfg_parameter_values[5];
-	flip_vertically 							= cfg_parameter_values[6];
-	num_recon_iterations 						= cfg_parameter_values[7];
-	first_iteration_2_analyze 					= cfg_parameter_values[8];
-	last_iteration_2_analyze 					= cfg_parameter_values[9];
-	first_slice_2_analyze 						= cfg_parameter_values[10];
-	last_slice_2_analyze 						= cfg_parameter_values[11];
-	print_analysis_cfgs							(cfg_parameter_list, cfg_parameter_values, cfg_parameter_decodings);
-	//***********************************************************************************************************************************************************************************************//
-	//************************************************** Import ROI definitions for current phantom and set corresponding internal variables/arrays *************************************************//
-	//***********************************************************************************************************************************************************************************************//
-	ROI_parameter_decodings						= newArray(ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_NUMBERS_DECODING_OP, ROI_DEFINITION_STRINGS_DECODING_OP);		
-	ROI_definitions_parameter_list				= newArray("ROI_material_names", "ROI_labels", "ROI_label_nicknames", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
-	ROI_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ROI_DEFINITIONS_FILENAME, 	ROI_definitions_parameter_list, print_ROI_definitions_path);		
-	ROI_material_names 							= ROI_parameter_string_2_values(ROI_definitions_parameter_list[0],  ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);	
-	ROI_labels 									= ROI_parameter_string_2_values(ROI_definitions_parameter_list[1], 	ROI_definitions_parameter_list, ROI_parameter_strings,  ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);
-	ROI_label_nicknames 						= ROI_parameter_string_2_values(ROI_definitions_parameter_list[2], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);					//bulk_material = bulk_material[0];
-	ROI_shapes 									= ROI_parameter_string_2_values(ROI_definitions_parameter_list[3], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);	
-	ROI_diameters 								= ROI_parameter_string_2_values(ROI_definitions_parameter_list[4],	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);
-	ROI_selection_radii 						= ROI_parameter_string_2_values(ROI_definitions_parameter_list[5], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, true);
-	ROI_profile_radius_beyond_ROI	 			= ROI_parameter_string_2_values(ROI_definitions_parameter_list[6],	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, false);	//ROI_profile_radius_beyond_ROI = ROI_profile_radius_beyond_ROI[0];
-	bulk_material 								= ROI_parameter_string_2_values(ROI_definitions_parameter_list[7], 	ROI_definitions_parameter_list, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_DEFINITION_NUMBERS_DECODING_OP, false);					//bulk_material = bulk_material[0];
-	bulk_material_RSP 							= material_name_2_RSP(bulk_material, SIMULATED_SCAN);
-	ROI_material_RSPs 							= ROI_material_names_2_RSPs(ROI_material_names, SIMULATED_SCAN);
-	num_ROIs_2_analyze 							= ROI_material_names.length; 						// # of material ROIs in phantom
-	//exit();
-	//***********************************************************************************************************************************************************************************************//
-	//************************************************************************************** Parameter value arrays *********************************************************************************//
-	//***********************************************************************************************************************************************************************************************//
-	empty_array 										= newArray();								// Passed to set_plot_extrema when no additional lines are plotted
-	sequential_values									= Array.getSequence(100);					// Long sequential values array which other sequence arrays can be sliced from	
-	num_specs 											= 4;										// # of test parameter properties specified in Specs file
-	voxel_width 										= 1;										// 
-	voxel_height										= 1;
-	voxel_thickness										= 2.5;	
-	voxel_dimensions									= newArray(voxel_width, voxel_height, voxel_thickness);
-	voxels_per_mm										= 1;			
-	flip_horizontally									= false;									// Specify if correct orientation of reconstructed images requires flipping horizontally
-	flip_vertically										= true;										// Specify if correct orientation of reconstructed images requires flipping vertically
-	num_recon_iterations 								= 12;										// # of iterations of feasibility seeking performed in reconstruction
-	images_per_recon 									= num_recon_iterations + 1;					// 	
-	first_iteration_2_analyze							= 0;
-	last_iteration_2_analyze							= 12;
-	iterations_2_analyze								= Array.slice(sequential_values, first_iteration_2_analyze, last_iteration_2_analyze + 1);
-	num_iterations_2_analyze							= iterations_2_analyze.length;				// # of iterations of feasibility seeking image results to analyze
-	iterations_2_analyze_string_precision 				= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
-	//first_slice_2_analyze 							= x_slices/2;								// first slice analyzed by pCT_Analysis macro
-	//last_slice_2_analyze 								= x_slices/2;								// last slice analyzed by pCT_Analysis macro		
-	first_slice_2_analyze								= 11;
-	last_slice_2_analyze								= 11;
-	slices_2_analyze									= Array.slice(sequential_values, first_slice_2_analyze, last_slice_2_analyze + 1);
-	num_slices_2_analyze								= slices_2_analyze.length;					// 
-	slices_2_analyze_string_precision 					= 0;										// # of digits after decimal point to use in conversion of slice # to string 	
-	ROI_radii 											= newArray(ROI_diameters.length);			// radii of circular selections used to analyze phantom ROIs
-	ROI_profile_radii 									= newArray(ROI_diameters.length);			// Set distance to extend profile line left/right from material insert ROI centers
-	//ROI_std_selection_radii 							= newArray(3.5, 4.0, 6.0);					// radii of circular selections used to analyze phantom ROIs
-	//ROI_selection_radii 								= Array.slice(ROI_std_selection_radii,0,1);	// radii of circular selections used to analyze phantom ROIs
-	ROI_selection_diameters 							= Array.copy(ROI_selection_radii);//newArray(ROI_selection_radii.length);		// diameters of circular selections used to analyze phantom ROIs	
-	ROI_selection_diameter_string_precision				= 0;										// # of digits after decimal point to use in conversion of an ROI selection diameter value to string	
-	num_ROI_selection_diameters							= ROI_selection_diameters.length;			// diameters of circular selections used to analyze phantom ROIs 
-	//***********************************************************************************************************************************************************************************************//
-	//************************************************************ Construct commonly used strings for parameter values and files/folders ***********************************************************//
-	//***********************************************************************************************************************************************************************************************//	
-	reconstructed_image_strings 						= newArray(images_per_recon);		
-	reconstructed_image_short_strings 					= newArray(images_per_recon);		
-	reconstructed_image_folders 						= newArray(images_per_recon);		
-	reconstructed_image_short_folders 					= newArray(images_per_recon);		
-	reconstructed_image_filenames 						= newArray(images_per_recon);		
-	reconstructed_image_png_filenames 					= newArray(images_per_recon);		
-	iterations_2_analyze_strings 						= newArray(images_per_recon);		
-	iterations_2_analyze_folders 						= newArray(images_per_recon);		
-	slices_2_analyze_strings 							= newArray(num_slices_2_analyze);						
-	slices_2_analyze_folders 							= newArray(num_slices_2_analyze);						
-	ROI_analysis_slices_2_analyze_folders 				= newArray(num_slices_2_analyze);						
-	slices_2_analyze_short_strings 						= newArray(num_slices_2_analyze);						
-	slices_2_analyze_short_folders 						= newArray(num_slices_2_analyze);						
-	ROI_selection_diameter_strings 						= newArray(num_ROI_selection_diameters);				
-	ROI_selection_diameter_folders 						= newArray(num_ROI_selection_diameters);
-	for(i = 0; i <= num_recon_iterations; i++)	
-	{							
-		reconstructed_image_strings[i] 					= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision);		
-		reconstructed_image_folders[i] 					= FOLDER_SEPARATOR +  RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision);	
-		reconstructed_image_short_strings[i] 			= RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + d2s(i, iterations_2_analyze_string_precision);		
-		reconstructed_image_short_folders[i] 			= FOLDER_SEPARATOR +  RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + d2s(i, iterations_2_analyze_string_precision);	
-		reconstructed_image_filenames[i] 				= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision) + TXT;		
-		reconstructed_image_png_filenames[i] 			= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision) + PNG;		
-		iterations_2_analyze_strings[i] 				= d2s(i, iterations_2_analyze_string_precision);		
-		iterations_2_analyze_folders[i] 				= FOLDER_SEPARATOR + ITERATION_2_ANALYZE_FOLDER_PREFIX + d2s(i, iterations_2_analyze_string_precision);	
-	}	
-	for(i = 0; i < num_slices_2_analyze; i++)	
-	{							
-		slices_2_analyze_strings[i] 					= d2s(slices_2_analyze[i], slices_2_analyze_string_precision);		
-		slices_2_analyze_folders[i] 					= FOLDER_SEPARATOR + SLICE_2_ANALYZE_FOLDER_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
-		slices_2_analyze_short_strings[i] 				= d2s(slices_2_analyze[i], slices_2_analyze_string_precision);		
-		slices_2_analyze_short_folders[i] 				= FOLDER_SEPARATOR + SLICE_2_ANALYZE_FOLDER_SHORT_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
-		ROI_analysis_slices_2_analyze_folders[i]		= FOLDER_SEPARATOR + ROI_ANALYSIS_SLICE_2_ANALYZE_FOLDER_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
-	}
-	for(i = 0; i < num_ROI_selection_diameters; i++)								
-	{																					
-		ROI_selection_diameters[i] 						= 2 * ROI_selection_radii[i];									
-		ROI_selection_diameter_strings[i] 				= d2s(ROI_selection_diameters[i], ROI_selection_diameter_string_precision);	
-		ROI_selection_diameter_folders[i] 				= FOLDER_SEPARATOR + ROI_SELECTION_DIAMETER_FOLDER_PREFIX + d2s(ROI_selection_diameters[i], ROI_selection_diameter_string_precision);		
-	}																								
-	for(i = 0; i < ROI_diameters.length; i++)
-	{
-		ROI_radii[i] 									= ROI_diameters[i] / 2;		
-		ROI_profile_radii[i]							= ROI_radii[i] + ROI_profile_radius_beyond_ROI;	
-	}			
-	//Ap(ROI_selection_radii);
-	//Ap(ROI_selection_diameters);
-	//exit();
-	//reconstructed_image_range_string					= "[" + reconstructed_image_strings[0] + "-" + reconstructed_image_strings[last_iteration_2_analyze] + "]";
-	reconstructed_image_range_string					= RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + "[" + iterations_2_analyze_strings[1] + "-" + iterations_2_analyze_strings[last_iteration_2_analyze] + "]";
-	iterations_2_analyze_range_string					= "[" + iterations_2_analyze_strings[first_iteration_2_analyze] + "-" + iterations_2_analyze_strings[last_iteration_2_analyze] + "]";
 	//***********************************************************************************************************************************************************************************************//
 	//******************************************************** Construct commonly used strings for parameter values and files/folders ***************************************************************//
 	//***********************************************************************************************************************************************************************************************//			
@@ -846,14 +854,214 @@ macro "ROI_Analysis_control"
 	color_rotation								= newArray("green", "blue",  "cyan",  "magenta", "orange", "red", "pink", "yellow", "darkGray", "gray", "lightGray", "black", "white"); 
 	add_text_justification						= "center";									//
 	linewidth									= 3.5;										//
-	plot_parameters 							= newArray(voxel_width, tolerance, lower_limits_scale, upper_limits_scale, difference_scale, x_frame_size, y_frame_size, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);
+//	plot_parameters 							= newArray(voxel_width, tolerance, lower_limits_scale, upper_limits_scale, difference_scale, x_frame_size, y_frame_size, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);
 	grayscale_range_min							= 0.0;										// Specify min value of grayscale range, all values at or below are shown as black 
 	grayscale_range_max							= 2.0;										// Specify max value of grayscale range, all values at or above are shown as white 
 	GIF_frame_rate								= 4;										// Specify animated GIF's frame rate in frames per second (fps)
-	animated_GIF_info							= newArray(print_MVP_GIF_paths, close_stack_images, close_MVP_stack_images, GIF_frame_rate );
+//	animated_GIF_info							= newArray(print_MVP_GIF_paths, close_stack_images, close_MVP_stack_images, GIF_frame_rate );
 	AVI_compression_format						= PNG_COMPRESSION;							// Specify image compression format used in constructing AVI  video from image stack
 	AVI_frame_rate								= 5;										// Specify AVI video frame rate in frames per second (fps)	
-	AVI_info									= newArray(print_MVP_AVI_paths, close_stack_images, close_MVP_stack_images, AVI_frame_rate, AVI_compression_format );	
+//	AVI_info									= newArray(print_MVP_AVI_paths, close_stack_images, close_MVP_stack_images, AVI_frame_rate, AVI_compression_format );	
+	//***********************************************************************************************************************************************************************************************************//
+	//********************************************************************************** Log Printing Properties and Settings ***********************************************************************************//
+	//***********************************************************************************************************************************************************************************************************//
+	num_tab_spaces 										= 8;
+	String.resetBuffer; 
+	for(i = 0; i < num_tab_spaces; i++)
+		String.append(" ");
+	//print_newline										= "\n";
+	tab_string											= "\t";
+	//tab_as_spaces_string								= "    ";
+	tab_as_spaces_string								= String.buffer;
+	if(exporting_log)
+		print_tab										= tab_string;
+	else
+		print_tab										= tab_as_spaces_string;
+	//***********************************************************************************************************************************************************************************************//
+	//****************************************************** Parse the externally specified ROI analysis configurations from analysis.cfg file ******************************************************//
+	//***********************************************************************************************************************************************************************************************//
+	//print_section								("Reading ROI analysis configuration file", PRINT_MINOR_SECTION);
+	//cfg_parameter_value_strings				= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ANALYSIS_CFG_INFO_FILENAME, 	CFG_PARAMETER_LIST, DONT_PRINT_PATH);		
+	cfg_parameter_values 						= parse_analysis_cfg(CFG_PARAMETER_LIST, CFG_PARAMETER_DECODINGS, PRINT_ANALYSIS_CFG_PATH);
+	SIMULATED_SCAN 								= cfg_parameter_values[0];
+	x_columns 									= cfg_parameter_values[1];
+	x_rows  									= cfg_parameter_values[2];				
+	x_slices 									= cfg_parameter_values[3];				
+	voxel_width 								= cfg_parameter_values[4];
+	voxel_height 								= cfg_parameter_values[5];
+	voxel_thickness 							= cfg_parameter_values[6];
+	voxels_per_mm 								= cfg_parameter_values[7];
+	flip_horizontally 							= cfg_parameter_values[8];
+	flip_vertically 							= cfg_parameter_values[9];
+	num_recon_iterations 						= cfg_parameter_values[10];
+	first_iteration_2_analyze 					= cfg_parameter_values[11];
+	last_iteration_2_analyze 					= cfg_parameter_values[12];
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	x_height									= x_slices * x_rows; 	
+	x_dimensions 								= newArray(x_columns, x_rows, x_slices, x_height);
+	voxel_dimensions							= newArray(voxel_width, voxel_height, voxel_thickness);
+	image_properties							= newArray(x_magnification, flip_horizontally, flip_vertically, grayscale_range_min, grayscale_range_max);
+	images_per_reconstruction 					= num_recon_iterations + 1;					// 	
+	last_iteration_2_analyze					= num_recon_iterations;//last_iteration_image_existing(DIRECTORY_PATH, last_iteration_2_analyze);
+	iterations_2_analyze						= sequential_value_array(first_iteration_2_analyze, last_iteration_2_analyze + 1);
+	num_iterations_2_analyze					= iterations_2_analyze.length;															// # of iterations of feasibility seeking image results to analyze
+	recon_iterations_2_analyze					= sequential_value_array(1, last_iteration_2_analyze + 1);
+	recon_iterations_2_analyze_strings 			= getStringSequence(1, recon_iterations_2_analyze.length, ITERATIONS_STRING_PRECISION);
+	cfg_parameter_values[12]					= last_iteration_2_analyze;
+//	plot_parameters 							= newArray(voxel_width, tolerance, lower_limits_scale, upper_limits_scale, difference_scale, x_frame_size, y_frame_size, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);
+	plot_parameters 							= newArray(voxel_width,  0.0000001, 0.95, 1.05, 0.1, 780, 380, 0.45, 0.01, "green", 3.5);
+	//print_analysis_cfgs							(CFG_PARAMETER_LIST, cfg_parameter_values, CFG_PARAMETER_DECODINGS);
+	//***********************************************************************************************************************************************************************************************//
+	//************************************************** Import ROI definitions for current phantom and set corresponding internal variables/arrays *************************************************//
+	//***********************************************************************************************************************************************************************************************//
+//	print_section								("Reading ROI definitions configuration file", PRINT_MINOR_SECTION);
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	ROI_parameter_strings						= file_2_decoded_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ROI_DEFINITIONS_FILENAME, ROI_DEFINITIONS_PARAMETER_LIST, ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, PRINT_ROI_DEFINITIONS_PATH);		
+	ROI_material_names 							= ROI_parameter_string_2_values(ROI_MATERIAL_NAMES_LINENUM, 	ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY			);	
+	ROI_labels 									= ROI_parameter_string_2_values(ROI_LABELS_LINENUM, 			ROI_parameter_strings,  ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY			);
+	ROI_label_nicknames 						= ROI_parameter_string_2_values(ROI_LABEL_NICKNAMES_LINENUM, 	ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY			);					//bulk_material = bulk_material[0];
+	ROI_types 									= ROI_parameter_string_2_values(ROI_TYPES_LINENUM, 				ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY			);	
+	ROI_diameters 								= ROI_parameter_string_2_values(ROI_DIAMETERS_LINENUM, 			ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY			);
+	ROI_ROI_xparams_string 						= ROI_parameter_strings[XPARAMS_LINENUM];
+	ROI_ROI_yparams_string 						= ROI_parameter_strings[YPARAMS_OFFSETS_LINENUM];
+	ROI_slices_string 							= ROI_parameter_strings[ROI_SLICES_LINENUM];
+	ROI_selection_radii 						= ROI_parameter_string_2_values(ROI_SELECTION_RADII_LINENUM, 	ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, FORCE_VALUE_2_ARRAY		 	);
+	ROI_profile_radius_beyond_ROI		 		= ROI_parameter_string_2_values(ROI_PROFILE_RADIUS_LINENUM, 	ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, DONT_FORCE_VALUE_2_ARRAY	);	//ROI_profile_radius_beyond_ROI = ROI_profile_radius_beyond_ROI[0];
+	bulk_material 								= ROI_parameter_string_2_values(BULK_MATERIAL_LINENUM, 			ROI_parameter_strings, 	ROI_PARAMETER_DECODINGS, FLOAT_DECODING_OP, DONT_FORCE_VALUE_2_ARRAY	);					//bulk_material = bulk_material[0];
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+//	print_section								("ROI configurations processing", PRINT_MINOR_SECTION);
+	bulk_material_RSP 							= material_RSP_LUT(bulk_material, SIMULATED_SCAN);
+	ROI_material_RSPs 							= ROI_material_names_2_RSPs(ROI_material_names, SIMULATED_SCAN);
+	num_ROIs_2_analyze 							= ROI_material_names.length; //ROI_types						// # of material ROIs in phantom
+	ROI_parameters_string 						= parse_ROI_xyparameter_lines(ROI_parameter_strings, XPARAMS_LINENUM, YPARAMS_OFFSETS_LINENUM, ROI_PARAMETER_DECODINGS, RETURN_STRING, PRINT_ROI_EXTRACTION);
+	ROIs_per_image			 					= parse_ROI_slice_list(ROI_slices_string, RETURN_COUNT, PRINT_ROI_SLICES);
+//	ROIs_per_reconstruction 					= ROIs_per_image * images_per_reconstruction;
+ 	slices_2_analyze 							= parse_ROI_slice_list(ROI_slices_string, RETURN_ALL, 	PRINT_ROI_SLICES);
+	first_slice_2_analyze						= parse_ROI_slice_list(ROI_slices_string, RETURN_MIN, 	PRINT_ROI_SLICES);;
+	last_slice_2_analyze						= parse_ROI_slice_list(ROI_slices_string, RETURN_MAX, 	PRINT_ROI_SLICES);;
+	num_slices_2_analyze						= slices_2_analyze.length;
+	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+	ROI_radii 									= newArray(ROI_diameters.length);			// radii of circular selections used to analyze phantom ROIs
+	ROI_profile_radii 							= newArray(ROI_diameters.length);			// Set distance to extend profile line left/right from material insert ROI centers
+	ROI_std_selection_radii 					= newArray(3.5, 4.0, 6.0);					// radii of circular selections used to analyze phantom ROIs
+	//ROI_selection_radii 						= Array.slice(ROI_std_selection_radii,0,1);	// radii of circular selections used to analyze phantom ROIs
+	ROI_selection_diameters 					= newArray(ROI_selection_radii.length);		// diameters of circular selections used to analyze phantom ROIs	
+	num_ROI_selection_diameters					= ROI_selection_diameters.length;			// diameters of circular selections used to analyze phantom ROIs 
+	//print_ROI_definitions						();
+	//exit();
+	//***********************************************************************************************************************************************************************************************//
+	//************************* Construct commonly used strings for parameter values and files/folders **********************************************************************************************//
+	//***********************************************************************************************************************************************************************************************//	
+	reconstructed_image_strings 					= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 							RECONSTRUCTED_IMAGE_FILE_BASENAMES, 		EMPTY_STRING);
+	reconstructed_image_folders 					= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 		FOLDER_SEPARATOR +	RECONSTRUCTED_IMAGE_FILE_BASENAMES, 		EMPTY_STRING);
+	reconstructed_image_short_strings 				= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 							RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES, 	EMPTY_STRING);
+	reconstructed_image_short_folders 				= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 		FOLDER_SEPARATOR +	RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES,	EMPTY_STRING);
+	reconstructed_image_filenames 					= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 							RECONSTRUCTED_IMAGE_FILE_BASENAMES, 		TXT			);
+	reconstructed_image_range_string				= generate_parameter_value_range_string(RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES, recon_iterations_2_analyze_strings, ITERATIONS_STRING_PRECISION, REMOVE_TRAILING_ZEROS, STRING_DONT_ADD_SPACES, ARRAY_VALUES_RANGE_TYPE_BRACKETED, ARRAY_VALUES_RANGE_BRACKET_SINGLE_VALUE);
+	iterations_2_analyze_strings 					= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 		EMPTY_STRING, 													EMPTY_STRING);
+	iterations_2_analyze_folders 					= string_array_concatenation(iterations_2_analyze, ITERATIONS_STRING_PRECISION, 		FOLDER_SEPARATOR +	ITERATION_2_ANALYZE_FOLDER_PREFIX, 			EMPTY_STRING);
+	iterations_2_analyze_range_string				= generate_parameter_value_range_string(EMPTY_STRING, iterations_2_analyze_strings, ITERATIONS_STRING_PRECISION, REMOVE_TRAILING_ZEROS, STRING_DONT_ADD_SPACES, ARRAY_VALUES_RANGE_TYPE_BRACKETED, ARRAY_VALUES_RANGE_BRACKET_SINGLE_VALUE);
+	slices_2_analyze_strings 						= string_array_concatenation(slices_2_analyze, SLICES_STRING_PRECISION, 				EMPTY_STRING, 													EMPTY_STRING);
+	slices_2_analyze_folders 						= string_array_concatenation(slices_2_analyze, SLICES_STRING_PRECISION, 				FOLDER_SEPARATOR + 	SLICE_2_ANALYZE_FOLDER_PREFIX, 				EMPTY_STRING);
+	slices_2_analyze_short_strings 					= string_array_concatenation(slices_2_analyze, SLICES_STRING_PRECISION, 				EMPTY_STRING, 													EMPTY_STRING);
+	slices_2_analyze_short_folders 					= string_array_concatenation(slices_2_analyze, SLICES_STRING_PRECISION, 				FOLDER_SEPARATOR + 	SLICE_2_ANALYZE_FOLDER_SHORT_PREFIX, 		EMPTY_STRING);
+	ROI_analysis_slices_2_analyze_folders 			= string_array_concatenation(slices_2_analyze, SLICES_STRING_PRECISION, 				FOLDER_SEPARATOR + 	SLICE_2_ANALYZE_FOLDER_PREFIX, 				EMPTY_STRING);
+	ROI_selection_diameters 						= array_apply_op(ROI_selection_radii, 2, MULTIPLICATION, DONT_SWITCH_OPERANDS);
+	ROI_selection_diameter_strings 					= string_array_concatenation(ROI_selection_diameters, ROI_SELECTION_DIAMETER_STRING_PRECISION,	EMPTY_STRING, 													EMPTY_STRING);
+	ROI_selection_diameter_folders 					= string_array_concatenation(ROI_selection_diameters, ROI_SELECTION_DIAMETER_STRING_PRECISION, FOLDER_SEPARATOR + ROI_SELECTION_DIAMETER_FOLDER_PREFIX, 		EMPTY_STRING);
+	ROI_radii 										= array_apply_op(ROI_diameters, 2, DIVISION, DONT_SWITCH_OPERANDS);
+	ROI_profile_radii 								= array_apply_op(ROI_radii, ROI_profile_radius_beyond_ROI, ADDITION, DONT_SWITCH_OPERANDS);
+	//print_reconstructed_image_info					();
+	//print_ROI_analysis_info							();
+	//exit();
+	//***********************************************************************************************************************************************************************************************//
+	//************************************************************************************** Parameter value arrays *********************************************************************************//
+//	//***********************************************************************************************************************************************************************************************//
+	empty_array 										= newArray();								// Passed to set_plot_extrema when no additional lines are plotted
+	sequential_values									= Array.getSequence(100);					// Long sequential values array which other sequence arrays can be sliced from	
+	num_specs 											= 4;										// # of test parameter properties specified in Specs file
+//	voxel_width 										= 1;										// 
+//	voxel_height										= 1;
+//	voxel_thickness										= 2.5;	
+//	voxel_dimensions									= newArray(voxel_width, voxel_height, voxel_thickness);
+//	voxels_per_mm										= 1;			
+//	flip_horizontally									= false;									// Specify if correct orientation of reconstructed images requires flipping horizontally
+//	flip_vertically										= true;										// Specify if correct orientation of reconstructed images requires flipping vertically
+//	num_recon_iterations 								= 12;										// # of iterations of feasibility seeking performed in reconstruction
+	images_per_recon 									= num_recon_iterations + 1;					// 	
+//	first_iteration_2_analyze							= 0;
+//	last_iteration_2_analyze							= 12;
+//	iterations_2_analyze								= Array.slice(sequential_values, first_iteration_2_analyze, last_iteration_2_analyze + 1);
+//	num_iterations_2_analyze							= iterations_2_analyze.length;				// # of iterations of feasibility seeking image results to analyze
+	iterations_2_analyze_string_precision 				= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
+//	//first_slice_2_analyze 							= x_slices/2;								// first slice analyzed by pCT_Analysis macro
+//	//last_slice_2_analyze 								= x_slices/2;								// last slice analyzed by pCT_Analysis macro		
+//	first_slice_2_analyze								= 11;
+//	last_slice_2_analyze								= 11;
+//	slices_2_analyze									= Array.slice(sequential_values, first_slice_2_analyze, last_slice_2_analyze + 1);
+//	num_slices_2_analyze								= slices_2_analyze.length;					// 
+//	slices_2_analyze_string_precision 					= 0;										// # of digits after decimal point to use in conversion of slice # to string 	
+//	ROI_radii 											= newArray(ROI_diameters.length);			// radii of circular selections used to analyze phantom ROIs
+//	ROI_profile_radii 									= newArray(ROI_diameters.length);			// Set distance to extend profile line left/right from material insert ROI centers
+//	//ROI_std_selection_radii 							= newArray(3.5, 4.0, 6.0);					// radii of circular selections used to analyze phantom ROIs
+//	//ROI_selection_radii 								= Array.slice(ROI_std_selection_radii,0,1);	// radii of circular selections used to analyze phantom ROIs
+//	ROI_selection_diameters 							= Array.copy(ROI_selection_radii);//newArray(ROI_selection_radii.length);		// diameters of circular selections used to analyze phantom ROIs	
+//	ROI_selection_diameter_string_precision				= 0;										// # of digits after decimal point to use in conversion of an ROI selection diameter value to string	
+//	num_ROI_selection_diameters							= ROI_selection_diameters.length;			// diameters of circular selections used to analyze phantom ROIs 
+//	//***********************************************************************************************************************************************************************************************//
+//	//************************************************************ Construct commonly used strings for parameter values and files/folders ***********************************************************//
+//	//***********************************************************************************************************************************************************************************************//	
+//	reconstructed_image_strings 						= newArray(images_per_recon);		
+//	reconstructed_image_short_strings 					= newArray(images_per_recon);		
+//	reconstructed_image_folders 						= newArray(images_per_recon);		
+//	reconstructed_image_short_folders 					= newArray(images_per_recon);		
+//	reconstructed_image_filenames 						= newArray(images_per_recon);		
+	reconstructed_image_png_filenames 					= newArray(images_per_recon);		
+//	iterations_2_analyze_strings 						= newArray(images_per_recon);		
+//	iterations_2_analyze_folders 						= newArray(images_per_recon);		
+//	slices_2_analyze_strings 							= newArray(num_slices_2_analyze);						
+//	slices_2_analyze_folders 							= newArray(num_slices_2_analyze);						
+//	ROI_analysis_slices_2_analyze_folders 				= newArray(num_slices_2_analyze);						
+//	slices_2_analyze_short_strings 						= newArray(num_slices_2_analyze);						
+//	slices_2_analyze_short_folders 						= newArray(num_slices_2_analyze);						
+//	ROI_selection_diameter_strings 						= newArray(num_ROI_selection_diameters);				
+//	ROI_selection_diameter_folders 						= newArray(num_ROI_selection_diameters);
+	for(i = 0; i <= num_recon_iterations; i++)	
+	{							
+//		reconstructed_image_strings[i] 					= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision);		
+//		reconstructed_image_folders[i] 					= FOLDER_SEPARATOR +  RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision);	
+//		reconstructed_image_short_strings[i] 			= RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + d2s(i, iterations_2_analyze_string_precision);		
+//		reconstructed_image_short_folders[i] 			= FOLDER_SEPARATOR +  RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + d2s(i, iterations_2_analyze_string_precision);	
+//		reconstructed_image_filenames[i] 				= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision) + TXT;		
+		reconstructed_image_png_filenames[i] 			= RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(i, iterations_2_analyze_string_precision) + PNG;		
+//		iterations_2_analyze_strings[i] 				= d2s(i, iterations_2_analyze_string_precision);		
+//		iterations_2_analyze_folders[i] 				= FOLDER_SEPARATOR + ITERATION_2_ANALYZE_FOLDER_PREFIX + d2s(i, iterations_2_analyze_string_precision);	
+	}	
+//	for(i = 0; i < num_slices_2_analyze; i++)	
+//	{							
+//		slices_2_analyze_strings[i] 					= d2s(slices_2_analyze[i], slices_2_analyze_string_precision);		
+//		slices_2_analyze_folders[i] 					= FOLDER_SEPARATOR + SLICE_2_ANALYZE_FOLDER_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
+//		slices_2_analyze_short_strings[i] 				= d2s(slices_2_analyze[i], slices_2_analyze_string_precision);		
+//		slices_2_analyze_short_folders[i] 				= FOLDER_SEPARATOR + SLICE_2_ANALYZE_FOLDER_SHORT_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
+//		ROI_analysis_slices_2_analyze_folders[i]		= FOLDER_SEPARATOR + ROI_ANALYSIS_SLICE_2_ANALYZE_FOLDER_PREFIX + d2s(slices_2_analyze[i], slices_2_analyze_string_precision);	
+//	}
+//	for(i = 0; i < num_ROI_selection_diameters; i++)								
+//	{																					
+//		ROI_selection_diameters[i] 						= 2 * ROI_selection_radii[i];									
+//		ROI_selection_diameter_strings[i] 				= d2s(ROI_selection_diameters[i], ROI_selection_diameter_string_precision);	
+//		ROI_selection_diameter_folders[i] 				= FOLDER_SEPARATOR + ROI_SELECTION_DIAMETER_FOLDER_PREFIX + d2s(ROI_selection_diameters[i], ROI_selection_diameter_string_precision);		
+//	}																								
+//	for(i = 0; i < ROI_diameters.length; i++)
+//	{
+//		ROI_radii[i] 									= ROI_diameters[i] / 2;		
+//		ROI_profile_radii[i]							= ROI_radii[i] + ROI_profile_radius_beyond_ROI;	
+//	}			
+//	//Ap(ROI_selection_radii);
+//	//Ap(ROI_selection_diameters);
+//	//exit();
+//	//reconstructed_image_range_string					= "[" + reconstructed_image_strings[0] + "-" + reconstructed_image_strings[last_iteration_2_analyze] + "]";
+//	reconstructed_image_range_string					= RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES + "[" + iterations_2_analyze_strings[1] + "-" + iterations_2_analyze_strings[last_iteration_2_analyze] + "]";
+//	iterations_2_analyze_range_string					= "[" + iterations_2_analyze_strings[first_iteration_2_analyze] + "-" + iterations_2_analyze_strings[last_iteration_2_analyze] + "]";
 	INPUT_FILE_LIST 							= newArray();   		
 	OUTPUT_FILE_LIST							= newArray();
 	COPIED_FILE_LIST							= newArray();
@@ -930,10 +1138,10 @@ macro "ROI_Analysis_control"
 	MVP_parameter_range_suffix				=  "["	+ MVP_parameter_min_value_string + "-" + MVP_parameter_max_value_string + "]";										// e.g.[0-1]
 	MVP_parameter_range_filenaming 			= parameter_string_prefixes[MVP_parameter_index] + MVP_parameter_range_suffix;		;										// e.g.TV[0-1]
 	MVP_parameter_range_plots	 			= parameter_string_prefixes[MVP_parameter_index] + " = " + MVP_parameter_range_suffix;										// e.g. TV = [0-1]	
-	MVP_animations_first_iteration			= 1;
-	MVP_animations_last_iteration			= 12;
-	MVP_animations_image_range_string		= "[" + reconstructed_image_strings[MVP_animations_first_iteration] + "-" + reconstructed_image_strings[MVP_animations_last_iteration] + "]";
-	MVP_animations_iteration_range_string	= "[" + iterations_2_analyze_strings[MVP_animations_first_iteration] + "-" + iterations_2_analyze_strings[MVP_animations_last_iteration] + "]";	
+//	MVP_animations_first_iteration			= 1;
+//	MVP_animations_last_iteration			= 12;
+//	MVP_animations_image_range_string		= "[" + reconstructed_image_strings[MVP_animations_first_iteration] + "-" + reconstructed_image_strings[MVP_animations_last_iteration] + "]";
+//	MVP_animations_iteration_range_string	= "[" + iterations_2_analyze_strings[MVP_animations_first_iteration] + "-" + iterations_2_analyze_strings[MVP_animations_last_iteration] + "]";	
 	num_MVP_PVs								= num_PVs[MVP_parameter_index];			
 	reduced_TTP_index						= TTP_index - 1;
 	reduced_modulo_values 					= generate_reduced_modulo_values(num_PVs, modulo_values, MVP_parameter_index);
@@ -1009,50 +1217,50 @@ macro "ROI_Analysis_control"
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//	
-	ROIs_per_recon 											= num_ROIs_2_analyze * images_per_recon;
-	ROIs_per_test 											= ROIs_per_recon * num_TTP_values;
-	ROIs_per_MVP_data 										= ROIs_per_test * num_MVP_PVs;
-	ROIs_per_test_iteration									= num_TTP_values * num_ROIs_2_analyze;									
-	ROI_material_RSP_line_by_target_parameter				= newArray(num_TTP_values);
-	before_TVS_index 										= 0;
-	after_TVS_index 										= 1;
-	TV_step_measurements_per_iteration						= 2;
-	TV_step_measurements_per_recon 							= num_recon_iterations * TV_step_measurements_per_iteration;
-	TV_step_measurements_per_MVP_curve 						= num_TTP_values * TV_step_measurements_per_iteration;
-	TV_step_measurements_per_MVP 							= TV_step_measurements_per_MVP_curve * num_MVP_PVs;
-	TV_step_measurements_per_test 							= TV_step_measurements_per_recon * num_TTP_values;					
-	TV_measurements_per_recon 								= TV_step_measurements_per_recon 	/ TV_step_measurements_per_iteration;
-	TV_measurements_per_MVP_curve 							= TV_step_measurements_per_MVP_curve 	/ TV_step_measurements_per_iteration;
-	TV_measurements_per_MVP 								= TV_step_measurements_per_MVP	 	/ TV_step_measurements_per_iteration;
-	TV_measurements_per_test 								= TV_step_measurements_per_test 			/ TV_step_measurements_per_iteration;						
-	TV_measurement_plots_per_iteration 						= 1;
-	TV_diff_measurements_per_recon 							= TV_step_measurements_per_recon 	/ TV_step_measurements_per_iteration;
-	TV_diff_measurements_per_MVP_curve 						= TV_step_measurements_per_MVP_curve 	/ TV_step_measurements_per_iteration;
-	TV_diff_measurements_per_MVP 							= TV_step_measurements_per_MVP	 	/ TV_step_measurements_per_iteration;
-	TV_diff_measurements_per_test 							= TV_step_measurements_per_test 			/ TV_step_measurements_per_iteration;						
-	num_input_directories									= lengthOf(all_reduced_path_strings);
-	num_input_directories_per_MVP							= num_MVP_PVs * num_TTP_values;
-	num_MVP_analyses										= num_input_directories / num_input_directories_per_MVP;
+//	ROIs_per_recon 											= num_ROIs_2_analyze * images_per_recon;
+//	ROIs_per_test 											= ROIs_per_recon * num_TTP_values;
+//	ROIs_per_MVP_data 										= ROIs_per_test * num_MVP_PVs;
+//	ROIs_per_test_iteration									= num_TTP_values * num_ROIs_2_analyze;									
+//	ROI_material_RSP_line_by_target_parameter				= newArray(num_TTP_values);
+//	before_TVS_index 										= 0;
+//	after_TVS_index 										= 1;
+//	TV_step_measurements_per_iteration						= 2;
+//	TV_step_measurements_per_recon 							= num_recon_iterations * TV_step_measurements_per_iteration;
+//	TV_step_measurements_per_MVP_curve 						= num_TTP_values * TV_step_measurements_per_iteration;
+//	TV_step_measurements_per_MVP 							= TV_step_measurements_per_MVP_curve * num_MVP_PVs;
+//	TV_step_measurements_per_test 							= TV_step_measurements_per_recon * num_TTP_values;					
+//	TV_measurements_per_recon 								= TV_step_measurements_per_recon 	/ TV_step_measurements_per_iteration;
+//	TV_measurements_per_MVP_curve 							= TV_step_measurements_per_MVP_curve 	/ TV_step_measurements_per_iteration;
+//	TV_measurements_per_MVP 								= TV_step_measurements_per_MVP	 	/ TV_step_measurements_per_iteration;
+//	TV_measurements_per_test 								= TV_step_measurements_per_test 			/ TV_step_measurements_per_iteration;						
+//	TV_measurement_plots_per_iteration 						= 1;
+//	TV_diff_measurements_per_recon 							= TV_step_measurements_per_recon 	/ TV_step_measurements_per_iteration;
+//	TV_diff_measurements_per_MVP_curve 						= TV_step_measurements_per_MVP_curve 	/ TV_step_measurements_per_iteration;
+//	TV_diff_measurements_per_MVP 							= TV_step_measurements_per_MVP	 	/ TV_step_measurements_per_iteration;
+//	TV_diff_measurements_per_test 							= TV_step_measurements_per_test 			/ TV_step_measurements_per_iteration;						
+//	num_input_directories									= lengthOf(all_reduced_path_strings);
+//	num_input_directories_per_MVP							= num_MVP_PVs * num_TTP_values;
+//	num_MVP_analyses										= num_input_directories / num_input_directories_per_MVP;
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//
-	zero_line_by_target_PVs 								= newArray(num_TTP_values);					
-	zero_line_by_iteration									= newArray(ROIs_per_recon);
-	zero_line_by_ROI										= newArray(num_ROIs_2_analyze);			
-	Array.fill												(zero_line_by_target_PVs, 0);	
-	Array.fill												(zero_line_by_iteration, 0);	
-	Array.fill												(zero_line_by_ROI, 0);	
-	ROI_material_RSP_line_by_target_parameter				= newArray(num_TTP_values);
-	ROI_material_RSP_line_no_air							= Array.slice(ROI_material_RSPs, 2, num_ROIs_2_analyze);			
-	ROI_material_RSPs_by_iteration							= newArray(ROIs_per_recon);
-	RSPs_by_ROI												= newArray(ROIs_per_recon);
-	RSPs_by_iteration										= newArray(ROIs_per_recon);
-	RSP_errors_by_ROI										= newArray(ROIs_per_recon);
-	RSP_errors_by_iteration									= newArray(ROIs_per_recon);
-	std_devs_by_ROI											= newArray(ROIs_per_recon);
-	std_devs_by_iteration									= newArray(ROIs_per_recon);			
-	TV_measurements_by_iteration							= newArray(ROIs_per_recon);
-	indices_4_ordering_data 								= generate_ordering_indices(num_recon_iterations, num_ROIs_2_analyze, images_per_recon, num_TTP_values);
+//	zero_line_by_target_PVs 								= newArray(num_TTP_values);					
+//	zero_line_by_iteration									= newArray(ROIs_per_recon);
+//	zero_line_by_ROI										= newArray(num_ROIs_2_analyze);			
+//	Array.fill												(zero_line_by_target_PVs, 0);	
+//	Array.fill												(zero_line_by_iteration, 0);	
+//	Array.fill												(zero_line_by_ROI, 0);	
+//	ROI_material_RSP_line_by_target_parameter				= newArray(num_TTP_values);
+//	ROI_material_RSP_line_no_air							= Array.slice(ROI_material_RSPs, 2, num_ROIs_2_analyze);			
+//	ROI_material_RSPs_by_iteration							= newArray(ROIs_per_recon);
+//	RSPs_by_ROI												= newArray(ROIs_per_recon);
+//	RSPs_by_iteration										= newArray(ROIs_per_recon);
+//	RSP_errors_by_ROI										= newArray(ROIs_per_recon);
+//	RSP_errors_by_iteration									= newArray(ROIs_per_recon);
+//	std_devs_by_ROI											= newArray(ROIs_per_recon);
+//	std_devs_by_iteration									= newArray(ROIs_per_recon);			
+//	TV_measurements_by_iteration							= newArray(ROIs_per_recon);
+//	indices_4_ordering_data 								= generate_ordering_indices(num_recon_iterations, num_ROIs_2_analyze, images_per_recon, num_TTP_values);
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//	
@@ -1072,13 +1280,13 @@ macro "ROI_Analysis_control"
 	if											(log_printing)
 	{				
 		print_ImageJ_info						();		
-		if										(printing_ROI_definitions)
-			print_ROI_definitions				();
-		if										(printing_reconstructed_image_analysis_info)						
-		{
-			print_reconstructed_image_info		();
-			print_ROI_analysis_info				();
-		}
+	//	if										(printing_ROI_definitions)
+	//		print_ROI_definitions				();
+	//	if										(printing_reconstructed_image_analysis_info)						
+	//	{
+	//		print_reconstructed_image_info		();
+	//		print_ROI_analysis_info				();
+	//	}
 		if										(printing_PVT_info)								
 			print_TTP_info						();
 		if										(printing_MVP_parameter_info)							
@@ -1396,6 +1604,25 @@ function ROI_parameter_string_2_values(_ROI_definitions_parameter_string, _ROI_d
 	if											( _num_desired_ROI_parameter_values == 1 && !_force_array)
 												return _desired_ROI_PVs[0];
 	else										return _desired_ROI_PVs;
+}
+function ROI_parameter_string_2_values(_ROI_parameter_string_index, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _force_array)
+{
+	_desired_ROI_parameter_string 				= _ROI_parameter_strings[_ROI_parameter_string_index];
+	_desired_ROI_parameter_string_elements 		= split(_desired_ROI_parameter_string, ",");
+	_num_desired_ROI_parameter_string_elements 	= _desired_ROI_parameter_string_elements.length;
+	_desired_ROI_parameter_values				= newArray(_num_desired_ROI_parameter_string_elements);
+	for(i = 0; i < _num_desired_ROI_parameter_string_elements; i++)
+	{
+		_spaceless_parameter_value_string 		= strip_surrounding_spaces(_desired_ROI_parameter_string_elements[i]);
+		if(_ROI_parameter_decodings[_ROI_parameter_string_index] == _ROI_parameter_value_parseFloat)
+			_desired_ROI_parameter_values[i] 	= parseFloat(_spaceless_parameter_value_string);
+		else
+			_desired_ROI_parameter_values[i] 	= _spaceless_parameter_value_string;
+	}
+	if( _num_desired_ROI_parameter_string_elements == 1 && !_force_array)
+		return _desired_ROI_parameter_values[0];
+	else
+		return _desired_ROI_parameter_values;
 }
 function ROI_parameter_string_2_values_old(_ROI_definitions_parameter_string, _ROI_definitions_parameter_list, _ROI_parameter_strings, _ROI_parameter_decodings, _ROI_PV_parseFloat, _force_array)
 {
@@ -3687,14 +3914,6 @@ function results_table_2_CSV(dir, filename, overwrite_existing, print_path, clea
 	if(clear_results)
 		run				("Clear Results");	
 }
-function ROI_material_names_2_RSPs(_ROI_material_names, _is_simulated_scan)
-{
-	_num_ROIs_2_analyze 		= _ROI_material_names.length;
-	_ROI_material_RSPs 			= newArray(_num_ROIs_2_analyze);
-	for(ROI = 0; ROI < _num_ROIs_2_analyze; ROI++)
-		_ROI_material_RSPs[ROI] 	= material_name_2_RSP(_ROI_material_names[ROI], _is_simulated_scan);
-	return _ROI_material_RSPs;
-}
 function save_AVI(dir, filename, compression, frame_rate, overwrite_existing, print_path, close_stack_after_saving)
 {
 	path 					= construct_valid_file_path(dir, filename);	
@@ -4297,4 +4516,912 @@ function verify_ROI_analysis_output_file_set(_common_dir, _current_PVT_folders, 
 	}
 	return missing_data_directories;						
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//********************************************************************* Functions to look at modifying/combining/removing later *********************************************************************//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function int_2_binary(_int, _num_bits, _base_power)
+{
+	_bit_values 					= newArray(_num_bits);
+	if								(_base_power == -1)
+	{
+		_int 						= _int * 2 + (_int + 1) % 2;
+		_base_power 				= 0;
+	}
+	for								( i = 0; i < _num_bits; i++)
+	{
+		_index						= _num_bits - 1 - i;	//  
+		_bit_value					= POWERS_OF_2[_index + _base_power];	// 4, 2
+		if							(_int >= _bit_value)					// 5, 1 	
+		{												// T, F
+			_bit_values[_index] 	= true;			// 
+			_int 					-= _bit_value;					// 1
+		}
+		else											// F, T
+			_bit_values[_index] 	= false;			// 
+	}
+	return							_bit_values;
+}
+function series_op(_series, _series_op, _series_index, _op_index_range, _skip_indices)
+{
+	_series_elements					= _series.length;
+	_series_next_index					= _series_index + 1;
+	_skip_indices_array					= array_from_data(_skip_indices);
+	if									(_series_op == SERIES_SUMMATION)
+		_series_op_result				= 0;
+	else if								(_series_op == SERIES_PRODUCT)
+		_series_op_result				= 1;
+	else
+		errKill							("Unknown '_series_op' passed to 'series_op' function");
+	if									(_op_index_range == SERIES_OP_UP_TO_INDEX)
+		loop_bounds						= newArray(0, _series_index);
+	else if								(_op_index_range == SERIES_OP_FROM_INDEX)
+		loop_bounds						= newArray(_series_next_index, _series_elements);
+	else
+		errKill							("Unknown '_op_index_range' passed to 'series_ops' function");
+	for									(i = loop_bounds[LOOP_LOWER_BOUND]; i < loop_bounds[LOOP_UPPER_BOUND]; i++)
+		if								(!isMember(i, _skip_indices_array, RETURN_MATCH_TF))
+			_series_op_result			= series_op_apply(_series[i], _series_op, _series_op_result);
+	return 								_series_op_result;
+}
+function series_op_apply(_series_value, _series_op, _series_op_result)
+{
+	if							(_series_op == SERIES_SUMMATION)
+		_series_op_result		+= _series_value;
+	else if						(_series_op == SERIES_PRODUCT)
+		_series_op_result		*= _series_value;
+	return						_series_op_result;
+}
+function series_ops(_series, _series_op, _op_index_range, _skip_indices)
+{
+	_series_elements 				= _series.length;
+	_skip_indices_array				= array_from_data(_skip_indices);
+	_series_op_results				= newArray();
+	if								(_series_op == SERIES_SUMMATION)
+		_series_op_end_index		= _series_elements;
+	else if							(_series_op == SERIES_PRODUCT)
+		_series_op_end_index		= _series_elements - 1;
+	for								(i = 0; i < _series_op_end_index; i++)
+		if							( !ifSkipIndex(i, _skip_indices_array) )
+			_series_op_results		= Array.concat(_series_op_results,	( series_op(_series, _series_op, i, _op_index_range, _skip_indices) )	);
+	return 							_series_op_results;
+}
+//function string_array_concatenation(_string_array, _front_concatenation_string, _back_concatenation_string)
+//{
+//	_num_array_strings = _string_array.length;
+//	_concatenated_string_array = newArray(_num_array_strings);
+//	for(i = 0; i < _num_array_strings; i++)
+//		_concatenated_string_array[i] = _front_concatenation_string + _string_array[i] + _back_concatenation_string;
+//	return _concatenated_string_array;
+//}
+function string_array_concatenation(_string_array, _string_array_precisions, _strings_2_prepend, _strings_2_append)//, _minimize_string_precision)
+{
+		
+	_string_precisions_array		= array_match_length_fill(_string_array, _string_array_precisions);
+	_strings_2_prepend_array		= array_match_length_fill(_string_array, _strings_2_prepend);
+	_strings_2_append_array			= array_match_length_fill(_string_array, _strings_2_append);
+	_new_string_array				= Array.copy(_string_array);
+	for								(i = 0; i < _string_array.length; i++)
+		_new_string_array[i]		= _strings_2_prepend_array[i] + d2s(_string_array[i], _string_precisions_array[i]) + _strings_2_append_array[i];
+	return 							_new_string_array;
+}
+function getStringSequence(_sequence_start_num, _sequence_end_num, _string_precision)
+{
+	_sequential_values			= Array.getSequence(_sequence_end_num + 1);					
+	_sequential_values_subset	= Array.slice(_sequential_values, _sequence_start_num, _sequence_end_num + 1);	
+	_sequential_strings			= newArray();
+	for( i = 0; i < _sequential_values_subset.length; i++)
+		_sequential_strings = Array.concat(_sequential_strings, d2s( _sequential_values_subset[i], _string_precision));
+	return _sequential_strings;
+}
+function minimize_string_precision(_value_strings, _max_precisions, _return_precision, _force_array)
+{
+	_value_strings_array							= array_from_data(_value_strings);
+	_max_precisions_array							= array_match_length_fill(_value_strings_array, _max_precisions);
+	_return_value_array								= array_new(_value_strings_array.length);
+	for												(_string = 0; _string < _return_value_array.length; _string++)
+	{
+		_value_string								= _value_strings_array[_string];	
+		_max_precision								= _max_precisions_array[_string];	
+		_value 										= parseFloat(_value_string);
+		if											(_max_precision < 0)
+		{
+			i 										= 0;
+			_continue								= true;
+			while									(_continue)
+			{
+				_new_value_string 					= d2s(_value, i);
+				_new_value 							= parseFloat(_new_value_string);
+				if									(_value - _new_value == 0)
+					_continue 						= false;
+				i++;
+			}
+			_return_value						= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+			_return_value_array[_string] 		= _return_value;
+			//_return_value_array[_string] 		= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+		}
+		else
+		{
+			_return_value							= if_else(_return_precision, _max_precision, _value_string);
+			for										(i = 0; i < _max_precision; i++)
+			{
+				_new_value_string 					= d2s(_value, i);
+				_new_value 							= parseFloat(_new_value_string);
+				_return_value						= if_else(_return_precision, precisionOf(_new_value_string), _new_value_string);
+				if									(_value - _new_value == 0)
+					i 								= _max_precision;
+			}
+			if										( i < _max_precision)
+				_return_value						= if_else(_return_precision, _max_precision, _value_string);
+			_return_value_array[_string] 			= _return_value;	
+			//if									( i >= _max_precision)
+				//_return_value_array[_string] 		= _return_value;	
+			//else
+				//_return_value_array[_string] 		= if_else(_return_precision, _max_precision, _value_string);
+		}
+	}
+	if(	_force_array || _return_value_array.length > 1)	
+		return _return_value_array;							
+	else
+		return _return_value_array[0];
+}
+function precisionOf(_string)
+{
+	_decimal_position_index			= indexOf(_string, DECIMAL_STRING);
+	if								(_decimal_position_index != -1)
+	{
+		_decimal_value_string		= substring	(_string, _decimal_position_index + 1 );
+		_decimal_value_precision	= lengthOf(_decimal_value_string);
+		return						_decimal_value_precision;
+	}
+	else
+		return						0;
+}
+function right_arrow(_arrow_length, _implication_arrow)
+{
+	right_arrow_string			= EMPTY_STRING;
+	if							(_implication_arrow == IMPLICATION_ARROW)
+		right_arrow_base_char	= EQUALS_STRING;
+	else
+		right_arrow_base_char	= DASH_STRING;
+	for							(i = 0; i < _arrow_length; i++)
+		right_arrow_string		+= right_arrow_base_char;
+	return 						right_arrow_string + RIGHT_CARAT_STRING;
+}
+function generate_parameter_value_range_string(_parameter_prefix, _parameter_values, _parameter_string_precision, _minimize_string_precision, _add_spaces, _value_range_form, _single_value_action)
+{	
+	_extrema 						= find_array_extrema(_parameter_values, TOLERANCE, false);
+	if								(_add_spaces)
+		_string_separation			= SPACE_STRING;
+	else
+		_string_separation			= EMPTY_STRING;
+	if								(_minimize_string_precision)
+	{
+		_range_min_string			= minimize_string_precision( _extrema[0], _parameter_string_precision, RETURN_STRINGS, RETURN_DONT_FORCE_ARRAY);
+		_range_max_string			= minimize_string_precision( _extrema[1], _parameter_string_precision, RETURN_STRINGS, RETURN_DONT_FORCE_ARRAY);
+	}
+	else
+	{
+		_range_min_string			= d2s( _extrema[0], _parameter_string_precision);
+		_range_max_string			= d2s( _extrema[1], _parameter_string_precision);
+		//_range_min_string			= minimize_string_precision( _extrema[0], _parameter_string_precision, RETURN_STRINGS, RETURN_DONT_FORCE_ARRAY);
+		//_range_max_string			= minimize_string_precision( _extrema[1], _parameter_string_precision, RETURN_STRINGS, RETURN_DONT_FORCE_ARRAY);
+	}
+	if								(_parameter_values.length > 1)
+	{
+		if							(_value_range_form == ARRAY_VALUES_RANGE_TYPE_BRACKETED)
+		_range_string				= _parameter_prefix + _string_separation + LEFT_BRACKET_STRING + _range_min_string + DASH_STRING + _range_max_string + RIGHT_BRACKET_STRING;
+		if							(_value_range_form == ARRAY_VALUES_RANGE_TYPE_EQUALS)
+		_range_string				= _parameter_prefix + _string_separation + EQUALS_STRING + _string_separation + LEFT_BRACKET_STRING + _range_min_string + DASH_STRING + _range_max_string + RIGHT_BRACKET_STRING;
+		if							(_value_range_form == ARRAY_VALUES_RANGE_TYPE_UNDERSCORED)
+		_range_string				= _parameter_prefix + UNDERSCORE_STRING + LEFT_BRACKET_STRING + _range_min_string + DASH_STRING + _range_max_string + RIGHT_BRACKET_STRING;
+	}
+	else
+	{
+		if							(_single_value_action == ARRAY_VALUES_RANGE_OMIT_SINGLE_VALUE)
+			_range_string			= EMPTY_STRING;
+		else if						(_single_value_action == ARRAY_VALUES_RANGE_BRACKET_SINGLE_VALUE)
+			_range_string			= _parameter_prefix + LEFT_BRACKET_STRING + _range_min_string + RIGHT_BRACKET_STRING;
+		else if						(_single_value_action == ARRAY_VALUES_RANGE_EQUALS_SINGLE_VALUE)
+			_range_string			= _parameter_prefix + EQUALS_STRING + _range_min_string;
+		else
+			errKill					("Unknown '_single_value_action' option passed to 'generate_parameter_value_range_string' function");
+	}
+	return 							_range_string;
+}							
+function all_2_lowercase(_string_array)
+{
+	_lowercase_strings = newArray(_string_array.length);
+	for(_i = 0; _i < _string_array.length; _i++)
+		_lowercase_strings[_i] = toLowerCase(_string_array[_i]);
+	return _lowercase_strings;
+}
+function all_2_uppercase(_string_array)
+{
+	_uppercase_strings = newArray(_string_array.length);
+	for(_i = 0; _i < _string_array.length; _i++)
+		_uppercase_strings[_i] = toUpperCase(_string_array[_i]);
+	return _uppercase_strings;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//********************************************************************* Functions to look at modifying/combining/removing later *********************************************************************//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function extract_raw_slice(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image)
+{
+	//print					("Extracting an individual raw sized slice of the image...");			
+	_flip_horizontally		= _image_properties[1];
+	_flip_vertically		= _image_properties[2];
+	_grayscale_range_min	= _image_properties[3];
+	_grayscale_range_max 	= _image_properties[4];
+	_x_columns 				= _x_dimensions[0];
+	_x_rows  				= _x_dimensions[1];					
+	_x_slices 				= _x_dimensions[2]; 					
+	_y_upper_LHS 			= (_slice - _slice_indexing) * _x_rows;			// y-coordinate of upper left corner of slice to be analyzed
+	makeRectangle			( 0, _y_upper_LHS, _x_columns, _x_rows);
+	//imageCalculator		("Copy create", filename ,filename );
+	//run					("Enhance Contrast", "saturated=0.35");
+	run						("Duplicate...", "title=" + _window_title );
+	setMinAndMax			(_grayscale_range_min, _grayscale_range_max);
+	if						(_flip_horizontally)
+		run					("Flip Horizontally");
+	if						(_flip_vertically)
+		run					("Flip Vertically");
+}
+function raw_slice_2_PNG(_directory, _filename, _x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image )
+{	// _slice_indexing = SLICES_ZERO_INDEXED / SLICES_NUM_INDEXED				
+	//print					("-------> Extracting and saving an individual raw sized slice of the image as a PNG image...");		
+	extract_raw_slice		(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image);
+	save_PNG				(_directory, _filename, _overwrite_existing, _close_image, false);				
+}
+function extract_slice(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image)
+{
+	//print					("Extracting an individual slice of the image...");			
+	_x_magnification		= _image_properties[0];
+	_flip_horizontally		= _image_properties[1];
+	_flip_vertically		= _image_properties[2];
+	_grayscale_range_min	= _image_properties[3];
+	_grayscale_range_max 	= _image_properties[4];
+	_x_columns 				= _x_dimensions[0];
+	_x_rows  				= _x_dimensions[1];					
+	_x_slices 				= _x_dimensions[2]; 					
+	_y_upper_LHS 			= (_slice - _slice_indexing) * _x_rows;			// y-coordinate of upper left corner of slice to be analyzed
+	makeRectangle			( 0, _y_upper_LHS, _x_columns, _x_rows);
+	_slice_columns 			= _x_magnification * _x_columns;
+	_slice_rows 			= _x_magnification * _x_rows;
+	//imageCalculator		("Copy create", filename ,filename );
+	//run					("Enhance Contrast", "saturated=0.35");
+	run						("Duplicate...", "title=" + _window_title );
+	setMinAndMax			(_grayscale_range_min, _grayscale_range_max);
+	if						(_flip_horizontally)
+		run					("Flip Horizontally");
+	if						(_flip_vertically)
+		run					("Flip Vertically");
+	run						("Size...", "width=" + _slice_columns + " height=" + _slice_rows + " constrain average interpolation=Bilinear");
+}
+//function slice_2_PNG(_directory, _filename, _slice, _x_magnification, _flip_horizontally, _flip_vertically, _min, _max, _slice_indexing, _overwrite_existing, _window_title, _close_image )
+function slice_2_PNG(_directory, _filename, _x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image )
+{	// _slice_indexing = SLICES_ZERO_INDEXED / SLICES_NUM_INDEXED				
+	//print					("-------> Extracting and saving an individual slice of the image as a PNG image...");		
+	extract_slice			(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image);
+	save_PNG				(_directory, _filename, _overwrite_existing, _close_image, false);				
+}
+function last_iteration_image_existing(_directory_path, _num_recon_iterations)
+{
+	for											(_iteration_check = 0; _iteration_check <= _num_recon_iterations; _iteration_check++)
+		if										( !File.exists(_directory_path + RECONSTRUCTED_IMAGE_FILE_BASENAMES + d2s(_iteration_check, ITERATIONS_STRING_PRECISION) + TXT ))
+			return 								_iteration_check - 1;
+	return 										_num_recon_iterations;
+}
+function slice_ycoordinates(_yoffsets, _slice, _rows, _slice_indexing) // _slice_indexing = SLICES_ZERO_INDEXED / SLICES_NUM_INDEXED
+{
+	_ycoordinates			= newArray(_yoffsets.length);
+	_yshift					= (_slice - _slice_indexing) * _rows;
+	for						(_i = 0; _i < _yoffsets.length; _i++)
+	{
+		_ycoordinates[_i]	= _yshift + _yoffsets[_i];
+	}
+	return 					_ycoordinates;
+}
+function ROI_type_LUT(_ROI_type)
+{
+	_num_ROI_types			= ROI_SELECTION_SHAPES.length;
+	_ROI_type_lcase			= toLowerCase(_ROI_type);
+	for						(_type = 0; _type < _num_ROI_types; _type++)
+		if					(_ROI_type_lcase == ROI_SELECTION_SHAPES[_type])
+			return 			_type;
+}
+function ROI_parameters_2_xyparameters(_ROI_parameters, _return_specifier)
+{
+	_num_ROI_parameters							= _ROI_parameters.length;
+	_ROI_xparameters							= newArray( floor(_num_ROI_parameters / 2) ); 
+	_ROI_yparameters							= newArray( floor(_num_ROI_parameters / 2) ); 
+	for											(_i = 0; _i < _num_ROI_parameters; _i++)
+	{
+		if										(_i % 2 == 0)
+			_ROI_xparameters[floor(_i / 2)] 	= _ROI_parameters[_i];
+		else
+			_ROI_yparameters[floor(_i / 2)] 	= _ROI_parameters[_i];
+	}
+	if											( _return_specifier == RETURN_XPARAMETERS )
+		return 									_ROI_xparameters;
+	else if										( _return_specifier == RETURN_YPARAMETERS )
+		return 									_ROI_yparameters;
+}
+function ROI_xyparameters_2_parameters(_ROI_xparameters, _ROI_yparameters)
+{
+	_num_ROI_xyparameters						= _ROI_xparameters.length;
+	_ROI_parameters								= newArray( 2 * _num_ROI_xyparameters ); 
+	for											(_i = 0; _i < _num_ROI_xyparameters; _i++)
+	{
+		_ROI_parameters[2*_i] 					= _ROI_xparameters[_i];
+		_ROI_parameters[2*_i + 1] 				= _ROI_yparameters[_i];
+	}
+	return 										_ROI_parameters;
+}
+function parse_ROI_parameter_line(_ROI_positions_string, _ROI_index, _ROI_decoding, _force_array, _print_extraction)
+{
+	_ROI_positions_groups 						= split(_ROI_positions_string, ROI_COORDINATE_GROUP_SEP);
+	_ROI_positions_group						= _ROI_positions_groups[_ROI_index];
+	_ROI_positions_raw						 	= split(_ROI_positions_group, ROI_COORDINATE_SEP);
+	_num_ROI_positions						 	= _ROI_positions_raw.length;
+	_ROI_positions								= newArray(_num_ROI_positions);
+	for											(_ROI_position = 0; _ROI_position < _num_ROI_positions; _ROI_position++)
+	{
+		_spaceless_ROI_position 				= strip_surrounding_spaces(_ROI_positions_raw[_ROI_position]);
+		if										(_ROI_decoding == FLOAT_DECODING_OP)
+			_decoded_ROI_position 				= parseFloat(_spaceless_ROI_position);
+		else if									(_ROI_decoding == INT_DECODING_OP)
+			_decoded_ROI_position 				= parseInt(_spaceless_ROI_position);
+		else
+			_decoded_ROI_position 				= _spaceless_ROI_position;
+		_ROI_positions[_ROI_position]			= _decoded_ROI_position;
+	}
+	if											(_print_extraction)
+	{
+		print									("_num_ROI_positions = ", _num_ROI_positions);
+		App										("_ROI_positions", _ROI_positions);
+	}
+	if											( _ROI_positions.length == 1 && !_force_array)
+		return 									_ROI_positions[0];
+	else
+		return 									_ROI_positions;
+}
+function parse_ROI_xyparameter_lines(_ROI_definitions_file_lines, _ROI_xcoordinates_linenum, _ROI_ycoordinates_linenum, _ROI_PARAMETER_DECODINGS, _return_string, _print_extraction )
+{//ROI_coordinates = parse_ROI_xyparameter_lines(ROI_parameter_strings, 5, 6, ROI_PARAMETER_DECODINGS, FORCE_VALUE_2_ARRAY);
+	_ROI_xcoordinates_string 					= _ROI_definitions_file_lines[_ROI_xcoordinates_linenum];
+	_ROI_ycoordinates_string 					= _ROI_definitions_file_lines[_ROI_ycoordinates_linenum];
+	_ROI_xcoordinates_groups 					= split(_ROI_xcoordinates_string, ROI_COORDINATE_GROUP_SEP);
+	_ROI_ycoordinates_groups 					= split(_ROI_ycoordinates_string, ROI_COORDINATE_GROUP_SEP);
+	_num_ROI_xcoordinates_groups 				= _ROI_xcoordinates_groups.length;
+	_num_ROI_ycoordinates_groups 				= _ROI_ycoordinates_groups.length;
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	if											( _num_ROI_xcoordinates_groups != _num_ROI_ycoordinates_groups)
+		errKill									("Mismatch in number of x/y coordinate groups (i.e. ';' separators)");
+	if											( endsWith(_ROI_xcoordinates_string, ROI_COORDINATE_GROUP_SEP) || startsWith(_ROI_xcoordinates_string, ROI_COORDINATE_GROUP_SEP) )
+		errKill									("First/last ROI x-coordinate group (i.e. ';' separated x-coordinate list) is empty");
+	if											( endsWith(_ROI_ycoordinates_string, ROI_COORDINATE_GROUP_SEP) || startsWith(_ROI_ycoordinates_string, ROI_COORDINATE_GROUP_SEP) )
+		errKill									("First/last ROI y-coordinate group (i.e. ';' separated y-coordinate list) is empty");
+	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+	_num_ROI_coordinates_groups 				= _num_ROI_xcoordinates_groups;
+	_coordinates_per_ROI						= newArray(_num_ROI_coordinates_groups);
+	_ROI_coordinates							= newArray();
+	_ROI_coordinates_string						= "";
+	for											(_ROI_group = 0; _ROI_group < _num_ROI_coordinates_groups; _ROI_group++)
+	{
+		_ROI_group_xcoordinates					= split(_ROI_xcoordinates_groups[_ROI_group], ROI_COORDINATE_SEP);
+		_ROI_group_ycoordinates					= split(_ROI_ycoordinates_groups[_ROI_group], ROI_COORDINATE_SEP);
+		_num_ROI_group_xcoordinates				= _ROI_group_xcoordinates.length;
+		_num_ROI_group_ycoordinates				= _ROI_group_ycoordinates.length;
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+		if										( _num_ROI_group_xcoordinates != _num_ROI_group_ycoordinates)
+			errKill								("Mismatch in number of x/y coordinate definitions");
+		if										( (_num_ROI_group_xcoordinates == 0) || (_num_ROI_group_ycoordinates == 0) )
+			errKill								("x or y coordinate group is empty");
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+		_num_ROI_group_coordinates				= _num_ROI_group_xcoordinates;
+		_coordinates_per_ROI[_ROI_group]		= _num_ROI_group_coordinates;
+		for										(_ROI_group_coordinate = 0; _ROI_group_coordinate < _num_ROI_group_coordinates; _ROI_group_coordinate++)
+		{
+			_spaceless_ROI_group_xcoordinate 	= strip_surrounding_spaces(_ROI_group_xcoordinates[_ROI_group_coordinate]);
+			_spaceless_ROI_group_ycoordinate 	= strip_surrounding_spaces(_ROI_group_ycoordinates[_ROI_group_coordinate]);
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+			if									(_ROI_PARAMETER_DECODINGS[_ROI_xcoordinates_linenum] == FLOAT_DECODING_OP)
+				_decoded_ROI_group_xcoordinate 	= parseFloat(_spaceless_ROI_group_xcoordinate);
+			else if								(_ROI_PARAMETER_DECODINGS[_ROI_xcoordinates_linenum] == INT_DECODING_OP)
+				_decoded_ROI_group_xcoordinate 	= parseInt(_spaceless_ROI_group_xcoordinate);
+			else
+				_decoded_ROI_group_xcoordinate 	= _spaceless_ROI_group_xcoordinate;
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+			if									(_ROI_PARAMETER_DECODINGS[_ROI_ycoordinates_linenum] == FLOAT_DECODING_OP)
+				_decoded_ROI_group_ycoordinate 	= parseFloat(_spaceless_ROI_group_ycoordinate);
+			else if								(_ROI_PARAMETER_DECODINGS[_ROI_ycoordinates_linenum] == INT_DECODING_OP)
+				_decoded_ROI_group_ycoordinate 	= parseInt(_spaceless_ROI_group_ycoordinate);
+			else
+				_decoded_ROI_group_ycoordinate 	= _spaceless_ROI_group_ycoordinate;
+			//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+			_ROI_coordinates					= Array.concat(_ROI_coordinates, _decoded_ROI_group_xcoordinate);
+			_ROI_coordinates					= Array.concat(_ROI_coordinates, _decoded_ROI_group_ycoordinate);
+			_ROI_coordinates_string				= _ROI_coordinates_string + toString(_decoded_ROI_group_xcoordinate) + ROI_COORDINATE_SEP + toString(_decoded_ROI_group_ycoordinate) + ROI_COORDINATE_PAIR_SEP; //d2s(n, decimalPlaces)
+		}
+		_ROI_coordinates_string					= substring(_ROI_coordinates_string, 0, lengthOf(_ROI_coordinates_string) - 1)  + ROI_COORDINATE_GROUP_SEP;
+	}
+	_ROI_coordinates_string						= substring(_ROI_coordinates_string, 0, lengthOf(_ROI_coordinates_string) - 1);
+	if											(_print_extraction)
+	{
+		App										("_ROI_coordinates", _ROI_coordinates);
+		App										("_coordinates_per_ROI", _coordinates_per_ROI);
+		print									("_ROI_coordinates_string = ", _ROI_coordinates_string);
+	}
+	if											( _return_string )
+		return 									_ROI_coordinates_string;
+	else
+		return 									_ROI_coordinates;
+}
+function parse_ROI_slices(_ROI_slices_string, _ROI_index, _print_slices)
+{
+	_ROI_slices_groups 						= split(_ROI_slices_string, ROI_COORDINATE_GROUP_SEP);
+	_ROI_slices_group						= _ROI_slices_groups[_ROI_index];
+	_ROI_slices_raw						 	= split(_ROI_slices_group, ROI_COORDINATE_SEP);
+	_num_ROI_slices						 	= _ROI_slices_raw.length;
+	_ROI_slices								= newArray(_num_ROI_slices);
+	for										(_ROI_slice = 0; _ROI_slice < _num_ROI_slices; _ROI_slice++)
+	{
+		_spaceless_ROI_slice 				= strip_surrounding_spaces(_ROI_slices_raw[_ROI_slice]);
+		_ROI_slices[_ROI_slice]				= parseInt(_spaceless_ROI_slice);
+	}
+	if(_print_slices)
+	{
+		print								("_num_ROI_slices = ", _num_ROI_slices);
+		App									("_ROI_slices", _ROI_slices);
+	}
+	return 									_ROI_slices;
+}
+function parse_ROI_slice_list(_ROI_slices_string, _return_specifier, _print_slices)
+{
+	_ROI_slices_string						= replace(_ROI_slices_string, ROI_COORDINATE_GROUP_SEP, ROI_COORDINATE_SEP);
+	_ROI_slices_raw						 	= split(_ROI_slices_string, ROI_COORDINATE_SEP);
+	_num_ROI_slices						 	= _ROI_slices_raw.length;
+	_ROI_slices								= newArray(_num_ROI_slices);
+	for										(_ROI_slice = 0; _ROI_slice < _num_ROI_slices; _ROI_slice++)
+	{
+		_spaceless_ROI_slice 				= strip_surrounding_spaces(_ROI_slices_raw[_ROI_slice]);
+		_ROI_slices[_ROI_slice]				= parseInt(_spaceless_ROI_slice);
+	}
+	_ROI_max_slice							= array_maxval(_ROI_slices);
+	_ROI_min_slice							= array_minval(_ROI_slices);
+	_unique_ROI_slices						= newArray();
+	for										(_ROI_slice = _ROI_min_slice; _ROI_slice <= _ROI_max_slice; _ROI_slice++)
+		if									( isMember(_ROI_slice, _ROI_slices, RETURN_MATCH_TF ) )
+			_unique_ROI_slices				= Array.concat(_unique_ROI_slices, _ROI_slice);
+	if										(_print_slices)
+		App									("_unique_ROI_slices", _unique_ROI_slices);
+	if										(_return_specifier == RETURN_MIN)
+		return 								_ROI_min_slice;
+	else if									(_return_specifier == RETURN_MAX)
+		return 								_ROI_max_slice;
+	else if									(_return_specifier == RETURN_ALL)
+		return 								_unique_ROI_slices;
+	else if									(_return_specifier == RETURN_COUNT)
+		return 								_num_ROI_slices;
+	else
+		return 								_unique_ROI_slices;
+}
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+function parse_ROI_parameters_string(_ROI_coordinates_string, _ROI_index, _return_specifier, _print_extraction )
+{//parse_ROI_parameters_string(_ROI_coordinates_string, _ROI_index, _ROI_PARAMETER_DECODINGS, _return_string )
+	_ROI_coordinates_groups 					= split(_ROI_coordinates_string, ROI_COORDINATE_GROUP_SEP); 
+	_num_ROI_coordinates_groups 				= _ROI_coordinates_groups.length;
+	_ROI_coordinates_group 						= _ROI_coordinates_groups[_ROI_index];
+	_ROI_coordinate_pairs 						= split(_ROI_coordinates_group, ROI_COORDINATE_PAIR_SEP);
+	_num_ROI_coordinate_pairs 					= _ROI_coordinate_pairs.length;
+	_ROI_xcoordinates							= newArray(_num_ROI_coordinate_pairs);
+	_ROI_ycoordinates							= newArray(_num_ROI_coordinate_pairs);
+	_ROI_coordinates							= newArray(2*_num_ROI_coordinate_pairs);
+	_ROI_coordinate_pair_string					= "";
+	for											(_ROI_point = 0; _ROI_point < _num_ROI_coordinate_pairs; _ROI_point++)
+	{
+		_ROI_coordinate_pair 					= split(_ROI_coordinate_pairs[_ROI_point], ROI_COORDINATE_SEP);
+		_ROI_xcoordinate_raw					= _ROI_coordinate_pair[0];
+		_ROI_ycoordinate_raw					= _ROI_coordinate_pair[1];
+		_spaceless_ROI_xcoordinate 				= strip_surrounding_spaces(_ROI_xcoordinate_raw);
+		_spaceless_ROI_ycoordinate 				= strip_surrounding_spaces(_ROI_ycoordinate_raw);
+		_decoded_ROI_xcoordinate 				= parseFloat(_spaceless_ROI_xcoordinate);
+		_decoded_ROI_ycoordinate 				= parseFloat(_spaceless_ROI_ycoordinate);
+		//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+		_ROI_xcoordinates[_ROI_point]			= _decoded_ROI_xcoordinate;
+		_ROI_ycoordinates[_ROI_point]			= _decoded_ROI_ycoordinate;
+		_ROI_coordinates[2*_ROI_point]			= _decoded_ROI_xcoordinate;
+		_ROI_coordinates[2*_ROI_point + 1]		= _decoded_ROI_ycoordinate;
+		_ROI_coordinate_pair_string				= _ROI_coordinate_pair_string + toString(_decoded_ROI_xcoordinate) + ROI_COORDINATE_SEP + toString(_decoded_ROI_ycoordinate) + ROI_COORDINATE_PAIR_SEP; //d2s(n, decimalPlaces)
+	}
+	_ROI_coordinate_pair_string					= substring(_ROI_coordinate_pair_string, 0, lengthOf(_ROI_coordinate_pair_string) - 1);
+	if(_print_extraction)
+	{
+		print									("_ROI_coordinate_pair_string = ", _ROI_coordinate_pair_string);
+		print									("_num_ROI_coordinate_pairs = ", _num_ROI_coordinate_pairs);
+		App										("_ROI_xcoordinates", _ROI_xcoordinates);
+		App										("_ROI_ycoordinates", _ROI_ycoordinates);
+		App										("_ROI_coordinates", _ROI_coordinates);
+	}
+	if											( _return_specifier == RETURN_XCOORDINATES )
+		return 									_ROI_xcoordinates;
+	else if										( _return_specifier == RETURN_YCOORDINATES )
+		return 									_ROI_ycoordinates;
+	else if										( _return_specifier == RETURN_COORDINATE_PAIRS )
+		return 									_ROI_coordinates;
+	else if										( _return_specifier == RETURN_COORDINATE_PAIR_STRING )
+		return 									_ROI_coordinate_pair_string;
+	else
+		return 									_ROI_coordinates;
+}
+//function ROI_selection_analysis(_ROI_parameters_string, _ROI_index, _ROI_shapes, _ROI_selection_diameter, _x_dimensions, _iteration, _slice, _print_on)
+function ROI_selection_analysis(_ROI_parameters_string, _ROI_index, _ROI_shapes, _ROI_selection_diameter, _x_dimensions, _iteration, _slice, _RSPs_by_ROI, _RSPs_by_iteration, _RSP_errors_by_ROI, _RSP_errors_by_iteration, _std_devs_by_ROI, _std_devs_by_iteration, _print_on)
+{
+	_ROI_type										= ROI_type_LUT(_ROI_shapes[_ROI_index]);
+	if												(_ROI_type == CIRCLE)
+		make_circular_ROI							(_ROI_parameters_string, _ROI_index, _ROI_selection_diameter, _x_dimensions, _slice, _print_on);
+	else
+		makeROISelection							(_ROI_parameters_string, _ROI_index, _ROI_type, _x_dimensions, _slice, _print_on );
+	
+	if(_print_on)
+		printvareq									("_ROI_type", _ROI_type);
+	run												("Measure");
+	List.setMeasurements;
+	_by_ROI_index 									= _iteration * num_ROIs_2_analyze + _ROI_index;					// Grouping all measurements for each iteration together  	
+	_by_iteration_index 							= _ROI_index * images_per_reconstruction + _iteration;	// Grouping all measurements for each ROI together 
+	_mean_RSP_val 									= List.getValue(MEAN_COLUMN_LABEL);
+	_RSPs_by_ROI[_by_ROI_index] 					= _mean_RSP_val;	
+	_RSPs_by_iteration[_by_iteration_index] 		= _mean_RSP_val;	
+	_RSP_error										= (_mean_RSP_val - ROI_material_RSPs[_ROI_index]) / ROI_material_RSPs[_ROI_index] * 100;
+	_RSP_errors_by_ROI[_by_ROI_index] 				= _RSP_error;	
+	_RSP_errors_by_iteration[_by_iteration_index] 	= _RSP_error;	
+	_std_dev_ROI 									= List.getValue(STDDEV_COLUMN_LABEL);
+	_std_devs_by_ROI[_by_ROI_index] 				= _std_dev_ROI;	
+	_std_devs_by_iteration[_by_iteration_index] 	= _std_dev_ROI;	
+	_median 										= List.getValue(MEDIAN_COLUMN_LABEL);
+	_mode 											= List.getValue(MODE_COLUMN_LABEL);
+	_min 											= List.getValue(MIN_COLUMN_LABEL);
+	_max 											= List.getValue(MAX_COLUMN_LABEL);
+	_centroidx 										= List.getValue(CENTROIDX_COLUMN_LABEL);
+	_centroidy 										= List.getValue(CENTROIDY_COLUMN_LABEL);
+	_com_x 											= List.getValue(COM_X_COLUMN_LABEL);
+	_com_y 											= List.getValue(COM_Y_COLUMN_LABEL);
+	_boundingx 										= List.getValue(BOUNDINGX_COLUMN_LABEL);
+	_boundingy 										= List.getValue(BOUNDINGY_COLUMN_LABEL);
+	_bounding_width 								= List.getValue(BOUNDING_WIDTH_COLUMN_LABEL);
+	_bounding_height 								= List.getValue(BOUNDING_HEIGHT_COLUMN_LABEL);
+	_int_density 									= List.getValue(INT_DENSITY_COLUMN_LABEL);
+	_rawint_density 								= List.getValue(RAWINT_DENSITY_COLUMN_LABEL);
+	_perimeter 										= List.getValue(PERIMETER_COLUMN_LABEL);
+	_area 											= List.getValue(AREA_COLUMN_LABEL);
+	_other_ROI_measurements							= newArray(_median, _mode, _min, _max, _centroidx, _centroidy, _com_x, _com_y, _boundingx, _boundingy, _bounding_width, _bounding_height, _int_density, _rawint_density, _perimeter, _area);
+	//_label 											= List.getValue(LABEL_COLUMN_LABEL); //List.getValue("Label"); //List.getValue(1);
+	//_other_ROI_measurements							= newArray(_median _mode, _min, _max, _centroidx, _centroidy, _com_x, _com_y, _boundingx, _boundingy, _bounding_width, _bounding_height, _int_density, _rawint_density, _perimeter, _area, _label );
+	setResult										(ROI_MATERIAL_RSP_COLUMN_LABEL, _ROI_index, ROI_material_RSPs[_ROI_index]);
+	setResult										(RSP_ERROR_COLUMN_LABEL, _ROI_index, _RSP_error);									
+	return											_other_ROI_measurements;
+}
+function makeROISelection(_ROI_parameters_string, _ROI_index, _ROI_type, _x_dimensions, _slice, _print_on )
+{//parse_ROI_type_parameters(_ROI_parameters_string, _ROI_index, _ROI_PARAMETER_DECODINGS, _return_string )
+	_ROI_parameters					= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_PARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_xparameters				= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_XPARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_yparameters				= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_YPARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_yparameters_shifted		= slice_ycoordinates(_ROI_yparameters, _slice, _x_dimensions[1], SLICES_ZERO_INDEXED);
+	if								(_print_on)
+	{
+		print						("_ROI_type = ", _ROI_type);
+		App							("_ROI_parameters", _ROI_parameters);
+		App							("_ROI_xparameters", _ROI_xparameters);
+		App							("_ROI_yparameters", _ROI_yparameters);
+		App							("_ROI_yparameters_shifted", _ROI_yparameters_shifted);
+	}
+	if								(_ROI_type == RECTANGLE )
+	{
+		_x 							= _ROI_xparameters[0];
+		_y 							= _ROI_yparameters_shifted[0];
+		_width 						= _ROI_xparameters[1];
+		_height 					= _ROI_yparameters[1];
+		if							(_ROI_xparameters.length > 2 ) 								//makeRectangle(x, y, width, height, arcSize);
+			makeRectangle			(_x, _y, _width, _height, _ROI_xparameters[2]);	
+		else 																			//makeRectangle(x, y, width, height);
+			makeRectangle			(_x, _y, _width, _height);	
+	}
+	else if							(_ROI_type == OVAL )
+	{																					//makeOval(x, y, width, height); 			//makeEllipse(x1, y1, x2, y2, aspectRatio);
+		_x 							= _ROI_xparameters[0];
+		_y 							= _ROI_yparameters_shifted[0];
+		_width 						= _ROI_xparameters[1];
+		_height 					= _ROI_yparameters[1];
+		makeOval					(_x, _y, _width, _height);
+		makeOval					(_x, _y, _width, _height);
+	}
+	else if							(_ROI_type == POLYGON ) 														//makePolygon(x1, y1, x2, y2, x3, y3, ...); //makePolygon(_ROI_parameters);
+		makeSelection				("polygon", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == FREEHAND )
+		makeSelection				("freehand", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == TRACED )
+		makeSelection				("traced", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == STRAIGHT_LINE )
+	{
+		_x1 						= _ROI_xparameters[0];
+		_y1 						= _ROI_yparameters_shifted[0];
+		_x2 						= _ROI_xparameters[1];
+		_y2 						= _ROI_yparameters_shifted[1];
+		if							(_ROI_xparameters.length > 2 ) 								//makeLine		(x1, y1, x2, y2, lineWidth);
+			makeLine				(x1, y1, x2, y2, _ROI_xparameters[2]);	
+		else 																			//makeLine		(x1, y1, x2, y2);
+			makeLine				(x1, y1, x2, y2);		
+	}
+	else if							(_ROI_type == SEGMENTED_LINE )
+		makeSelection				("polyline", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == FREEHAND_LINE )
+		makeSelection				("freeline", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == ANGLE )
+		makeSelection				("angle", _ROI_xparameters, _ROI_yparameters_shifted);
+	else if							(_ROI_type == COMPOSITE )
+	{
+		for							( _selection_num = 0; _selection_num < _composite_selections; _selection_num++)
+		{
+			shiftKeyDown			();
+		  	makeOval				(50,10,15,10);
+			shiftKeyDown			();
+			makeOval				(150,110,15,10);
+			shiftKeyDown			();
+			makeOval				(150,11,15,10);
+			shiftKeyDown			();
+			makeRectangle			(41, 21, 105, 68);	
+			shiftKeyDown			();
+			wait					(ROI_SELECTION_DELAY);
+			selectionType			();		
+		}
+	}
+	else if							(_ROI_type == POINT )
+	{
+		if							(!isArray(_ROI_xparameters) )
+		{ 	//makePoint				(x, y);
+			_x 						= _ROI_xparameters;
+			_y 						= _ROI_yparameters_shifted;
+			makePoint				(_x, _y);
+		}
+		else //makeSelection		("point", x_coords, y_coords);	
+			makeSelection			("point", _ROI_xparameters, _ROI_yparameters_shifted);		
+	}
+	else if							(_ROI_type == CIRCLE )
+	{
+		_x 							= _ROI_xparameters[0];
+		_y 							= _ROI_yparameters_shifted[0];
+		_width 						= _ROI_xparameters[1];
+		_height 					= _ROI_yparameters[1];
+		run							("Specify...", "width=" + _width + " height=" + _height + " x=" + _x + " y=" + _y + " oval centered");		
+	}
+	return 							_ROI_parameters;
+}
+function make_circular_ROI(_ROI_parameters_string, _ROI_index, _ROI_selection_diameter, _x_dimensions, _slice, _print_on )
+{
+	_ROI_parameters								= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_PARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_xparameters							= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_XPARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_yparameters							= parse_ROI_parameters_string(_ROI_parameters_string, _ROI_index, RETURN_YPARAMETERS, _print_on ); //RETURN_PARAMETERS
+	_ROI_yparameters_shifted					= slice_ycoordinates(_ROI_yparameters, _slice, _x_dimensions[1], SLICES_ZERO_INDEXED);
+	_x 											= _ROI_xparameters[0];
+	_y 											= _ROI_yparameters_shifted[0];
+	_width 										= _ROI_xparameters[1];
+	_height 									= _ROI_yparameters[1];
+	if											(_ROI_selection_diameter % 2 == 1)
+	{
+		_x 										= _x + 0.5; 
+		_y 										= _y + 0.5; 
+	}
+	if(_print_on)
+	{
+		App										("_ROI_parameters", _ROI_parameters);
+		App										("_ROI_xparameters", _ROI_xparameters);
+		App										("_ROI_yparameters", _ROI_yparameters);
+		App										("_ROI_yparameters_shifted", _ROI_yparameters_shifted);
+	}
+	run											("Specify...", "width=" + _width + " height=" + _height + " x=" + _x + " y=" + _y + " oval centered");		
+	//run										("Specify...", "width=" + _ROI_selection_diameter + " height=" + _ROI_selection_diameter + " x=" + _selection_center_x + " y=" + _selection_center_y + " oval centered");
+}
+	//function analyzeROISelection(_ROI_index, _num_ROIs_2_analyze, _ROI_material_RSPs, _iteration, _images_per_reconstruction)
+function analyzeROISelection(_ROI_index, _num_ROIs_2_analyze, _ROI_material_RSPs, _iteration, _images_per_reconstruction, _RSPs_by_ROI, _RSPs_by_iteration, _RSP_errors_by_ROI, _RSP_errors_by_iteration, _std_devs_by_ROI, _std_devs_by_iteration)
+{
+	//_other_ROI_measurements 						= newArray();
+	run												("Measure");
+	List.setMeasurements;
+	_by_ROI_index 									= _iteration * _num_ROIs_2_analyze + _ROI_index;					// Grouping all measurements for each iteration together  	
+	_by_iteration_index 							= _ROI_index * _images_per_reconstruction + _iteration;	// Grouping all measurements for each ROI together 
+	_mean_RSP_val 									= List.getValue(MEAN_COLUMN_LABEL);
+	_RSPs_by_ROI[_by_ROI_index] 					= _mean_RSP_val;	
+	_RSPs_by_iteration[_by_iteration_index] 		= _mean_RSP_val;	
+	_RSP_error										= (_mean_RSP_val - _ROI_material_RSPs[_ROI_index]) / _ROI_material_RSPs[_ROI_index] * 100;
+	_RSP_errors_by_ROI[_by_ROI_index] 				= _RSP_error;	
+	_RSP_errors_by_iteration[_by_iteration_index] 	= _RSP_error;	
+	_std_dev_ROI 									= List.getValue(STDDEV_COLUMN_LABEL);
+	_std_devs_by_ROI[_by_ROI_index] 				= _std_dev_ROI;	
+	_std_devs_by_iteration[_by_iteration_index] 	= _std_dev_ROI;	
+	_median 										= List.getValue(MEDIAN_COLUMN_LABEL);
+	_mode 											= List.getValue(MODE_COLUMN_LABEL);
+	_min 											= List.getValue(MIN_COLUMN_LABEL);
+	_max 											= List.getValue(MAX_COLUMN_LABEL);
+	_centroidx 										= List.getValue(CENTROIDX_COLUMN_LABEL);
+	_centroidy 										= List.getValue(CENTROIDY_COLUMN_LABEL);
+	_com_x 											= List.getValue(COM_X_COLUMN_LABEL);
+	_com_y 											= List.getValue(COM_Y_COLUMN_LABEL);
+	_boundingx 										= List.getValue(BOUNDINGX_COLUMN_LABEL);
+	_boundingy 										= List.getValue(BOUNDINGY_COLUMN_LABEL);
+	_bounding_width 								= List.getValue(BOUNDING_WIDTH_COLUMN_LABEL);
+	_bounding_height 								= List.getValue(BOUNDING_HEIGHT_COLUMN_LABEL);
+	_int_density 									= List.getValue(INT_DENSITY_COLUMN_LABEL);
+	_rawint_density 								= List.getValue(RAWINT_DENSITY_COLUMN_LABEL);
+	_perimeter 										= List.getValue(PERIMETER_COLUMN_LABEL);
+	_area 											= List.getValue(AREA_COLUMN_LABEL);
+	_other_ROI_measurements							= newArray(_median, _mode, _min, _max, _centroidx, _centroidy, _com_x, _com_y, _boundingx, _boundingy, _bounding_width, _bounding_height, _int_density, _rawint_density, _perimeter, _area); //List.getValue(LABEL_COLUMN_LABEL); & , _label
+	setResult										(ROI_MATERIAL_RSP_COLUMN_LABEL, nResults - 1, _ROI_material_RSPs[_ROI_index]); 	// _ROI_index -> nResults - 1
+	setResult										(RSP_ERROR_COLUMN_LABEL, 		nResults - 1, _RSP_error);						// _ROI_index -> nResults - 1				
+	return											_other_ROI_measurements;
+}
+//function shade_ROI_selection() { run("Draw"); run("Fill"); }
+function shade_ROI_selection() { run("Fill"); }
+function export_shaded_ROI_slice(_output_dir, _iteration, _slice, _write_slice, _overwrite_existing)
+{	
+	_shaded_ROIs_filename	= ROI_SELECTIONS_IMAGE_FILE_BASENAMES + d2s(_iteration, ITERATIONS_STRING_PRECISION) + UNDERSCORE_STRING + d2s(_slice, SLICES_STRING_PRECISION) + UNDERSCORE_STRING + ROI_SELECTIONS_IMAGE_FILE_SUFFIXES;
+	if(_write_slice )
+		raw_slice_2_PNG		(_output_dir, _shaded_ROIs_filename, x_dimensions, slice, image_properties, SLICES_ZERO_INDEXED, _overwrite_existing, _shaded_ROIs_filename, CLOSE_SAVED_PNG_IMAGE );
+}
+//	label_ROI_selection				(ROI_labels[ROI], other_ROI_measurements[BOUNDINGX_MEAS_INDEX] + 1.15*other_ROI_measurements[BOUNDING_WIDTH_MEAS_INDEX], other_ROI_measurements[BOUNDINGY_MEAS_INDEX] + 1.0 * other_ROI_measurements[BOUNDING_HEIGHT_MEAS_INDEX], 0);
+function label_ROI_selection(_ROI_shape_string, _x, _y, _angle)
+{
+	//extract_raw_slice		(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image);
+	setColor("white");	//r, g, b; value; string; "blue", "black"
+	setFont("Serif", 8, "antialiased");//"SansSerif", "Serif" or "Monospaced"
+	//setFont("SansSerif", ROI_LABEL_FONTSIZE, "antiliased");//"SansSerif", "Serif" or "Monospaced"
+	//setFont(name, size[, style])	//setLineWidth(x_magnification);	
+	//setLineWidth(2);
+	Overlay.drawString(_ROI_shape_string, _x, _y, _angle);
+	//Overlay.drawLine(x_magnification*(ROI_xparams[i] - profile_r),x_magnification*(ROI_yparams[i]) ,x_magnification*(ROI_xparams[i] + profile_r), x_magnification*(ROI_yparams[i]));
+	//Overlay.drawEllipse(x_magnification*(ROI_xparams[i]-r), x_magnification*(ROI_yparams[i]-r), x_magnification*d, x_magnification*d);
+	Overlay.show();
+	//drawString(_ROI_shape_string, _x, _y);
+	//makeText(_ROI_shape_string, _x, _y);
+	//fillOval(x_magnification*(ROI_xparams[i]-r), x_magnification*(ROI_yparams[i]-r), x_magnification*d, x_magnification*d);
+	//save_PNG				(_directory, _filename, _overwrite_existing, _close_image, false);				
+}
 
+function file_2_decoded_key_value_pairs(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME,  _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _printing_ROI_definitions)
+{
+	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME, _printing_ROI_definitions);
+	_num_ROI_key_value_pairs					= _ROI_definition_file_key_value_pairs.length;
+	_ordered_ROI_parameter_strings				= newArray(_num_ROI_key_value_pairs);
+	for(i = 0; i < _num_ROI_key_value_pairs; i++)
+	{
+		separated_key_value_pair 				= split(_ROI_definition_file_key_value_pairs[i], "=");
+		key_string 								= separated_key_value_pair[0];
+		_spaceless_key_string 					= strip_surrounding_spaces(key_string);
+		_ROI_parameter_values_string			= strip_surrounding_spaces(separated_key_value_pair[1]);
+		for(j = 0; j < _ROI_definitions_parameter_list.length; j++)
+			if(_spaceless_key_string == _ROI_definitions_parameter_list[j] )
+				_ordered_ROI_parameter_strings[j] = _ROI_parameter_values_string;
+	}	
+	return _ordered_ROI_parameter_strings;	
+}
+function all_2_lowercase(_string_array)
+{
+	_lowercase_strings = newArray(_string_array.length);
+	for(_i = 0; _i < _string_array.length; _i++)
+		_lowercase_strings[_i] = toLowerCase(_string_array[_i]);
+	return _lowercase_strings;
+}
+function all_2_uppercase(_string_array)
+{
+	_uppercase_strings = newArray(_string_array.length);
+	for(_i = 0; _i < _string_array.length; _i++)
+		_uppercase_strings[_i] = toUpperCase(_string_array[_i]);
+	return _uppercase_strings;
+}
+function material_name_LUT(_material_name)
+{
+	_num_material_aliases			= MATERIAL_ALIAS_LUT.length;
+	_material_name_lcase			= toLowerCase(_material_name);
+	for(_alias = 0; _alias < _num_material_aliases; _alias++)
+		if(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_alias])
+			return MATERIAL_NAME_LUT_LCASE[_alias];
+}
+function material_RSP_LUT(_material_name, _is_simulated_scan)
+{
+	//SIMULATED_MATERIAL_RSPS		= newArray(0.0013, 	0.877, 	0.9973, 1.024,   1.0386,		1.144,  1.155,     1.356,     1.828,    1.788,   1.037,         1.047,          1.108		);
+	//EXPERIMENTAL_MATERIAL_RSPS	= newArray(0.0013, 	0.883, 	0.979,  1.144,   1.024,			1.160,  1.160,     1.359,     1.79,     1.788,   1.037,         1.047,          1.108		); 	
+	_material_name_lcase			= material_name_LUT(_material_name);
+	_num_material_names			 	= MATERIAL_NAMES_LCASE.length;
+	if								(_is_simulated_scan)
+		_material_RSPs 				= Array.copy(SIMULATED_MATERIAL_RSPS);
+	else
+		_material_RSPs				= Array.copy(EXPERIMENTAL_MATERIAL_RSPS);
+	for								(_material = 0; _material < _num_material_names; _material++)
+		if							(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_material])
+			return 					_material_RSPs[_material];
+}
+//function ROI_material_names_2_RSPs(_ROI_material_names, _is_simulated_scan)
+//{
+//	_num_ROIs_2_analyze 		= _ROI_material_names.length;
+//	_ROI_material_RSPs 			= newArray(_num_ROIs_2_analyze);
+//	for(ROI = 0; ROI < _num_ROIs_2_analyze; ROI++)
+//		_ROI_material_RSPs[ROI] 	= material_name_2_RSP(_ROI_material_names[ROI], _is_simulated_scan);
+//	return _ROI_material_RSPs;
+//}
+function ROI_material_names_2_RSPs(_ROI_material_names, _is_simulated_scan)
+{
+	_num_ROIs_2_analyze 		= _ROI_material_names.length;
+	_ROI_material_RSPs 			= newArray(_num_ROIs_2_analyze);
+	for(_ROI = 0; _ROI < _num_ROIs_2_analyze; _ROI++)
+		_ROI_material_RSPs[_ROI] 	= material_RSP_LUT(_ROI_material_names[_ROI], _is_simulated_scan);
+//		_ROI_material_RSPs[_ROI] 	= ROI_material_name_2_RSP(_ROI_material_names[_ROI], _is_simulated_scan);
+	return _ROI_material_RSPs;
+}
+function array_maxval(_array)
+{
+	maxval				=_array[0];
+	for					(_i = 1; _i < _array.length; _i++)
+		if				( _array[_i] > maxval )
+			maxval 		= _array[_i];
+	return 				maxval;
+}
+function array_minval(_array)
+{
+	minval				=_array[0];
+	for					(_i = 1; _i < _array.length; _i++)
+		if				( _array[_i] < minval )
+			minval 		= _array[_i];
+	return 				minval;
+}
+function isMember(_match, _array, _return_index)
+{
+	for				(i = 0; i < _array.length; i++)	
+		if			(_array[i] == _match)		
+			return	conditional_return(_return_index, i, true);	
+	return			conditional_return(_return_index, -1, false);
+}					
+function conditional_return(_condition, _return_if_true, _return_if_false)
+{
+	if			(_condition)
+		return 	_return_if_true;
+	else
+		return 	_return_if_false;
+}
+function if_else(_condition, _value_if_true, _value_if_false)
+{
+	if			(_condition)
+		return 	_value_if_true;
+	else
+		return 	_value_if_false;
+}
+function isNumber(_value)
+{
+	if				(isArray(_value))
+		return 		false;
+	_parsed_value	= parseFloat(toString(_value));
+	return 			ifNaN(_parsed_value, false, true);
+}
+function match(_1st_item, _2nd_item, _statement, _bool_control)
+{
+	_1st_item_array						= array_from_data(_1st_item);
+	_2nd_item_array						= array_from_data(_2nd_item);
+	_bool_control_array					= int_2_binary	(_bool_control, 4, 	BOOL_CONVERSION);
+	_print_match 						= _bool_control_array[0];
+	_dont_print_match 					= _bool_control_array[1];
+	_throw_mismatch_error 				= _bool_control_array[2];
+	_dont_throw_mismatch_error 			= _bool_control_array[3];
+	if									(_statement != EMPTY_STRING)
+		print							(_statement);
+	for									(i = 0; i < _1st_item_array.length; i++)
+		if								( _1st_item_array[i] != _2nd_item_array[i] )
+		{
+			if							(_throw_mismatch_error)	
+				showMessageWithCancel	("Mismatch: \n" + _1st_item_array[i] + NEWLINE_CMD_STRING + _2nd_item_array[i]);
+			return 						false;
+		}	
+	if							(_print_match)	
+		Aps("Matching items", _1st_item_array);
+	return 								true;
+}
