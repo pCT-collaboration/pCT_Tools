@@ -7,8 +7,8 @@ macro "merge_data"
 	//***************************************************************************************************************************************************************************************************//
 	PROMPT_TEST_BATCH_DIR							= true;
 	//PROMPT_TEST_BATCH_DIR_CONTROLLED							= true;
-	simulated_scan 														= false;
-	experimental_scan 													= !simulated_scan;
+	SIMULATED_SCAN 														= false;
+	EXPERIMENTAL_SCAN 													= !SIMULATED_SCAN;
 	log_printing														= true;			
 	exporting_log														= false;		
 	debug_path_printing													= false;
@@ -18,13 +18,29 @@ macro "merge_data"
 	printing_multiplot_parameter_info									= true;	
 	print_ROI_definitions_path											= false;		
 	print_directories_created											= false;	
-	print_input_data_path												= false;
+	print_input_data_path												= true;
 	print_input_CSV_path												= false;
 	print_input_TXT_path												= false;
 	print_input_PNG_paths												= false;
 	print_output_CSV_path												= true;
 	print_output_TXT_path												= true;
 	print_output_PNG_paths												= false;
+	LOG_PRINTING														= true;			
+	EXPORTING_LOG														= false;		
+	DEBUG_PATH_PRINTING													= false;
+	PRINTING_ROI_DEFINITIONS											= true;		
+	PRINTING_RECONSTRUCTED_IMAGE_ANALYSIS_INFO							= true;
+	PRINTING_PVT_INFO													= true;
+	PRINTING_MULTIPLOT_PARAMETER_INFO									= true;	
+	PRINT_ROI_DEFINITIONS_PATH											= false;		
+	PRINT_DIRECTORIES_CREATED											= false;	
+	PRINT_INPUT_DATA_PATH												= true;
+	PRINT_INPUT_CSV_PATH												= false;
+	PRINT_INPUT_TXT_PATH												= false;
+	PRINT_INPUT_PNG_PATHS												= false;
+	PRINT_OUTPUT_CSV_PATH												= true;
+	PRINT_OUTPUT_TXT_PATH												= true;
+	PRINT_OUTPUT_PNG_PATHS												= false;
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ CSV file merging Booleans ************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//			
@@ -52,7 +68,7 @@ macro "merge_data"
 	write_merged_RSP_Error_TXT_data 									= true && write_merged_TXT_data;
 	write_merged_Std_Dev_TXT_data 										= true && write_merged_TXT_data;
 	write_merged_TV_TXT_data 											= true && write_merged_TXT_data;
-	overwrite_merged_data 												= false;
+	overwrite_merged_data 												= true;
 	overwrite_merged_CSV_data 											= true && overwrite_merged_data;
 	overwrite_merged_TXT_data 											= true && overwrite_merged_data;
 	overwrite_merged_RSP_CSV_data 										= true && overwrite_merged_CSV_data;
@@ -74,7 +90,7 @@ macro "merge_data"
 	write_merged_multiplot_RSP_Error_TXT_data 							= true && write_merged_multiplot_TXT_data;
 	write_merged_multiplot_Std_Dev_TXT_data 							= true && write_merged_multiplot_TXT_data;
 	write_merged_multiplot_TV_TXT_data 									= true && write_merged_multiplot_TXT_data;
-	overwrite_merged_multiplot_data 									= false;
+	overwrite_merged_multiplot_data 									= true;
 	overwrite_merged_multiplot_CSV_data 								= true;// && overwrite_merged_multiplot_data;
 	overwrite_merged_multiplot_TXT_data 								= true && overwrite_merged_multiplot_data;
 	overwrite_merged_multiplot_RSP_CSV_data 							= true && overwrite_merged_multiplot_CSV_data;
@@ -210,7 +226,8 @@ macro "merge_data"
 	IS_MIXED_ARRAY									= 3;
 	RETURN_MIN										= 0;
 	RETURN_MAX 										= 1;
-	RETURN_MINMAX									= 2;
+	RETURN_ALL										= 2;
+	RETURN_MINMAX									= 3;
 	PRINT_MATCH										= 0;
 	DONT_PRINT_MATCH								= 1;
 	THROW_MISMATCH_ERROR							= 2;
@@ -269,6 +286,7 @@ macro "merge_data"
 	//************************************************************************************* Define string constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
 	FOLDER_SEPARATOR								= File.separator;
+	CFG 											= ".cfg";
 	TXT 											= ".txt";
 	CSV 											= ".csv";
 	PNG 											= ".png";
@@ -310,14 +328,22 @@ macro "merge_data"
 	PNG_compression									= "PNG";
 	ROI_definition_numbers_decoding_op				= "parseFloat";	
 	ROI_definition_strings_decoding_op				= "none";	
+	ROI_DEFINITION_NUMBERS_DECODING_OP				= "parseFloat";	
+	ROI_DEFINITION_STRINGS_DECODING_OP				= "none";	
+	ROIDEF_NUMBER									= "parseFloat";	
+	ROIDEF_STRING									= "none";	
+	FLOAT_DECODING_OP								= "parseFloat";	
+	INT_DECODING_OP									= "parseInt";	
+	STRING_DECODING_OP								= "none";	
+	BOOL_DECODING_OP								= "parseBool";	
 	ROI_material_RSP_column_label 					= "Predicted RSP";
 	RSP_error_column_label 							= "% Error";
 	mean_column_label 								= "Mean";	
 	COLUMN_SUM_ROW_LABEL 							= "Sum";	
-	TV_before_TVS_label 							= "TV: Before TVS";	
-	TV_after_TVS_label 								= "TV: After TVS";
-	TV_reduction_label 								= "TVS TV Reduction";
-	TV_table_titles									= newArray(TV_before_TVS_label, TV_after_TVS_label, TV_reduction_label);
+	TV_BEFORE_TVS_LABEL 							= "TV: Before TVS";	
+	TV_AFTER_TVS_LABEL 								= "TV: After TVS";
+	TV_REDUCTION_LABEL 								= "TVS TV Reduction";
+	TV_TABLE_TITLES									= newArray(TV_BEFORE_TVS_LABEL, TV_AFTER_TVS_LABEL, TV_REDUCTION_LABEL);
 	OTVS_row_header									= "OTVS";
 	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
@@ -353,20 +379,16 @@ macro "merge_data"
 	IJ_launch_directory								= getDirectory("startup");
 	USER_HOME_DIRECTORY								= getDirectory("home");
 	IJ_previous_macro								= getInfo("macro.filepath");
-	github_macro_directory_Baylor_ICTHUS			= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
- 	github_macro_directory_pCT_Collaboration		= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
+	PCT_RECON_DIR									= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\";
+ 	GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
  	reconstruction_data_directory_drive_C			= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	reconstruction_data_directory_drive_D			= "D:\\pCT\\pCT_data\\reconstruction_data";
-	autobreak_filename 								= "autobreak.txt";
-	material_RSP_defs_filename 						= "material_RSP_defs.txt";
 	ROI_analysis_macro_filename 					= "ROI_Analysis.ijm";
 	multiplotting_macro_filename 					= "Multiplotting.ijm";
 	test_result_comparison_macro_filename 			= "Test_Result_Comparison.ijm";
-	auto_break_path 								= IJ_macro_directory + autobreak_filename;
-	material_RSP_defs_path 							= IJ_macro_directory + material_RSP_defs_filename;
-	ROI_analysis_macro_path 						= github_macro_directory_pCT_Collaboration + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
-	multiplotting_macro_path 						= github_macro_directory_pCT_Collaboration + FOLDER_SEPARATOR + multiplotting_macro_filename;
-	test_result_comparison_macro_path 				= github_macro_directory_pCT_Collaboration + FOLDER_SEPARATOR + test_result_comparison_macro_filename;
+	ROI_analysis_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
+	multiplotting_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + multiplotting_macro_filename;
+	test_result_comparison_macro_path 				= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + test_result_comparison_macro_filename;
 	print_ImageJ_info								();
 
 	reconstruction_data_folder						= FOLDER_SEPARATOR + "reconstruction_data";
@@ -389,33 +411,43 @@ macro "merge_data"
 	experimental_data								= "Experimental";	
 	drive_C											= "C";
 	drive_D											= "D";
-	current_reconstruction_data_drive				= "D";
-	current_reconstruction_data_type				= experimental_data;
+	current_reconstruction_data_drive				= drive_D;
+	current_reconstruction_data_type				= simulated_data;
 	
 	if												(current_reconstruction_data_drive == drive_C)				
 		reconstruction_data_directory 				= reconstruction_data_directory_drive_C;
 	else if											(current_reconstruction_data_drive == drive_D)			
 		reconstruction_data_directory 				= reconstruction_data_directory_drive_D;
 	if												(current_reconstruction_data_type == simulated_data) 			
-		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
+		TEST_BATCH_DIR 								= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
 	else if											(current_reconstruction_data_type == experimental_data)	
-		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
+		TEST_BATCH_DIR 								= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
 	
 	//TEST_BATCH_DIR 								= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-	TEST_BATCH_DIR 							= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-	PROMPT_TEST_BATCH_DIR=false;
-	if(PROMPT_TEST_BATCH_DIR)
-		TEST_BATCH_DIR 						= getDirectory("Choose a Directory");
-	else
-		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	TEST_BATCH_DIR 									= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	//PROMPT_TEST_BATCH_DIR=true;
+	//if(PROMPT_TEST_BATCH_DIR)
+	//	TEST_BATCH_DIR 								= getDirectory("Choose a Directory");
+	//else
+	//	TEST_BATCH_DIR 								= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	////TEST_BATCH_DIR 								= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		    
 	
+	////TEST_BATCH_DIR = "D:\\pCT\\pCT_data\\reconstruction_data\\CTP404_Sensitom\\Experimental\\B_25600";
+	//print(TEST_BATCH_DIR);
+	////TEST_BATCH_DIR 								= RECON_DATA_DIR + PHANTOM_NAME_FOLDER + EXPERIMENTAL_DATA_FOLDER + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
 	// ImageJ macro & execution parameters/settings/configurations/logging file info
+ 	GITHUB_MACRO_CONFIGS_FOLDER						= "AnalysisConfigs";
+ 	GITHUB_MACRO_CONFIGS_SUBDIR						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + GITHUB_MACRO_CONFIGS_FOLDER;
 	parameter_test_info_basename					= "Test_Parameters_";
 	ANALYSIS_LOG_FNAME 								= "AnalysisLog.nfo";
 	OTVS_dir_suffix									= "_OTVS";
 	ROI_definitions_filename_suffix					= "_ROIs" + TXT;	
 	ROI_definitions_filename						= phantom_basename + ROI_definitions_filename_suffix;
-	ROI_definitions_file_path						= github_macro_directory_pCT_Collaboration + FOLDER_SEPARATOR + ROI_definitions_filename;
+	ROI_definitions_file_path						= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + ROI_definitions_filename;
+	autobreak_filename 								= "autobreak.txt";
+	auto_break_path 								= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + autobreak_filename;
+	material_RSP_defs_filename 						= "material_RSP_defs.txt";
+	material_RSP_defs_path 							= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + material_RSP_defs_filename;
 		
 	// Input/Output directory/subdirectory names/prefixes 
 	iteration_2_analyze_folder_prefix 				= "Iteration_";
@@ -467,6 +499,7 @@ macro "merge_data"
 		TEST_BATCH_DIR							= macroargs[2];
 	else if(PROMPT_TEST_BATCH_DIR)
 		TEST_BATCH_DIR 							= getDirectory("Choose a Directory");
+	print(TEST_BATCH_DIR);
 	DONT_KILL_LOOP					= true;
 	//DONT_KILL_LOOP					= false;
 	DEBUG_LOOP_KILL_INDEX			= 0;
@@ -484,6 +517,7 @@ macro "merge_data"
     //run("Select None");
     setBatchMode					(true);	
 	//setBatchMode					(false);
+	exit();
 	//***********************************************************************************************************************************************************************************************//
 	//***********************************************************************************************************************************************************************************************//
 	//***********************************************************************************************************************************************************************************************//
@@ -493,7 +527,7 @@ macro "merge_data"
 	//***********************************************************************************************************************************************************************************************//
 	ROI_parameter_decodings							= newArray(ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_strings_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_numbers_decoding_op, ROI_definition_strings_decoding_op);		
 	ROI_definitions_parameter_list					= newArray("ROI_material_names", "ROI_labels", "ROI_label_nicknames", "ROI_shapes", "ROI_diameters", "ROI_selection_radii", "ROI_profile_radius_beyond_ROI", "bulk_material" );
-	ROI_parameter_strings							= file_2_key_value_pairs(github_macro_directory_pCT_Collaboration, ROI_definitions_filename, phantom_basename, 	ROI_definitions_parameter_list, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, print_ROI_definitions_path);		
+	ROI_parameter_strings							= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ROI_definitions_filename, phantom_basename, 	ROI_definitions_parameter_list, ROI_parameter_decodings, ROI_definition_numbers_decoding_op, print_ROI_definitions_path);		
 	ROI_material_names 								= ROI_parameter_string_2_values(0, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);	
 	ROI_labels 										= ROI_parameter_string_2_values(1, ROI_parameter_strings,  	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);
 	ROI_label_nicknames 							= ROI_parameter_string_2_values(2, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);					//bulk_material = bulk_material[0];
@@ -502,8 +536,8 @@ macro "merge_data"
 	ROI_selection_radii 							= ROI_parameter_string_2_values(5, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, FORCE_VALUE_2_ARRAY		);
 	ROI_profile_radius_beyond_ROI	 				= ROI_parameter_string_2_values(6, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, DONT_FORCE_VALUE_2_ARRAY	);	//ROI_profile_radius_beyond_ROI = ROI_profile_radius_beyond_ROI[0];
 	bulk_material 									= ROI_parameter_string_2_values(7, ROI_parameter_strings, 	ROI_parameter_decodings, ROI_definition_numbers_decoding_op, DONT_FORCE_VALUE_2_ARRAY	);					//bulk_material = bulk_material[0];
-	bulk_material_RSP 								= ROI_material_name_2_RSP(bulk_material, simulated_scan);
-	ROI_material_RSPs 								= ROI_material_names_2_RSPs(ROI_material_names, simulated_scan);
+	bulk_material_RSP 								= ROI_material_name_2_RSP(bulk_material, SIMULATED_SCAN);
+	ROI_material_RSPs 								= ROI_material_names_2_RSPs(ROI_material_names, SIMULATED_SCAN);
 	num_ROIs_2_analyze 								= ROI_material_names.length; 						// # of material ROI ROIs in phantom
 	print_ROI_definitions							();
 	//print_ROI_definitions						();
@@ -517,7 +551,7 @@ macro "merge_data"
 	IJIO_precision_image							= 5;
 	IJIO_precision_CSV								= 6;
 	IJIO_precision_image							= 5;
-	IJIO_ResultsTable_extension 					= ".csv";
+	IJIO_ResultsTable_extension 					= CSV;
 	IJIO_ResultsTable_options 						= "copy_column copy_row save_column save_row";
 	IJIO_jpeg_quality 								= 85;
 	IJIO_transparent_index 							= -1;
@@ -544,7 +578,7 @@ macro "merge_data"
 	iterations_2_analyze_string_precision 			= 0;										// # of digits after decimal point to use in conversion of iteration # to string 	
 	//recon_iterations_2_analyze					= Array.slice(SEQUENTIAL_VALUES_ARRAY, 1, last_iteration_2_analyze + 1);
 	recon_iterations_2_analyze						= sequential_value_array(1, last_iteration_2_analyze + 1);
-	recon_iterations_2_analyze_strings 				= getStringSequence(1, recon_iterations_2_analyze.length, 0);
+	recon_iterations_2_analyze_strings 				= getStringSequence(1, recon_iterations_2_analyze.length, iterations_2_analyze_string_precision);
 	first_slice_2_analyze							= 11;
 	last_slice_2_analyze							= 11;
 	//slices_2_analyze								= Array.slice(SEQUENTIAL_VALUES_ARRAY, first_slice_2_analyze, last_slice_2_analyze + 1);
@@ -592,7 +626,7 @@ macro "merge_data"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------- Specifications used to identify file containing specifications of parameters of parameter value test -------------------------------------------------------//
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	parameter_test_number							= 1;
+	parameter_test_number							= 6;
 	parameter_test_info_filename					= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
 	parameter_test_info 							= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, print_input_data_path);
 	num_parameters 									= parameter_test_info.length;
@@ -804,7 +838,7 @@ macro "merge_data"
 	ROI_multiplot_table_title_dimensions		= newArray(title_start_column, 		title_start_row, 	title_row_separation, 	ROI_multiplot_table_total_columns);
 	ROI_multiplot_table_titles 					= table_grid_row_array_duplication( ROI_labels, num_ROI_multiplot_tables);
 	//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	num_TV_tables								= TV_table_titles.length;
+	num_TV_tables								= TV_TABLE_TITLES.length;
 	num_TV_multiplot_tables						= num_multiplot_parameter_values * num_TV_tables;
 	TV_table_first_column						= first_column;
 	TV_table_column_separation					= ROI_table_column_separation;//	= 2;
@@ -820,7 +854,7 @@ macro "merge_data"
 	TV_multiplot_table_grid_columns				= num_TV_tables;
 	TV_multiplot_table_total_columns			= tables_total_columns(TV_table_first_column, TV_multiplot_table_grid_columns, TV_table_columns, TV_table_column_separation);
 	TV_multiplot_table_title_dimensions			= newArray(title_start_column, 		title_start_row, 	title_row_separation, 	TV_multiplot_table_total_columns);
-	TV_multiplot_table_titles 					= table_grid_row_array_duplication( TV_table_titles, num_TV_multiplot_tables);	
+	TV_multiplot_table_titles 					= table_grid_row_array_duplication( TV_TABLE_TITLES, num_TV_multiplot_tables);	
 	//*******************************************************************************************************************************************************************************************//
 	//**** Parameter value test plot and multiplot data array sizing, indexing, and partitioning info used to identify, extract/collect, and plot subets of data ********************************//
 	//*******************************************************************************************************************************************************************************************//	
@@ -1192,8 +1226,8 @@ macro "merge_data"
 							ROI_table_grid_label_indices 				= series_ops(ROI_table_grid_labels_lengths, SERIES_SUMMATION, SERIES_OP_UP_TO_INDEX, EMPTY_ARRAY);
 							//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 							TV_table_grid_titles 						= array_from_data(multiplot_parameter_values_string); 
-							TV_table_grid_labels 						= Array.concat(TV_table_grid_titles, TV_table_titles, TV_table_column_headers, TV_table_row_headers);
-							TV_table_grid_labels_lengths				= Array.concat((TV_table_grid_titles.length), (TV_table_titles.length),(TV_table_column_headers.length),(TV_table_row_headers.length));
+							TV_table_grid_labels 						= Array.concat(TV_table_grid_titles, TV_TABLE_TITLES, TV_table_column_headers, TV_table_row_headers);
+							TV_table_grid_labels_lengths				= Array.concat((TV_table_grid_titles.length), (TV_TABLE_TITLES.length),(TV_table_column_headers.length),(TV_table_row_headers.length));
 							TV_table_grid_label_indices 				= series_ops(TV_table_grid_labels_lengths, SERIES_SUMMATION, SERIES_OP_UP_TO_INDEX, EMPTY_ARRAY);
 							//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 							print_loop_status							(merge_ROI_analysis_section_statement, current_multiplot_analysis_number + 1, PRINT_MAJOR_SECTION);						//"Reading ROI analysis..."
@@ -1495,7 +1529,7 @@ function Appc					(_print_statement, _array)				{ cprint				("-----> " + _print_
 function Aps					(_print_statement, _array)				{ print					(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	print(TAB_STRING + _array[i]);	}
 function Apsc					(_print_statement, _array)				{ cprint				(_print_statement + PADDED_EQUALS_STRING); 	for(i = 0; i < _array.length; i++)	cprint(TAB_STRING + _array[i]);	}
 function Appexit				(_print_statement, _array)				{ App					(_print_statement, _array); 								Ap			(_array);								}
-function autobreak				()										{ autobreak_bool	 	= file_2_array(IJ_macro_directory, autobreak_filename, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
+function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_CONFIGS_SUBDIR, autobreak_filename, !PRINT_PATH);	exitIf(autobreak_bool[0]);				}
 function ceil					(value)									{ return 				conditional_return( (value - round(value) > 0), round(value + 1), round(value) ); 								}
 function clearResults			()										{ run					("Clear Results");																								}
 function Apc					(_array)								{ Array.print			(_array);																										}
@@ -1554,7 +1588,7 @@ function string_cut_last_N_chars(_string, _N)							{ return 				substring(_stri
 //	IJROI_analysis_redirect 							= "None";
 //	IJROI_analysis_CSV_precision 						= IJIO_precision_CSV;
 //	IJROI_analysis_image_precision 						= IJIO_precision_image;
-//	IJIO_ResultsTable_extension 						= ".csv";
+//	IJIO_ResultsTable_extension 						= CSV;
 //	IJIO_ResultsTable_options 							= "copy_column copy_row save_column save_row";
 //	IJIO_jpeg_quality 									= 85;
 //	IJIO_transparent_index 								= -1;
@@ -3898,8 +3932,7 @@ function print_ImageJ_info()
 		print("-------> IJ_macro_directory =\n ", IJ_macro_directory);
 		print("-------> IJ_launch_directory =\n ", IJ_launch_directory);
 		print("-------> IJ_previous_macro =\n ", IJ_previous_macro);
-		print("-------> github_macro_directory_Baylor_ICTHUS =\n ", github_macro_directory_Baylor_ICTHUS);
-		print("-------> github_macro_directory_pCT_Collaboration =\n ", github_macro_directory_pCT_Collaboration);
+		print("-------> GITHUB_MACRO_DIR =\n ", GITHUB_MACRO_DIR);
 		print("-------> reconstruction_data_directory_drive_C =\n ", reconstruction_data_directory_drive_C);
 		print("-------> reconstruction_data_directory_drive_D =\n ", reconstruction_data_directory_drive_D);
 		print("-------> ROI_analysis_macro_filename =\n ", ROI_analysis_macro_filename);

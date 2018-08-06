@@ -14,7 +14,7 @@ macro "merge_data_control"
 	//************************************************************************************ Define Boolean constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
 	PROMPT_TEST_BATCH_DIR							= true;
-	PROMPT_TEST_BATCH_DIR_CONTROLLED							= true;
+	PROMPT_TEST_BATCH_DIR_CONTROLLED				= true;
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ Define Boolean constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
@@ -39,22 +39,65 @@ macro "merge_data_control"
 	//***********************************************************************************************************************************************************************************************//
 	//***************************************************************************** Set reconstruction data directory/file info *********************************************************************//
 	//***********************************************************************************************************************************************************************************************//
+	// Image/data filename and directory prefixes, file extensions, and results table column headings
+	CFG 											= ".cfg";
+	TXT 											= ".txt";
+	CSV 											= ".csv";
+	PNG 											= ".png";
+	GIF 											= ".gif";
+	AVI 											= ".avi";
+	IJM 											= ".ijm";
+	EMPTY_STRING 									= "";										// String constant: empty string
+	SPACE_STRING 									= " ";										// String constant: space character string
+	UNDERSCORE_STRING 								= "_";										// String constant: underscore character string
+	COMMA_STRING 									= ",";										// String constant: comma character string
+	DECIMAL_STRING 									= ".";										// String constant: decimal character string
+	PERIOD_STRING 									= ".";										// String constant: period character string
+	EQUALS_STRING 									= "=";										// String constant: equals character string
+	PLUS_SIGN_STRING 								= "+";										// String constant: equals character string
+	DASH_STRING 									= "-";										// String constant: dash character string
+	RIGHT_CARAT_STRING 								= ">";										// String constant: right carat character string
+	LEFT_BRACKET_STRING 							= "[";										// String constant: right carat character string
+	RIGHT_BRACKET_STRING 							= "]";										// String constant: right carat character string
+	NEWLINE_CMD_STRING								= "\n";
+	TAB_CMD_STRING									= "\t";
+	TAB_AS_SPACES_STRING							= string_tab_construction(USE_TAB_SPACES_STRING, NUM_TAB_SPACES);	
+	TAB_STRING										= string_tab_construction(exporting_log, NUM_TAB_SPACES);	
+	PADDED_EQUALS_STRING 							= SPACE_STRING + EQUALS_STRING + SPACE_STRING;
+	PADDED_PLUS_SIGN_STRING							= SPACE_STRING + PLUS_SIGN_STRING + SPACE_STRING;
+	TRUE_STRING										= "true";
+	FALSE_STRING									= "false";
+	TRUE											= "true";
+	FALSE											= "false";
+	add_operation									= "add";
+	multiply_operation								= "multiply";
+	x_direction										= "x";
+	y_direction										= "y";	 					
+	circular_ROI									= "circle";
+	square_ROI										= "square";		
+	no_compression									= "None";
+	JPEG_compression								= "JPEG";
+	PNG_compression									= "PNG";								
 	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
 	FOLDER_SEPARATOR								= File.separator;
+	//***********************************************************************************************************************************************************************************************//
+	//***************************************************************************** Set reconstruction data directory/file info *********************************************************************//
+	//***********************************************************************************************************************************************************************************************//
 	ImageJ_plugins_directory						= getDirectory("plugins");
 	ImageJ_macro_directory							= getDirectory("macros");
 	ImageJ_program_directory						= getDirectory("imagej") ;
 	ImageJ_launch_directory							= getDirectory("startup");
 	ImageJ_previous_macro							= getInfo("macro.filepath");
-	GITHUB_MACRO_DIR							= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\Tools\\ImageJ";
- 	github_collab_macro_directory					= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
+ 	PCT_RECON_DIR									= "C:\\Users\\Blake\\Documents\\GitHub\\Baylor_ICTHUS\\pCT_Reconstruction\\";
+ 	GITHUB_MACRO_DIR								= "C:\\Users\\Blake\\Documents\\GitHub\\pCT-collaboration\\pCT_Tools\\ImageJ";
+	
  	reconstruction_data_directory_C					= "C:\\Users\\Blake\\Documents\\Education\\Research\\pCT\\pCT_data\\reconstruction_data";
 	reconstruction_data_directory_D					= "D:\\pCT\\pCT_data\\reconstruction_data";
 	ROI_analysis_macro_filename 					= "ROI_Analysis.ijm";
 	ROI_analysis_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_analysis_macro_filename;
 	merge_analysis_macro_filename 					= "merge_data.ijm";
-	merge_ROI_analysis_files_macro_path 			= github_collab_macro_directory + FOLDER_SEPARATOR + merge_analysis_macro_filename;
+	merge_ROI_analysis_files_macro_path 			= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + merge_analysis_macro_filename;
 	multiplotting_macro_filename 					= "Multiplotting.ijm";
 	multiplotting_macro_path 						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + multiplotting_macro_filename;
 	test_result_comparison_macro_filename 			= "Test_Result_Comparison.ijm";
@@ -64,9 +107,9 @@ macro "merge_data_control"
 	experimental_data_folder						= FOLDER_SEPARATOR + "Experimental";
 	output_folder									= FOLDER_SEPARATOR + "Output";
 	geant4_data_folder_basename						= FOLDER_SEPARATOR + "G_";
-	phantom_basename								= "CTP404_Sensitom";
-	//phantom_basename								= "CTP404_Sensitom_4M";
-	phantom_name_folder								= FOLDER_SEPARATOR + phantom_basename;
+	PHANTOM_BASENAME								= "CTP404_Sensitom";
+	//PHANTOM_BASENAME								= "CTP404_Sensitom_4M";
+	PHANTOM_NAME_FOLDER								= FOLDER_SEPARATOR + PHANTOM_BASENAME;
 	run_date										= "15-05-24";
 	//run_date 										= "14-12-11";
 	run_date_folder									= geant4_data_folder_basename + run_date;
@@ -84,50 +127,33 @@ macro "merge_data_control"
 	
 	if(current_reconstruction_data_drive == drive_C)				reconstruction_data_directory 	= reconstruction_data_directory_C;
 	else if(current_reconstruction_data_drive == drive_D)			reconstruction_data_directory 	= reconstruction_data_directory_D;
-	if(current_reconstruction_data_type == simulated_data) 			TEST_BATCH_DIR 			= reconstruction_data_directory + phantom_name_folder + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
-	else if(current_reconstruction_data_type == experimental_data)	TEST_BATCH_DIR 			= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
+	if(current_reconstruction_data_type == simulated_data) 			TEST_BATCH_DIR 			= reconstruction_data_directory + PHANTOM_NAME_FOLDER + simulated_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;
+	else if(current_reconstruction_data_type == experimental_data)	TEST_BATCH_DIR 			= reconstruction_data_directory + PHANTOM_NAME_FOLDER + experimental_data_folder + run_date_folder + run_number_folder + output_folder + preprocess_date_folder + FOLDER_SEPARATOR;		
 
-	//PROMPT_TEST_BATCH_DIR							= false;
-	if(PROMPT_TEST_BATCH_DIR)
-		TEST_BATCH_DIR 						= getDirectory("Choose a Directory");
-	else
-		TEST_BATCH_DIR 						= reconstruction_data_directory + phantom_name_folder + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
-	
-	// Image/data filename and directory prefixes, file extensions, and results table column headings
-	TXT 											= ".txt";
-	CSV 											= ".csv";
-	PNG 											= ".png";
-	GIF 											= ".gif";
-	AVI 											= ".avi";
-	IJM 											= ".ijm";
-	TRUE											= "true";
-	FALSE											= "false";
-	add_operation									= "add";
-	multiply_operation								= "multiply";
-	x_direction										= "x";
-	y_direction										= "y";	 					
-	circular_ROI									= "circle";
-	square_ROI										= "square";		
-	no_compression									= "None";
-	JPEG_compression								= "JPEG";
-	PNG_compression									= "PNG";
-								
 	// Input/output info and data basenames/filenames
-	ROI_definitions_filename_suffix					= "_ROIs" + TXT;	
-	ROI_definitions_filename						= phantom_basename + ROI_definitions_filename_suffix;
-	ROI_definitions_file_path						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + ROI_definitions_filename;
-	reconstructed_image_file_basenames 				= "x_";
-	reconstructed_image_file_short_basenames 		= "x";
-	initial_iterate_filename 						= reconstructed_image_file_basenames + "0" + TXT;	
+ 	GITHUB_MACRO_CONFIGS_FOLDER						= "AnalysisConfigs";
+ 	GITHUB_MACRO_CONFIGS_SUBDIR						= GITHUB_MACRO_DIR + FOLDER_SEPARATOR + GITHUB_MACRO_CONFIGS_FOLDER;
+	MATERIAL_RSP_DEFS_FILENAME 						= "material_RSP_defs.txt";
+	MATERIAL_RSP_DEFS_PATH 							= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + MATERIAL_RSP_DEFS_FILENAME;
+	ROI_DEFINITIONS_FILENAME_SUFFIX					= "_ROIs" + TXT;	
+	ROI_DEFINITIONS_FILENAME						= PHANTOM_BASENAME + ROI_DEFINITIONS_FILENAME_SUFFIX;
+	ROI_DEFINITIONS_FILE_PATH						= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + ROI_DEFINITIONS_FILENAME;
 	AUTO_BREAK_FILENAME 							= "autobreak.txt";
-	AUTO_BREAK_PATH 								= ImageJ_macro_directory + AUTO_BREAK_FILENAME;
-	parameter_test_info_basename					= "Test_Parameters_";
-	specific_data_folders_filename 					= "ROI_analysis_folders.txt";
-	reconstruction_folders_filename 				= "reconstruction_folders.txt";
-	averaging_folders_filename 						= "averaging_folders.txt";
-	multiplot_folders_filename 						= "multiplot_folders.txt";
-	compared_folders_filename 						= "compared_folders.txt";	
+	AUTO_BREAK_PATH 								= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + AUTO_BREAK_FILENAME;
+	ANALYSIS_CFG_INFO_FILENAME						= "analysis.cfg";
+	ANALYSIS_CFG_INFO_FILE_PATH						= GITHUB_MACRO_CONFIGS_SUBDIR + FOLDER_SEPARATOR + ANALYSIS_CFG_INFO_FILENAME;
+	PARAMETER_TEST_INFO_BASENAME					= "Test_Parameters_";
+	AVERAGING_FOLDERS_FILENAME 						= "averaging_folders.txt";
+	COMPARED_FOLDERS_FILENAME 						= "compared_folders.txt";	
+	MULTIPLOT_FOLDERS_FILENAME 						= "multiplot_folders.txt";
+	RECON_FOLDERS_FILENAME 							= "reconstruction_folders.txt";
+	SPECIFIC_DATA_FOLDERS_FILENAME 					= "ROI_analysis_folders.txt";
 	ANALYSIS_LOG_FNAME 								= "AnalysisLog.nfo";
+	RECONSTRUCTED_IMAGE_FOLDER_PREFIX 				= "x";
+	RECONSTRUCTED_IMAGE_FILE_BASENAMES 				= "x_";
+	RECONSTRUCTED_IMAGE_FILE_SHORT_BASENAMES 		= "x";
+	INITIAL_ITERATE_FILENAME 						= RECONSTRUCTED_IMAGE_FILE_BASENAMES + "0" + TXT;	
+
 	//***********************************************************************************************************************************************************************************************//
 	//************************************************************************************** Parameter value arrays *********************************************************************************//
 	//***********************************************************************************************************************************************************************************************//
@@ -146,8 +172,16 @@ macro "merge_data_control"
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	//---------------------------------------------- Specifications used to identify file containing specifications of parameters of parameter value test -------------------------------------------------------//
 	//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-	parameter_test_number						= 1;
-	parameter_test_info_filename				= parameter_test_info_basename + d2s(parameter_test_number, 0)  + TXT;
+	PROMPT_TEST_BATCH_DIR							= true;
+	PROMPT_TEST_BATCH_DIR_CONTROLLED				= true;
+	if(PROMPT_TEST_BATCH_DIR)
+		TEST_BATCH_DIR 						= getDirectory("Choose a Directory");
+	else
+		TEST_BATCH_DIR 						= reconstruction_data_directory + PHANTOM_NAME_FOLDER + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
+	print(TEST_BATCH_DIR);
+	
+	parameter_test_number						= 6;
+	parameter_test_info_filename				= PARAMETER_TEST_INFO_BASENAME + d2s(parameter_test_number, 0)  + TXT;
 	parameter_test_info 						= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, false);
 	num_parameters 								= parameter_test_info.length;
 	parameter_values 							= newArray();
@@ -177,6 +211,7 @@ macro "merge_data_control"
 	allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A");
+
 	App("", parameter_values);
 	for(i = 0; i < num_parameters - 1; i++)
 	{
@@ -194,7 +229,7 @@ macro "merge_data_control"
 //************************* User defined function definitions ***************************************************************************************************************************************//
 //***************************************************************************************************************************************************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_DIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);						}
+function autobreak				()										{ autobreak_bool	 	= file_2_array(GITHUB_MACRO_CONFIGS_SUBDIR, AUTO_BREAK_FILENAME, !PRINT_PATH);	exitIf(autobreak_bool[0]);						}
 function earlyExit				(_print_statement)						{ print					("Early Exit:" + _print_statement); 						exit		();											}
 function endProgram				(_print_statement)						{ print_section			("Execution Complete:" + _print_statement, PRINT_MAJOR_SECTION); exit	();											}
 function exitIf					(_exit_condition)						{ if					(_exit_condition)											exit		();											}
@@ -309,9 +344,9 @@ function file_2_float_array(path, filename, print_path)
 	INPUT_FILE_LIST	= Array.concat(INPUT_FILE_LIST, file_path);			
 	return array;
 }
-function file_2_key_value_pairs(_ROI_definitions_directory, _ROI_definitions_filename, _phantom_basename, _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _print_ROI_definitions_path)
+function file_2_key_value_pairs(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME, _PHANTOM_BASENAME, _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _print_ROI_definitions_path)
 {
-	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_directory, _ROI_definitions_filename, _print_ROI_definitions_path);
+	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME, _print_ROI_definitions_path);
 	_num_ROI_key_value_pairs					= _ROI_definition_file_key_value_pairs.length;
 	_ordered_ROI_parameter_strings				= newArray(_num_ROI_key_value_pairs);
 	for(i = 0; i < _num_ROI_key_value_pairs; i++)
@@ -800,7 +835,7 @@ function import_multiplot_comparison_data(_TEST_BATCH_DIR, _source_subdirectory,
 		print					("           from:\n" + _path);
 		if(_file_extension == ".txt")
 			_compared_data		=  file_2_array(_path, _source_filename, false);
-		else if(_file_extension == ".csv")
+		else if(_file_extension == CSV)
 			_compared_data		=  csv_2_array(_path, _source_filename, _CSV_column_headings, _CSV_num_rows, ROW_MAJOR, false);		
 		else
 		{

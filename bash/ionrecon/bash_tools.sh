@@ -53,6 +53,11 @@ alias findfn='compgen -A function | grep'
 alias findal='compgen -a | grep'
 alias finddefof='declare -f|grep'
 alias getpbsnodelist='pbsnodes -a | grep -v = | sed '/^\s*$/d'| sort -d'
+alias delnp='tr -dc '[[:print:]]' '
+alias cutcr="tr -d '\n'"
+alias trimsp='sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//''
+alias trim='sed -e 's/^[[:space:]\t\n\r\f]*//' -e 's/[[:space:]\t\n\r\f]*$//''
+#alias trimall='sed -e 's/^[[:space:]\t\n\r\f]*//' -e 's/[[:space:]\t\n\r\f]*$//''
 #for fn in $(compgen -A function |grep tx | tr '\n' ' ');do echo "it=$fn"; done
 #for fn in $(declare -F |grep tx | sed -r 's/^declare -f//'| tr '\n' ' ');do declare -f "$fn"; done
 #compgen -u
@@ -77,9 +82,8 @@ alias getpbsnodelist='pbsnodes -a | grep -v = | sed '/^\s*$/d'| sort -d'
 #-------------------------------------------------------------------------------------------------#
 function now() { date +"%T %Z (%a) %m-%d-%Y"; }
 function current_date() { date +"%y-%m-%d"; }
-function returnval() { eval "$@" && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; }; }
-#function returnval() { $1 && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; }; }
-#function returnval() { $1; echo $?; }
+#function exitcode() { $1 && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; }; }
+#function exitcode() { $1; echo $?; }
 function refvar_assign() { if [[ -n $1 ]]; then eval $1=\"\${$2}\"; fi; }
 #-------------------------------------------------------------------------------------------------#
 function optcount()
@@ -105,21 +109,92 @@ function optcount()
 #-------------------------------------------------------------------------------------------------#
 function dec2int() { echo "scale=0; $@/1" | bc ; }
 #-------------------------------------------------------------------------------------------------#
+function isnumber()
+{
+    if [[ $1 =~ $NUMBER_REGEXP ]]; then return 0
+    else return 1; fi
+}
+#-------------------------------------------------------------------------------------------------#
 function is_integer()
 {
-    re='^[0-9]+$'
-    if [[ $1 =~ $re ]]; then return 0
+    if [[ $1 =~ $INTEGER_REGEXP ]]; then return 0
     else return 1; fi
+}
+#-------------------------------------------------------------------------------------------------#
+function isfloat()
+{
+    local OPTIND
+    local regexp=$FLOAT_REGEXP
+    for arg in "$@"; do
+        shift
+        case "$arg" in
+            --no*=*|--allow*=*|--any*=*)      set -- "$@" "-n";;
+            --only*=*|--dis*=*|--req*=*)      set -- "$@" "-r";;
+            *)                                set -- "$@" "$arg";;
+        esac
+    done
+    while getopts 'nNbBrRtT' opt; do
+        case $opt in
+            n|N|b|B) regexp=$FLOAT_REGEXP;;
+            r|R|t|T) regexp=$SUFFIXED_FLOAT_REGEXP;;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+    if [[ $1 =~ $regexp && ${#1} != 1 ]]; then return 0
+    else return 1; fi
+}
+#-------------------------------------------------------------------------------------------------#
+#----------------------------- numeric string operations/manipulations ---------------------------#
+#-------------------------------------------------------------------------------------------------#
+function setprecision() { echo "scale=$2; $1/1" | bc | sed -r 's/^(-?)\./\10./'; }
+#-------------------------------------------------------------------------------------------------#
+function setprecisions() 
+{ 
+    local valsname=$1[@]
+    local vals=("${!valsname}")
+    local setvals=()
+    for val in ${vals[@]}
+    do
+        setvals+=( $(setprecision $val $2) )
+    done
+    setprecisions_var=${3:-REPLY}
+    refarr_assign $setprecisions_var setvals
+    echo "${setvals[@]}"
 }
 #-------------------------------------------------------------------------------------------------#
 #------------------------------ bash string operations/manipulations -----------------------------#
 #-------------------------------------------------------------------------------------------------#
 function evaltabs() { eval echo \"\${$1}\" | expand; }
 function charrep() { printf '%*s' "$2" | tr ' ' "$1" ; }
+function trimall() { printf "$1" | sed -e 's/^[[:space:]\t\n\r\f]*//' -e 's/[[:space:]\t\n\r\f]*$//'; }
+function trim_whitespace() { printf "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+function pipe_trimall() { sed -e 's/^[[:space:]\t\n\r\f]*//' -e 's/[[:space:]\t\n\r\f]*$//'; }
+function pipe_trimsp() { sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'; }
+function cut_prefix() { sed -e 's/^'"$1"'//gi'; }  
+function cut_suffix() { sed -e 's/'"$1"'$//gi'; }
+#function cutif_prefix() { echo $1 | eval sed -r 's/^"$2"\(.*\)/\\1/'; }  
+#function cutif_suffix() { echo $1 | eval sed -r 's/\(.*\)"$2"$/\\1/'; }
+#function cutif_prefix() { printf $1 | sed -e 's/^'"$2"'//gi'; }  
+#function cutif_suffix() { printf $1 | sed -e 's/'"$2"'$//gi'; }
+function cutif_prefix() { printf $2 | sed -e 's/^'"$1"'//gi'; }  
+function cutif_suffix() { printf $2 | sed -e 's/'"$1"'$//gi'; }
 function char_matches() { num_occurrences=$(grep -o "$2" <<< "$1" | wc -l); REPLY=$num_occurrences; }
-function cutif_prefix() { echo $1 | eval sed -r 's/^"$2"\(.*\)/\\1/'; }  
-function cutif_suffix() { echo $1 | eval sed -r 's/\(.*\)"$2"$/\\1/'; }
+function setprecision() { echo "scale=$2; $1/1" | bc | sed -r 's/^(-?)\./\10./'; }
 #-------------------------------------------------------------------------------------------------#
+function setprecisions() 
+{ 
+    local valsname=$1[@]
+    local vals=("${!valsname}")
+    local setvals=()
+    for val in ${vals[@]}
+    do
+        setvals+=( $(setprecision $val $2) )
+    done
+    setprecisions_var=${3:-REPLY}
+    refarr_assign $setprecisions_var setvals
+    echo "${setvals[@]}"
+}
 function tolowercase()
 {
     #lower=$(echo "$1" | tr '[:upper:]' '[:lower:]')
@@ -129,6 +204,47 @@ function touppercase()
 {
     #lower=$(echo "$1" | tr '[:lower:]' '[:upper:]')
     echo "$1" | awk '{print toupper($0)}'
+}
+function addto_string () 
+{
+    local OPTIND
+    local prefix=''
+    local suffix=''
+    local addto_string_var='REPLY'
+    while getopts 'p:s:v:' opt; do
+        case $opt in
+            p) prefix=${OPTARG};;
+            s) suffix=${OPTARG};;
+            v) addto_string_var=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+    local strout="${prefix}${1}${suffix}"
+    refvar_assign "$addto_string_var" strout
+}
+function addto_strings () 
+{    
+    local OPTIND
+    local prefix=''
+    local suffix=''
+    local addto_strings_var='REPLY'
+    while getopts 'p:s:v:' opt; do
+        case $opt in
+            p) prefix=${OPTARG};;
+            s) suffix=${OPTARG};;
+            v) addto_strings_var=${OPTARG};;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+    local strout_arr=()
+    for str in "$@"; do 
+         strout_arr+=( ${prefix}${str}${suffix} )
+    done
+    #refarr_assign "$addto_strings_var" strout
+    refarr_assign $addto_strings_var strout_arr
+    #echoif $echo_on "${arr[*]}"
 }
 #----------------------------------------------------------------------------------------------------#
 #----------------------------------- File/Directory Path Manipulation -----------------------------------#
@@ -234,7 +350,7 @@ function numbered_dirs_orig()
     local num_chars=${#oldending}
     local check_index=$((num_chars + 1))
     for dir in $(dirsarr -p); do 
-        local numbered_dir=$(returnval is_integer "${dir:(-${check_index}):1}")
+        local numbered_dir=$(exitcode is_integer "${dir:(-${check_index}):1}")
         if [[ "${dir:(-${num_chars})}" == "${oldending}" && $numbered_dir == $TRUE_VAL ]]; then
             #echo ${str#*:}
             #echo ${str//:*/ }
@@ -282,7 +398,7 @@ function numbered_dirs()
         end=${dir##*_}
         last_index=$((${#dir} - ${#end} - 2))
         #last_index=$((${#dir} - $(echo $end | tr -d '\n' | wc -m) - 2))
-        local numbered_dir=$(returnval is_integer "${dir:$last_index:1}")
+        local numbered_dir=$(exitcode is_integer "${dir:$last_index:1}")
         if [[ ( "${dir:(-${num_chars})}" == "${oldending}" && $numbered_dir == $TRUE_VAL )|| ( $num_chars == 0&& $numbered_dir == $FALSE_VAL ) ]]; then
             if [[ "$newending" == "$oldending" ]]; then echoif $echo_on "${dir}"
             else
@@ -298,7 +414,7 @@ function numbered_dirs()
 function rename_statement() { echoif $1 "Renaming $2...\n${FROM_LEADER}${3}\n${TO_LEADER}${4}"; }
 function getdirsarr() { printf '%s\n' $(command ls); }
 function refarr_assign() { if [[ -n $1 ]]; then eval $1=\(\"\${$2\[\@\]}\"\); fi; }
-function dirsarr()
+function dirsarr() 
 {
     local OPTIND
     local echo_on=$FALSE
@@ -313,11 +429,6 @@ function dirsarr()
     target_arr=${1:-REPLY}
     refarr_assign $target_arr arr
     echoif $echo_on "${arr[*]}"
-}
-function echoif()
-{
-    local bool_val=$(setbool $1)
-    if [[ $bool_val == $TRUE_VAL ]]; then echo "${2}"; fi
 }
 function qsort() 
 {
@@ -359,55 +470,56 @@ function qsort()
 # }
 function dcount() 
 { 
-    target=.
-    maxdepth=1
-    optstring='p:m:'
-    while getopts $optstring opt; do
+    local OPTIND
+    local maxdepth=1
+    while getopts 'p:m:' opt; do
         case $opt in
-            p) target=${OPTARG};;
             m) maxdepth=${OPTARG};;
             #n) node_name_flag='true';;
             *) error "Unexpected option ${flag}";;
         esac
     done   
+    shift $(( OPTIND - 1 ))
+    local target="${1:-.}"
     find ${target} -maxdepth ${maxdepth} -type d -print| wc -l
 }
 function fcount() 
 { 
-    target="."
-    maxdepth=1
-    optstring='p:m:'
-    while getopts $optstring opt; do
+    local OPTIND
+    local maxdepth=1
+    while getopts 'p:m:' opt; do
         case $opt in
-            p) target=${OPTARG};;
             m) maxdepth=${OPTARG};;
             #n) node_name_flag='true';;
             *) error "Unexpected option ${flag}";;
         esac
     done   
+    shift $(( OPTIND - 1 ))
+    local target="${1:-.}"
     find ${target} -maxdepth ${maxdepth} -type f -print| wc -l
 }
 function lsdirs() 
 { 
-    dirs=$(find -maxdepth 1 -type d -printf "%f\n")
+    local dirs=$(find -maxdepth 1 -type d -printf "%f\n")
     string_2_array $dirs    
-    dirs_array=( ${qsort_ret[@]} )
+    local dirs_array=( ${qsort_ret[@]} )
+    printf '%s\n' ${dirs_array[@]}
     REPLY="${dirs_array[@]}"
     IFS=$DEFAULT_IFS   
 }
 function lsm()
 {
     local OPTIND
-    match_string='*'
-    depth='1'
-    filename_string=''
-    filename='lsm_results.txt'
-    verbose_string=''
-    mtime='' 
-    mtime_string=''
-    file_type='d'
-    period_identifier="days"
-    age=''
+    local match_string='*'
+    local depth='1'
+    local filename_string=''
+    local filename='lsm_results.txt'
+    local verbose_string=''
+    local mtime='' 
+    local mtime_string=''
+    local file_type='d'
+    local period_identifier="days"
+    local age=''
     while getopts 'vm:d:f:o:t:sIMCAR' opt; do
         case $opt in
             v) verbose_string='-printf %f\n';;
@@ -446,6 +558,9 @@ function lsm()
     print "Search results:\n$results" 0,32 6,40 underline
     print_newline
 }
+function ls_empty_dirs() { find "${1:-.}" ${2:--maxdepth 1} -type d -empty | sed -e 's/^\(\.\/\)//gi' ; }
+function del_empty_dirs() { find "${1:-.}" ${2:--maxdepth 1} -type d -empty -delete; }
+#----------------------------------------------------------------------------------------------------#
 function cp2k() 
 { 
     target="."
@@ -830,13 +945,14 @@ function printc()
             *)                              set -- "$@" "$arg";;
         esac
     done
-    while getopts 'b:t:f:c:s:' opt; do
+    while getopts 'b:t:f:c:s:i:' opt; do
         case $opt in
             b) background_code=${OPTARG// /};;
             t) text_code=${OPTARG// /};;
             f) format_code=${OPTARG// /};;
             c) full_code=${OPTARG// /}; build_code=$FALSE;;
             s) skip_lines=${OPTARG// /};;
+            i) print_condition=${OPTARG};;
             *) error "Unexpected option ${flag}";;
         esac
     done
@@ -845,9 +961,9 @@ function printc()
     if [[ "${build_code}" == $TRUE ]]; then 
         full_code="${text_code};${background_code};${format_code}"
     fi
-    full_code="${ESCAPE_SEQUENCE}${full_code//,/;}m"
+    full_code="${OPEN_COLOR_ESCAPE_SEQ}${full_code//,/;}m"
     if [ ${skip_lines} == 'before' -o ${skip_lines} == 'both' ]; then print_newline; fi
-    printf "${full_code}${print_statement}${CLOSE_COLOR_ESCAPE_SEQ}"
+    echo "${full_code}${print_statement}${CLOSE_COLOR_ESCAPE_SEQ}"
     if [ ${skip_lines} == 'after' -o ${skip_lines} == 'both' ]; then print_newline; fi
 }
 function print_key_value()
@@ -859,11 +975,12 @@ function print_key_value()
     for arg in "$@"; do        
         shift
         case "$arg" in
-            --skip=*) skip_lines="${arg#*=}";;
+            #--skip=*) skip_lines="${arg#*=}";;
+            --skip=*)       set -- "$@" "-s ${arg#*=}";;
             *)              set -- "$@" "$arg"
         esac
     done
-    while getopts 'c:C:k:K:v:a:A:' opt; do
+    while getopts 'c:C:k:K:v:a:A:s:' opt; do
         case $opt in
             c) key_color_coding=${OPTARG};;
             C) value_color_coding=${OPTARG};;
@@ -872,6 +989,7 @@ function print_key_value()
             v) value=${OPTARG};;
             a) colstart=${OPTARG}; keyval_sep_fmt='c';;
             A) colstart=${OPTARG}; keyval_sep_fmt='C';;
+            s) skip_lines=${OPTARG};;
             *) error "Unexpected option ${flag}";;
         esac
     done
@@ -994,14 +1112,23 @@ function print_program_version()
     echo -e "$( $2 )${NOCOLOR} $3"
 }
 #---------------------------------------------------------------------------------------------------#
+#---------------------------- conditional control of function execution ----------------------------#
+#---------------------------------------------------------------------------------------------------#
+function exitcode() { eval "$@" && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; }; }
+#function conditional_exec() { if test $(exitcode isbool $1)  == $TRUE_VAL; then $2 "${@:3}"; fi; }
+function conditional_exec() { if test $(exitcode isbool $1)  == $TRUE_VAL; then "${@:2}"; fi; }
+function echoif() { conditional_exec $1 echo "${@:2}";}
+function printcif() { conditional_exec $1 printc "${@:2}";}
+function print_keyvalif() { conditional_exec $1 print_key_value "${@:2}";}
+#---------------------------------------------------------------------------------------------------#
 #-------------------- bash logic and Boolean equivalent assignments/operations ---------------------#
 #---------------------------------------------------------------------------------------------------#
 function success() { [ $? -gt 0 ] && echo $FALSE_VAL || echo $TRUE_VAL;}
 function failure() { [ $? -eq 0 ] && echo $FALSE_VAL || echo $TRUE_VAL;}
-function bool_2_name() { tobool ${1} && { echo "${TRUE}"; } || { echo "${FALSE}"; } }
-function bool_2_val() { tobool ${1} && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; } }
-function bool_2_string() { tobool ${1} && { echo "${TRUE_STRING}"; } || { echo "${FALSE_STRING}"; } }
-function setbool() { returnval "bool $1 && test -n $1"; }
+function bool_2_name() { isbool ${1} && { echo "${TRUE}"; } || { echo "${FALSE}"; } }
+function bool_2_val() { isbool ${1} && { echo "${TRUE_VAL}"; } || { echo "${FALSE_VAL}"; } }
+function bool_2_string() { isbool ${1} && { echo "${TRUE_STRING}"; } || { echo "${FALSE_STRING}"; } }
+function setbool() { exitcode "isbool $1 && test -n $1"; }
 function ismember() { for elem in "${@:2}"; do if [[ "$1" == $elem ]]; then return 0; fi; done; return 1 ; }
 #---------------------------------------------------------------------------------------------------#
 function bool_by_type()
@@ -1045,7 +1172,7 @@ function bool_by_type()
     refvar_assign $bool_var bool_val
     if [[ $echo_on == $TRUE ]]; then echo $bool_val; fi
 }
-function bool()
+function isbool()
 {
     test "${1}" == "${TRUE}" -o "${1}" == "${TRUE_STRING}"  -o "${1}" == "${TRUE_VAL}"  && return 0 
     test "${1}" == "${ON}" -o "${1}" == "${ON_STRING}"  -o "${1}" == "${ON_VAL}"  && return 0 
@@ -1073,6 +1200,25 @@ function string_2_array()
     qsort "${string_array[@]}"
     REPLY="${qsort_ret[@]}"
 }
+#----------------------------------------------------------------------------------------------------#
+#function ls_empty_dirs() { find "${1:-.}" ${2:--maxdepth 1} -type d -empty | sed -e 's/^\(\.\/\)//gi' ; }
+#function del_empty_dirs() { find "${1:-.}" ${2:--maxdepth 1} -type d -empty -delete; }
+#find -type f \( -name "hull*" -o -name "FBP*" \) -exec rm {}    
+#find Simulated/ -type f \( -name "*.bin" -o -name "hull*" -o -name "FBP*" \) -delete
+#find \( -name "hull*" -o -name "FBP*" \) -print0
+#find ./ -type f \( -name "*.bin" -o -name "hull*" -o -name "FBP*" -o -name "MSC*" \) -delete
+# addto_string -p prefix -s suffix -v addto_string_var
+# arr=( "*.bin" "hull*" "FBP*" "MSC*" )
+# pre=" -name "
+# suf=" -o"
+# function array_2_string() 
+# {    
+    # for elem in "${@:2}"; do
+        # echo "${1}${elem}${@:3}"
+    # done
+# }
+# array_2_string "${pre}" "${arr[@]}" "${suf}"
+# array_2_string "${pre}" "${arr[@]}" "${suf}"
 function array_member_test () 
 {
     local OPTIND
@@ -1105,8 +1251,8 @@ function array_member_test ()
     done
     shift $(( OPTIND - 1 ))
     local arrstr="${@:2}"
-    #is_member=$(returnval "ismember $1 ${arrstr}" )
-    is_member=$( returnval ismember $node_state ${@:2} )
+    is_member=$(exitcode "ismember $1 ${arrstr}" )
+    #is_member=$( exitcode ismember $node_state ${@:2} )
     bool_by_type -v $is_member_var "${return_type}" $is_member
     if [[ $echo_on == $TRUE ]]; then echo ${!is_member_var}; fi
     return $is_member
@@ -1209,6 +1355,29 @@ function printarr()
     passarr $1
     for item in ${array[@]}; do echo "${item}"; done
 }
+function get_combo_index()
+{
+    local index=$1
+    name1=$2[@]
+    name2=$3[@]
+    name3=$4[@]
+    numvals=("${!name1}")
+    vals_offsets=("${!name2}")
+    vals_repeats=("${!name3}")
+    combo_index=0
+    combo_vals_indices=()
+    for repsloc in ${vals_repeats[@]}
+    do
+        div=$(($index / $repsloc))
+        modv=$(( $div % ${numvals[$combo_index]}))
+        param_vals_index=$(($modv + ${vals_offsets[$combo_index]}))
+        combo_vals_indices+=($param_vals_index)
+        combo_index=$(($combo_index+1))
+    done
+    get_combo_index_varname=${5:-REPLY}
+    refarr_assign $get_combo_index_varname combo_vals_indices
+    #export REPLY=${combo_vals_indices[@]}
+}
 #------------------------------------------------------------------------------------------------------------#
 #---------------------------------- PBS queue manager queries/interactions ----------------------------------#
 #------------------------------------------------------------------------------------------------------------#
@@ -1220,6 +1389,20 @@ function getpbsnodes ()
     local nodes=( $(getpbsnodearray) )      
     printf '%s\n' ${nodes[@]}
 }
+function pbsnodefieldline() { pbsnodes $1 | sed -r -n -e '/'"$2"'/p';  }
+function pbsnodefield() { pbsnodefieldline $1 "$2" | trimsp; }
+#function pbsnodefieldval() { echo "$1" | trimall |tr -dc '[[:print:]]'; }
+#function pbsnodefieldval() { pbsnodefield $1 "$2" | sed -e 's/^'"$2 = "'//gi'; }
+function pbsnodefieldval() { pbsnodefield $1 "$2" | cut_prefix "$2 = "; }
+function pbstardisnodes () 
+{
+    local tardis_nodes=()
+    for node in "${allnodes[@]}"; do
+        node_queue=$( pbsnodefieldval "$node" 'queue' )
+        if [[ ${node_queue} == 'tardis' ]]; then tardis_nodes+=(${node}); fi
+    done
+    echo "${tardis_nodes[@]}"
+}
 function pbsavailnodes () 
 {
     unset avail_qnodes; avail_qnodes=()
@@ -1227,34 +1410,25 @@ function pbsavailnodes ()
     local requested_info=(${@:2})
     local qnodes=()
     for node in "${allnodes[@]}"; do
-        node_queue=$( pbsnodefield "$node" 'queue' )
+        node_queue=$( pbsnodefieldval "$node" 'queue' )
         if [[ ${node_queue} == "$1" ]]; then qnodes+=(${node}); fi
     done
     for node in "${qnodes[@]}"; do
-        node_state=$(pbsnodefield "$node" 'state' | tr ',' ' ')
-        node_pcpus=$(pbsnodefield "$node" 'pcpus')
+        node_state=$(pbsnodefieldval "$node" 'state' | tr ',' ' ')
+        node_pcpus=$(pbsnodefieldval "$node" 'pcpus')
         #array_member_test -p -s $node_state "${UNAVAILABLE_NODE_STATES[@]}" 
-        is_member=$( returnval ismember $node_state ${UNAVAILABLE_NODE_STATES[@]} )
+        is_member=$( exitcode ismember $node_state ${UNAVAILABLE_NODE_STATES[@]} )
         if [[ $is_member != $TRUE_VAL ]]; then 
             avail_qnode_info=':'
             for info in "${requested_info[@]}"; do
-                avail_qnode_info="${avail_qnode_info} ${info}=$(pbsnodefield $node $info),"
+                avail_qnode_info="${avail_qnode_info} ${info}=$(pbsnodefieldval $node $info),"
             done
             avail_qnodes+=("${node}${avail_qnode_info%?}")
         fi
     done
     echo "${avail_qnodes[@]}"
 }
-function pbsavailtardisnodes () { avail_tardis_nodes=( $(pbsavailnodes tardis ${@}) ); }
-function pbstardisnodes () 
-{
-    local tardis_nodes=()
-    for node in "${allnodes[@]}"; do
-        node_queue=$( pbsnodefield "$node" 'queue' )
-        if [[ ${node_queue} == 'tardis' ]]; then tardis_nodes+=(${node}); fi
-    done
-    echo "${tardis_nodes[@]}"
-}
+function pbsavailtardisnodes () { pbsavailnodes tardis ${@}; }
 function pbsqnodes () 
 {
     local OPTIND
@@ -1291,15 +1465,15 @@ function pbsqnodes ()
     if [[ "$queue" == 'all' ]]; then qnodes=(${allnodes[@]}); else 
         qnodes=()
         for node in "${allnodes[@]}"; do
-            node_queue=$( pbsnodefield "$node" 'queue' )
+            node_queue=$( pbsnodefieldval "$node" 'queue' )
             if [[ ${node_queue} == "$queue" ]]; then qnodes+=(${node}); fi
         done
     fi
     #echo "qnodes=\n${qnodes[@]}"
     if [[ $availabiles == $ON ]]; then  
         for node in "${qnodes[@]}"; do
-            node_state=$(pbsnodefield "$node" 'state' | tr ',' ' ' | tr -d '<' | tr -d '>' )
-            is_member=$( returnval ismember $node_state ${UNAVAILABLE_NODE_STATES[@]} )
+            node_state=$(pbsnodefieldval "$node" 'state' | tr ',' ' ' | tr -d '<' | tr -d '>' )
+            is_member=$( exitcode ismember $node_state ${UNAVAILABLE_NODE_STATES[@]} )
             if [[ $is_member == $FALSE_VAL ]]; then 
                 qnodes_queried+=( ${node} )
             fi
@@ -1309,7 +1483,7 @@ function pbsqnodes ()
     for node in "${qnodes_queried[@]}"; do
         qnode_info=':'
         for info in "${requested_info[@]}"; do
-            qnode_info="${qnode_info} ${info}=$(pbsnodefield $node $info),"
+            qnode_info="${qnode_info} ${info}=$(pbsnodefieldval $node $info),"
         done
         qnodes_info+=("${node}${qnode_info%?}")
     done            
@@ -1498,6 +1672,8 @@ function get_tardis_node_info()
     #   [3] ecsn003 - jpertwee   - 192.168.225.3
     #   [4] ecsn004 - tbaker     - 192.168.225.4 ${BROWN}
     #   [5] ecsn005 - pdavison   - 192.168.225.5
+    #   [6] ecsn005 - pdavison1   - 192.168.225.6
+    #   [7] ecsn005 - pdavison2   - 192.168.225.7
     node_num=$1
     if [[ $node_num == 0 ]]; then node_type="head_node"
     else node_type="compute_node${node_num}"; fi
@@ -1516,6 +1692,8 @@ function get_current_node_alias()
     elif [ $node_ID == "ecsn003" ]; then node_alias="JPertwee"
     elif [ $node_ID == "ecsn004" ]; then node_alias="TBaker"
     elif [ $node_ID == "ecsn005" ]; then node_alias="PDavison"
+    elif [ $node_ID == "ecsn006" ]; then node_alias="PDavison1"
+    elif [ $node_ID == "ecsn007" ]; then node_alias="PDavison2"
     elif [ $node_ID == "tardis-student1" ]; then node_alias="Workstation #1"
     elif [ $node_ID == "tardis-student2" ]; then node_alias="Workstation #2"
     fi

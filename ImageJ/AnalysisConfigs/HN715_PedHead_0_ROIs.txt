@@ -1,0 +1,11 @@
+ROI_material_names 				= softTissue, brainTissue, trabecularBone, dentin, enamel
+ROI_labels 						= Soft Tissue, Brain Tissue, Trabecular Bone, Tooth, Tooth
+ROI_label_nicknames				= soft, brain, trabec, dentin, enamel
+ROI_shapes 						= polygon, polygon, oval, oval, oval
+ROI_diameters 					= 12.2, 12.2, 12.2, 12.2, 12.2
+ROI_xparams 					= 69, 83, 99, 82, 90, 72, 82, 69 ; 95, 101, 107, 110, 105, 98, 93, 95   ; 114, 9 ; 48, 7  ; 48, 7
+ROI_yparams 					= 73, 70, 70, 96, 128, 116, 96, 73 ; 93, 92, 96, 101, 106, 106, 104, 93 ; 80, 15 ; 120, 7 ; 120, 7
+ROI_slices						= 7 ; 7; 7 ; 1 ; 1
+ROI_selection_radii 			= 3.5
+ROI_profile_radius_beyond_ROI 	= 8
+bulk_material 					= brain

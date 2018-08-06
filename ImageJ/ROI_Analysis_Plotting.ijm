@@ -74,8 +74,6 @@ macro "ROI_Analysis [F2]"
 	MULTIVALUE_ONLY_OFF								= false;
 	REMOVE_PARAMETER_VALUE_ONLY						= true;
 	REMOVE_PARAMETER_PREFIX_AND_VALUE				= false;
-	STD_LINE_PROFILE								= false;
-	GRADIENT_LINE_PROFILE							= true;
 	//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 	COLUMN_MAJOR									= true;
 	ROW_MAJOR										= false;
@@ -1398,6 +1396,7 @@ macro "ROI_Analysis [F2]"
 		print_major_log_section_separator											("Performing analysis of = " + directory_path );
 		for(slice_2_analyze_index = 0; slice_2_analyze_index < num_slices_2_analyze; slice_2_analyze_index++)
 		{
+		
 			//**************************************************************************************************************************************************************************************************//
 			//*********************************************** Repeat analysis routines for each specified circular region diameter *****************************************************************************//
 			//**************************************************************************************************************************************************************************************************//		
@@ -1407,6 +1406,7 @@ macro "ROI_Analysis [F2]"
 				slice_string						= slices_2_analyze_strings[slice_2_analyze_index];
 				ROI_selection_radius 				= ROI_selection_radii[ROI_selection_diameter_index];
 				ROI_selection_diameter				= ROI_selection_diameters[ROI_selection_diameter_index];
+				centersy 							= set_ROI_y_coordinates(slice, x_rows, ROI_yparams);			
 				slice_2_analyze_folder 				= slices_2_analyze_folders[slice_2_analyze_index];
 				slice_2_analyze_directory 			= directory_path + slice_2_analyze_folder;			
 				ROI_selection_diameter_folder		= ROI_selection_diameter_folders[ROI_selection_diameter_index] + FOLDER_SEPARATOR;			
@@ -1423,20 +1423,29 @@ macro "ROI_Analysis [F2]"
 					print							("slice_2_analyze_directory = " 		+ slice_2_analyze_directory);
 					print							("ROI_selection_diameter_directory = " 	+ ROI_selection_diameter_directory);												
 				}
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 				if(perform_selection_analysis)
 				{
 					print_major_log_section_separator							("Performing ROI analysis for the current slice and writing the extracted slice and resulting plots to disk as PNG images...");
-					if								(print_task_progress) print("ROI analysis progress:");
+					if(print_task_progress)
+						print						("ROI analysis progress:");
 					calculated_TV_data				= newArray(images_per_reconstruction);
 					for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)		
 					{
-						if							print_task_progress) print(TAB_STRING + "Analyzing iteration " + iteration + " of " + last_iteration_2_analyze + "...");
+						if(print_task_progress)
+							print					(TAB_STRING + "Analyzing iteration " + iteration + " of " + last_iteration_2_analyze + "...");
 						iteration_string			= iterations_2_analyze_strings[iteration];
 						TXT_image_filename 			= reconstructed_image_strings[iteration] + TXT;
 						PNG_image_filename 			= reconstructed_image_strings[iteration] + PNG;			
 						open_reconstructed_image	(directory_path, TXT_image_filename);
-						if(perform_TV_calculation)	//perform_TV_calculation = true;
+						//**************************************************************************************************************************************************************************************************//
+						//********************************************** Extract and save PNG of the slice of x being analysed *********************************************************************************************//
+						//**************************************************************************************************************************************************************************************************//
+						//x_columns 								= 200;
+						//x_rows  								= 200;					
+						//x_slices 								= 20; 					
+						//x_height								= 4000; 	
+						//perform_TV_calculation										= true;
+						if(perform_TV_calculation)
 							calculated_TV_data[iteration] = calculate_TV_opened_image( x_rows, x_columns, x_slices );
 						//**************************************************************************************************************************************************************************************************//
 						//********************************************** Extract and save PNG of the slice of x being analysed *********************************************************************************************//
@@ -1452,16 +1461,27 @@ macro "ROI_Analysis [F2]"
 						//**************************************************************************************************************************************************************************************************//
 						if(line_profile_on)
 						{
-							print							("-------> Extracting line profile through each region of interest, writing the data and resulting plot to disk as CSV and PNG files, respectively...");			
-							for 							(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+							//print					("-------> Extracting line profile through each region of interest, writing the data and resulting plot to disk as CSV and PNG files, respectively...");			
+							legend_entries		= newArray("Profile through ROI", "Predicted ROI Profile", "Selection Center"									);
+							xlabel 				= "x [mm]";
+							ylabel 				= "RSP(x)";
+							for (ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 							{
-								centersy 					= set_ROI_y_coordinates(slice, x_rows, ROI_yparams);						
-								//profile					= line_profile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, write_profile_plot, title, text, text_size, xlabel, ylabel, legend_entries, legend_text_size, plot_parameters, false);
-								profile						= analyzeLineProfile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, STD_LINE_PROFILE);
-							}//END for 						(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-							filename						= profile_CSV_basename + "_" + reconstructed_image_strings[iteration] + CSV;
-							if								(write_profile_data)	//profile_CSV_basename = "Line_Profiles";
-								results_table_2_CSV			(ROI_selection_diameter_directory, filename, overwrite_profile_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);
+				
+								title 				= "Line profile for " + ROI_labels[ROI] + " in slice " +  slice_string + " after " + iteration_string + " iterations";
+								text 				= current_parameters_string + "\nLine profile for " + ROI_labels[ROI] + " in slice " +  slice_string + " after " + iteration_string + " iterations";
+								//function line_profile(_ROI_number, _ROI_x, _ROI_y, _ROI_radius, _profile_radius, _profile_direction, _base_value, _ref_value, 							_voxel_dimensions, _x_frame_size, _y_frame_size, _title, _text, _text_size, _xlabel, _ylabel, _add_text_justification, _legend_entries, _legend_text_size, _plot_parameters, _is_gradient_analysis)
+								profile				= line_profile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, write_profile_plot, title, text, text_size, xlabel, ylabel, legend_entries, legend_text_size, plot_parameters, false);
+								filename 			= profile_data_file_basenames + "_" + ROI_labels[ROI] + "_" + reconstructed_image_strings[iteration] + PNG;
+								if(write_profile_plot)	//profile_data_file_basenames = "Line_Profile";
+									save_PNG			(ROI_selection_diameter_directory, filename, overwrite_profile_plot, close_saved_PNG_image, print_output_PNG_path);
+								//else
+								//	close				();							
+							}//END for (ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+							filename				= profile_CSV_basename + "_" + reconstructed_image_strings[iteration] + CSV;
+							if(write_profile_data)
+		//profile_CSV_basename = "Line_Profiles";
+								results_table_2_CSV	(ROI_selection_diameter_directory, filename, overwrite_profile_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);
 						}
 						//exit();
 						//*******************************************************************************************************************************************************************************************************//
@@ -1469,20 +1489,20 @@ macro "ROI_Analysis [F2]"
 						//*******************************************************************************************************************************************************************************************************//
 						if(perform_region_analysis)
 						{
-							print											("-------> Performing analysis of ROIs of reconstructed images from each iteration of feasibility seeking (and potentially including TVS)...");	
-							filename 										= regions_data_file_basenames + "_" + reconstructed_image_strings[iteration] + CSV;
-							for 											(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+							//print("-------> Performing analysis of ROIs of reconstructed images from each iteration of feasibility seeking (and potentially including TVS)...");	
+							filename = regions_data_file_basenames + "_" + reconstructed_image_strings[iteration] + CSV;
+							for (ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 							{			
 								//makeOval									(ROI_xparams[ROI] - ROI_selection_radius, centersy[ROI] - ROI_selection_radius, ROI_selection_diameter, ROI_selection_diameter);
-								if											(ROI_selection_diameter % 2 == 1)
+								if(ROI_selection_diameter % 2 == 1)
 								{
-									selection_center_x 						= ROI_xparams[ROI] + 0.5; 
-									selection_center_y 						= centersy[ROI] + 0.5; 
+									selection_center_x = ROI_xparams[ROI] + 0.5; 
+									selection_center_y = centersy[ROI] + 0.5; 
 								}
 								else
 								{
-									selection_center_x 						= ROI_xparams[ROI]; 
-									selection_center_y 						= centersy[ROI]; 
+									selection_center_x = ROI_xparams[ROI]; 
+									selection_center_y = centersy[ROI]; 
 								}
 								run											("Specify...", "width=" + ROI_selection_diameter + " height=" + ROI_selection_diameter + " x=" + selection_center_x + " y=" + selection_center_y + " oval centered");
 								run											("Measure");
@@ -1490,9 +1510,9 @@ macro "ROI_Analysis [F2]"
 								by_ROI_index 								= iteration * num_ROIs_2_analyze + ROI;					// Grouping all measurements for each iteration together  	
 								by_iteration_index 							= ROI * images_per_reconstruction + iteration;	// Grouping all measurements for each ROI together 
 								mean_RSP_val 								= List.getValue(MEAN_COLUMN_LABEL);
-								//peq										("x center = ", selection_center_x);
-								//peq										("y center = ", selection_center_y);
-								//peq										("mean_RSP_val", mean_RSP_val);
+								//peq("x center = ", selection_center_x);
+								//peq("y center = ", selection_center_y);
+								//peq("mean_RSP_val", mean_RSP_val);
 								RSPs_by_ROI[by_ROI_index] 					= mean_RSP_val;	
 								RSPs_by_iteration[by_iteration_index] 		= mean_RSP_val;	
 								RSP_error									= (mean_RSP_val - ROI_material_RSPs[ROI]) / ROI_material_RSPs[ROI] * 100;
@@ -1503,47 +1523,264 @@ macro "ROI_Analysis [F2]"
 								std_devs_by_iteration[by_iteration_index] 	= std_dev_ROI;	
 								setResult									(ROI_MATERIAL_RSP_COLUMN_LABEL, ROI, ROI_material_RSPs[ROI]);
 								setResult									(RSP_ERROR_COLUMN_LABEL, ROI, RSP_error);									
-							}//END: for 									(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-							if												(write_regions_data)							//regions_data_file_basenames = "Region_Statistics";
+							}//END: for (ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+							if(write_regions_data)							//regions_data_file_basenames = "Region_Statistics";
 								results_table_2_CSV							(ROI_selection_diameter_directory, filename, overwrite_regions_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);					
-						}//END: if											(perform_region_analysis)
-						//run												("Clear Results");	
+						}//END: if(perform_region_analysis)
+						//run("Clear Results");	
 						//**************************************************************************************************************************************************************************************************//
 						//***** Plot gradient profile analysis: define a line across the diameter of ROIs through their center, extract profile along this line, and write profile values to disk ***********************//
 						//**************************************************************************************************************************************************************************************************//				
 						if( gradient_profile_on )
 						{	
-							print						("-------> Extracting gradient line profile through ROIs and performing gradient analysis, writing the data and resulting plot to disk as CSV and PNG files, respectively...");				
+							//print						("-------> Extracting gradient line profile through ROIs and performing gradient analysis, writing the data and resulting plot to disk as CSV and PNG files, respectively...");				
 							makeRectangle				(0, 0, x_columns, x_height);			
 							run							("Convolve...", "text1=" + gradient_x_kernel + " normalize"); // Scharr-x		
-							for							(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+							xlabel 						= "x [mm]";
+							ylabel 						= "d/dx[RSP(x)])";
+							legend_entries 				= newArray("Gradient Profile through ROI", "Predicted Gradient Profile", "Selection Center");
+							for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
 							{						
-								//gradient				= line_profile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, write_gradient_plot, title, text, text_size, xlabel, ylabel, legend_entries, legend_text_size, plot_parameters, true);										
-								gradient				= analyzeLineProfile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, GRADIENT_LINE_PROFILE);
-							}// END for					(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)					
+								title 					= "Line gradient for " + ROI_labels[ROI] + " in slice " +  slice_string + " after " + iteration_string + " iterations" ;
+								text 					= current_parameters_string + "\nLine gradient for " + ROI_labels[ROI] + " in slice " +  slice_string + " after " + iteration_string + " iterations";
+								//function line_profile(_ROI_number, _ROI_x, _ROI_y, _ROI_radius, _profile_radius, _profile_direction, _base_value, _ref_value, _voxel_dimensions, _x_frame_size, _y_frame_size, _title, _text, _text_size, _xlabel, _ylabel, _add_text_justification, _legend_entries, _legend_text_size, _plot_parameters, _is_gradient_analysis)
+								//profile				= line_profile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, x_frame_size, y_frame_size, title, text, text_size, xlabel, ylabel, add_text_justification, legend_entries, legend_text_size, plot_parameters, false);
+								gradient				= line_profile(ROI, ROI_xparams[ROI], centersy[ROI], ROI_radii[ROI], ROI_profile_radii[ROI], X_DIRECTION, bulk_material_RSP, ROI_material_RSPs[ROI], voxel_dimensions, write_gradient_plot, title, text, text_size, xlabel, ylabel, legend_entries, legend_text_size, plot_parameters, true);										
+								filename				= gradient_data_file_basenames + "_" + ROI_labels[ROI] + "_" + reconstructed_image_strings[iteration] + PNG;
+								if(write_gradient_plot)	//gradient_data_file_basenames = "Gradient";
+									save_PNG			(ROI_selection_diameter_directory, filename, overwrite_gradient_plot, close_saved_PNG_image, print_output_PNG_path);
+								//else
+								//	close				();																								
+							}// END for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)					
 							filename 					= gradient_CSV_basename + "_" + reconstructed_image_strings[iteration] + CSV;
 							if(write_gradient_data)		//gradient_CSV_basename = "Gradients";
 								results_table_2_CSV		(ROI_selection_diameter_directory, filename, overwrite_gradient_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);											
-						}//END if						(gradient_profile_on)
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
+						}//END if(gradient_profile_on)
 						close(TXT_image_filename);
-					}// END for							(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-					//write_calculated_TV_2_TXT			= true;
-					//overwrite_calculated_TV_TXT		= true;
-					//write_calculated_TV_2_CSV			= true;
-					//overwrite_calculated_TV_CSV		= true;
-					if(write_calculated_TV_2_CSV)		//RSP_CSV_filename = "RSP" + CSV;	
-						array_2_CSV						(1, images_per_reconstruction, calculated_TV_data, 		directory_path, 	"TV_calculated.csv", 		print_output_CSV_path, overwrite_calculated_TV_CSV);
-					if									(write_RSP_CSV)						//RSP_CSV_filename = "RSP" + CSV;	
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, RSPs_by_iteration, 		ROI_selection_diameter_directory, 	RSP_CSV_filename, 		print_output_CSV_path, overwrite_RSP_CSV);
-					if									(write_RSP_error_CSV)					//RSP_error_CSV_filename = "RSP_Error" + CSV;
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, RSP_errors_by_iteration,	ROI_selection_diameter_directory, 	RSP_error_CSV_filename, print_output_CSV_path, overwrite_RSP_error_CSV);			
-					if									(write_std_dev_CSV)					//std_dev_CSV_filename = "Std_Dev" + CSV;
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, std_devs_by_iteration, 	ROI_selection_diameter_directory, 	std_dev_CSV_filename,	print_output_CSV_path, overwrite_std_dev_CSV);						
+					}// END for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)
+					//file_2_array(directory_path, TV_measurements_TXT_filename, print_input_data_path);
+					//write_calculated_TV_2_TXT							= true;
+					//overwrite_calculated_TV_TXT							= true;
+					//write_calculated_TV_2_CSV							= true;
+					//overwrite_calculated_TV_CSV							= true;
+					if(write_calculated_TV_2_CSV)						//RSP_CSV_filename = "RSP" + CSV;	
+						array_2_CSV(1, images_per_reconstruction, calculated_TV_data, 		directory_path, 	"TV_calculated.csv", 		print_output_CSV_path, overwrite_calculated_TV_CSV);
+					if(write_RSP_CSV)						//RSP_CSV_filename = "RSP" + CSV;	
+						array_2_CSV(num_ROIs_2_analyze, images_per_reconstruction, RSPs_by_iteration, 		ROI_selection_diameter_directory, 	RSP_CSV_filename, 		print_output_CSV_path, overwrite_RSP_CSV);
+					if(write_RSP_error_CSV)					//RSP_error_CSV_filename = "RSP_Error" + CSV;
+						array_2_CSV(num_ROIs_2_analyze, images_per_reconstruction, RSP_errors_by_iteration,	ROI_selection_diameter_directory, 	RSP_error_CSV_filename, print_output_CSV_path, overwrite_RSP_error_CSV);			
+					if(write_std_dev_CSV)					//std_dev_CSV_filename = "Std_Dev" + CSV;
+						array_2_CSV(num_ROIs_2_analyze, images_per_reconstruction, std_devs_by_iteration, 	ROI_selection_diameter_directory, 	std_dev_CSV_filename,	print_output_CSV_path, overwrite_std_dev_CSV);						
 					//exit();					
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 				}// END if(perform_ROI_analysis)	
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//***************************************************************************************************************************************************************************************************************//
+		//************************************** Perform analyses of measurements vs. ROI or predicted RSP (ROIs defined in increasing RSP order) ***********************************************************************//
+		//***************************************************************************************************************************************************************************************************************//		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				//print_by_ROI_selection_diameter_data();					
+				//print_by_iteration_data();
+				if(perform_vs_predicted_RSP_analysis)
+				{
+					print_major_log_section_separator("Performing analyses of measurements vs. predicted ROI RSP for the current slice and writing the resulting plots to disk as PNG images...");
+					if(print_task_progress)
+						print						("Reconstructed vs. Predicted analysis progress:");
+					for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)
+					{	
+						if(print_task_progress)
+							print					(TAB_STRING + "Analyzing iteration " + iteration + " of " + last_iteration_2_analyze + "...");
+						iteration_string					= iterations_2_analyze_strings[iteration];
+						by_ROI_start_index 					= iteration * num_ROIs_2_analyze;							// Index of the 1st ROI's measurements for current iteration
+						by_ROI_end_index 					= (iteration + 1) * num_ROIs_2_analyze;					// Index of the last ROI's measurements for current iteration
+						current_RSPs_by_ROI 				= Array.slice(RSPs_by_ROI, by_ROI_start_index, by_ROI_end_index); 
+						current_RSP_errors_by_ROI			= Array.slice(RSP_errors_by_ROI, by_ROI_start_index, by_ROI_end_index); 
+						current_std_devs_by_ROI 			= Array.slice(std_devs_by_ROI, by_ROI_start_index, by_ROI_end_index); 			
+						current_RSPs_by_ROI_no_air 			= Array.slice(RSPs_by_ROI, by_ROI_start_index + 2, by_ROI_end_index); 
+						current_RSP_errors_by_ROI_no_air	= Array.slice(RSP_errors_by_ROI, by_ROI_start_index + 2, by_ROI_end_index); 
+						current_std_devs_by_ROI_no_air 		= Array.slice(std_devs_by_ROI, by_ROI_start_index + 2, by_ROI_end_index); 			
+						//print_current_by_ROI_selection_diameter_data();					
+						//*******************************************************************************************************************************************************************************************************//
+						//*************** Plot % error between predicted and measured RSP vs. predicted RSP and write the resulting image/data to disk as PNG/CSV ***************************************************************//
+						//*******************************************************************************************************************************************************************************************************//				
+						if(plot_measured_vs_predicted_RSP)
+						{
+							//print				("-------> Plotting predicted vs. measured RSP and writing image to disk as PNG...");			
+							title 				= "Predicted vs. Measured RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							text 				= current_parameters_string + "\nPredicted vs. Measured RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							xlabel 				= "Predicted RSP";
+							ylabel				= "% Error";
+							legend_entries 		= newArray("Predicted vs. Mean RSP", "Predicted RSP Line");
+							Plot.create			(title, xlabel, ylabel, ROI_material_RSPs, current_RSPs_by_ROI);
+							Plot.setLimits		(0, ROI_material_RSPs[num_ROIs_2_analyze - 1], 0, ROI_material_RSPs[num_ROIs_2_analyze - 1]);
+							Plot.setColor		("yellow");
+							Plot.add			("error bars", current_RSPs_by_ROI, current_std_devs_by_ROI);
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.setColor		("yellow");
+							Plot.setColor		(add_line_color);
+							Plot.add			("line", ROI_material_RSPs, ROI_material_RSPs);
+							//set_plot_data_props	(data_line_color, add_text_justification);					
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename 			= RSP_comparison_basename + "_" + reconstructed_image_strings[iteration] + PNG;
+							if(write_RSP_comparison_plot)//RSP_comparison_basename = "RSP_Comparison";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_RSP_comparison_plot, close_saved_PNG_image, print_output_PNG_path);												
+						}
+						//*******************************************************************************************************************************************************************************************************//
+						//*************** Plot % error between predicted and measured RSP vs. predicted RSP and write the resulting image/data to disk as PNG/CSV ***************************************************************//
+						//*******************************************************************************************************************************************************************************************************//				
+						if(plot_ROI_errors_vs_predicted_RSP)
+						{
+							//print				("-------> Plotting RSP % error vs true RSP and writing image to disk as PNG...");			
+							plot_extrema		= set_plot_extrema(current_RSP_errors_by_ROI_no_air, zero_line_by_ROI, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);
+							ymin 				= plot_extrema[0];
+							ymax				= plot_extrema[1];
+							title 				= "% error vs. predicted RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							text 				= current_parameters_string + "\nRSP % error between reconstructed and predicted RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							xlabel				= "Predicted RSP";
+							ylabel 				= "RSP % Error";
+							legend_entries 		= newArray("RSP % Error", "Optimal % Error"																);
+							Plot.create			(title, xlabel, ylabel, ROI_material_RSP_line_no_air, current_RSP_errors_by_ROI_no_air );
+							Plot.setLimits		(ROI_material_RSPs[2], ROI_material_RSPs[num_ROIs_2_analyze - 1], ymin, ymax);
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.add			("line", zero_line_by_ROI);
+							Plot.setColor		(data_line_color);
+							//Plot.add			("error bars", mean_RSPs, std_devs);
+							//set_plot_data_props	(data_line_color, add_text_justification);									
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename			= RSP_error_comparison_basename + "_" + reconstructed_image_strings[iteration] + PNG;
+							if(write_RSP_error_comparison_plot)//RSP_error_comparison_basename = "RSP_Error_Comparison";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_RSP_error_comparison_plot, close_saved_PNG_image, print_output_PNG_path);												
+						}
+						//*******************************************************************************************************************************************************************************************************//
+						//*************** Plot standard deviation vs. predicted RSP and write the resulting image/data to disk as PNG/CSV ***************************************************************//
+						//*******************************************************************************************************************************************************************************************************//				
+						if(plot_ROI_std_dev_vs_predicted_RSP)
+						{
+							//print				("-------> Plotting RSP standard deviation vs true RSP and writing image to disk as PNG...");			
+							plot_extrema		= set_plot_extrema(current_std_devs_by_ROI, zero_line_by_ROI, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);
+							ymin 				= plot_extrema[0];
+							ymax				= plot_extrema[1];
+							title 				= "Standard deviation vs. predicted RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							text 				= current_parameters_string + "\nStandard deviation vs. predicted RSP after " + iteration_string + " iterations" + " for slice " +  slice_string;
+							xlabel				= "Predicted RSP";
+							ylabel 				= "Standard Deviation";
+							legend_entries 		= newArray("Standard Deviation", "Optimal Standard Deviation"																);
+							Plot.create			(title, xlabel, ylabel, ROI_material_RSPs, current_std_devs_by_ROI );
+							Plot.setLimits		(ROI_material_RSPs[2], ROI_material_RSPs[num_ROIs_2_analyze - 1], ymin, ymax);
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.add			("line", zero_line_by_ROI);
+							Plot.setColor		(data_line_color);
+							//Plot.add			("error bars", mean_RSPs, std_devs);
+							//set_plot_data_props	(data_line_color, add_text_justification);	
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename			= std_dev_comparison_basename + "_" + reconstructed_image_strings[iteration] + PNG;
+							if(write_std_dev_comparison_plot)//std_dev_comparison_basename = "Std_Dev_Comparison";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_std_dev_comparison_plot, close_saved_PNG_image, print_output_PNG_path);												
+						}				
+					}// END for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)		
+					//exit();		
+				}// END if(perform_vs_predicted_RSP_analysis)
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//*******************************************************************************************************************************************************************************************************************//
+		//*********************************************************** Perform analyses of measurements vs. iteration ********************************************************************************************************//
+		//*******************************************************************************************************************************************************************************************************************//		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				if(perform_vs_iteration_analysis)
+				{
+					print_major_log_section_separator("Performing analyses of measurements vs. iteration for the current slice and writing the resulting plots to disk as PNG images...");
+					if(print_task_progress)
+						print						("Convergence analysis progress:");
+					for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+					{
+						if(print_task_progress)
+							print					(TAB_STRING + "Analyzing ROI " + d2s(ROI + 1, 0) + " of " + num_ROIs_2_analyze + "...");
+						by_iteration_start_index 		= ROI * images_per_reconstruction;
+						by_iteration_end_index 			= ROI * images_per_reconstruction + num_recon_iterations + 1;
+						current_RSPs_by_iteration		= Array.slice(RSPs_by_iteration, by_iteration_start_index, by_iteration_end_index); 
+						current_RSP_errors_by_iteration	= Array.slice(RSP_errors_by_iteration, by_iteration_start_index, by_iteration_end_index); 
+						current_std_devs_by_iteration 	= Array.slice(std_devs_by_iteration, by_iteration_start_index, by_iteration_end_index); 				
+						//print_current_by_iteration_data	();				
+						//*******************************************************************************************************************************************************************************************************//
+						//********************************** Plots of RSP as a function of iteration (showing convergence behavior) *********************************************************************************************//
+						//*******************************************************************************************************************************************************************************************************//
+						if(RSP_analysis_on)
+						{
+							//print				("-------> Plotting mean RSP as a function of iteration and writing image to disk as PNG...");			
+							title 				= "Convergence of mean RSP as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							text 				= current_parameters_string + "\nConvergence of mean RSP as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							xlabel				= "i [Iteration #]";
+							ylabel 				= "Mean RSP(i)";
+							Array.fill			(ROI_material_RSPs_by_iteration, ROI_material_RSPs[ROI]);
+							plot_extrema		= set_plot_extrema(current_RSPs_by_iteration, ROI_material_RSPs_by_iteration, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);
+							ymin 				= plot_extrema[0];
+							ymax  				= plot_extrema[1];
+							legend_entries 		= newArray("RSP vs. Iteration", "Predicted RSP");
+							Plot.create			(title, xlabel, ylabel, iterations_2_analyze, current_RSPs_by_iteration );
+							Plot.setLimits		(first_iteration_2_analyze, last_iteration_2_analyze, ymin, ymax);					
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.add			("line", ROI_material_RSPs_by_iteration);				
+							//set_plot_data_props	(data_line_color, add_text_justification);
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename			= RSP_data_file_basenames + "_" + ROI_labels[ROI] + PNG;
+							if(write_RSP_plot)	//RSP_data_file_basenames = "RSP";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_RSP_plot, close_saved_PNG_image, print_output_PNG_path);									
+						}	
+						//*******************************************************************************************************************************************************************************************************//
+						//************************ Plot of the RSP % error between predicted and reconstructed RSPs as a function of iteration **********************************************************************************//
+						//*******************************************************************************************************************************************************************************************************//
+						if(RSP_error_analysis_on)
+						{
+							//print				("-------> Plotting RSP % error as a function of iteration and writing image to disk as PNG...");			
+							plot_extrema		= set_plot_extrema(current_RSP_errors_by_iteration, zero_line_by_iteration, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);
+							ymin 				= plot_extrema[0];
+							ymax				= plot_extrema[1];
+							title		 		= "RSP % error as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							text 				= current_parameters_string + "\nRSP % error as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							xlabel				= "i [Iteration #]";
+							ylabel 				= "RSP % Error";
+							legend_entries 		= newArray("RSP % Error vs. Iteration", "Optimal % Error");
+							Plot.create			(title, xlabel, ylabel, iterations_2_analyze, current_RSP_errors_by_iteration );
+							Plot.setLimits		(first_iteration_2_analyze, last_iteration_2_analyze, ymin, ymax);
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.add			("line", zero_line_by_iteration);
+							//set_plot_data_props	(data_line_color, add_text_justification);
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename			= RSP_error_basename + "_" + ROI_labels[ROI] + PNG;
+							if(write_RSP_error_plot)//RSP_error_basename = "RSP_Error";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_RSP_error_plot, close_saved_PNG_image, print_output_PNG_path);																
+						}
+					//***********************************************************************************************************************************************************************************************************//
+					//******************************************************************** Standard deviation analysis **********************************************************************************************************//
+					//***********************************************************************************************************************************************************************************************************//
+						if(std_dev_analysis_on)
+						{
+							//print("-------> Performing standard deviation trend analysis, writing the data and resulting plot to disk as CSV and PNG files, respectively...");				
+							plot_extrema		= set_plot_extrema(current_std_devs_by_iteration, zero_line_by_iteration, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);
+							ymin 				= plot_extrema[0];
+							ymax				= plot_extrema[1];
+							xlabel				= "i [Iteration #]";
+							ylabel 				= "Standard deviation(i)";
+							title 				= "Standard deviation as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							text 				= current_parameters_string + "\nStandard deviation as a function of iteration for " + ROI_labels[ROI] + " in slice " +  slice_string;
+							legend_entries 		= newArray("Standard Deviation vs. Iteration", "Optimal Standard Deviation");
+							Plot.create			(title, xlabel, ylabel, iterations_2_analyze, current_std_devs_by_iteration );
+							//Plot.getValues	(xpoints, ypoints);
+							Plot.setLimits		(first_iteration_2_analyze, last_iteration_2_analyze, ymin, ymax);
+							//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+							set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+							Plot.add			("line", zero_line_by_iteration);
+							//set_plot_data_props	(data_line_color, add_text_justification);					
+							set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+							filename			= std_dev_basename + "_" + ROI_labels[ROI] + PNG;
+							if(write_std_dev_plot)//std_dev_basename = "Std_Dev";
+								save_PNG		(ROI_selection_diameter_directory, filename, overwrite_std_dev_plot, close_saved_PNG_image, print_output_PNG_path);												
+						}		
+					}// END for(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
+				}// END if(perform_vs_iteration_analysis)
 				run("Clear Results");				
 			}// END for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < ROI_selection_diameters.length; ROI_selection_diameter_index++)
 		}// END for(slice_2_analyze_index = 0; slice_2_analyze_index < num_slices_2_analyze; slice_2_analyze_index++)	
@@ -1564,7 +1801,178 @@ macro "ROI_Analysis [F2]"
 			before_TVS_data[iteration] 	= TVS_data[start_index];
 			after_TVS_data[iteration]  	= TVS_data[start_index + 1];
 		}
+		if(plot_TV_analysis)
+		{
+			print				("-------> Plotting TV before and after TVS vs. iteration as separate curves and writing image to disk as PNG...");			
+			plot_extrema		= set_plot_extrema(before_TVS_data, after_TVS_data, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);						
+			ymin 				= plot_extrema[0];
+			ymax				= plot_extrema[1];
+			title		 		= "TV measurements vs. Iteration";
+			text 				= current_parameters_string + "\nTV measurements vs. Iteration";
+			xlabel				= "i [Iteration #]";
+			ylabel 				= "Total Variation (TV)";
+			legend_entries 		= newArray("TV After TVS", "TV Before TVS");
+			Plot.create			(title, xlabel, ylabel, x_axis_data, after_TVS_data);
+			Plot.setLimits		(1, num_recon_iterations, ymin, ymax);
+			//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+			set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+			Plot.add			("line", x_axis_data, before_TVS_data);
+			//set_plot_data_props	(data_line_color, add_text_justification);		
+			set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+			if(write_TV_analysis_plot)
+				save_PNG		(directory_path, TV_measurements_plot_filename, overwrite_TV_analysis_plot, close_saved_PNG_image, PRINT_PATH);	//print_output_PNG_path
+		}	
+		if(plot_TV_step_analysis)
+		{
+			print				("-------> Plotting TV before/after TVS vs. iteration as single step curve and writing image to disk as PNG...");								
+			TV_step_data	 	= newArray(before_TVS_data.length + after_TVS_data.length);
+			x_axis_data			= newArray(before_TVS_data.length + after_TVS_data.length);
+			x_axis_data_min		= 1;
+			for(i = 0; i < before_TVS_data.length; i++)
+			{
+				start_index 					= 2 * i;
+				TV_step_data[start_index] 		= before_TVS_data[i];
+				TV_step_data[start_index + 1] 	= after_TVS_data[i];	
+				x_axis_data[start_index] 		= x_axis_data_min + i;					
+				x_axis_data[start_index + 1] 	= x_axis_data_min + i;
+			}
+			plot_extrema		= set_plot_extrema(before_TVS_data, after_TVS_data, tolerance, lower_limits_scale, upper_limits_scale, difference_scale);						
+			ymin 				= plot_extrema[0];
+			ymax				= plot_extrema[1];
+			title		 		= "TV measurements vs. Iteration";
+			text 				= current_parameters_string + "\nTV measurements vs. Iteration";
+			xlabel				= "i [Iteration #]";
+			ylabel 				= "Total Variation (TV)";
+			legend_entries 		= newArray("TV Before/After TVS");
+			Plot.create			(title, xlabel, ylabel, x_axis_data, TV_step_data );
+			Plot.setLimits		(1, num_recon_iterations, ymin, ymax);
+			//set_plot_props		(legend_entries, x_frame_size, y_frame_size, text, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);					
+			set_plot_props		(legend_entries, legend_text_size, x_frame_size, y_frame_size, text, text_size, text_xpos_ratio, text_ypos_ratio, add_text_justification, add_line_color, linewidth	);					
+			//Plot.add			("line", x_axis_data, after_TVS_data);
+			//set_plot_data_props	("blue", add_text_justification);			
+			set_plot_data_props	(data_line_color, add_text_justification, x_frame_size, y_frame_size											);			
+			if(write_TV_step_analysis_plot)//TV_measurements_step_plot_filename		= "TV_step_plot" + PNG;
+				save_PNG		(directory_path, TV_measurements_step_plot_filename, overwrite_TV_step_analysis_plot, close_saved_PNG_image, PRINT_PATH);	//print_output_PNG_path
+		}// END: if(plot_TV_step_analysis)				
 	}// END: if(perform_TV_analysis)	
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//*******************************************************************************************************************************************************************************************************************//
+	//*********************************************************** Perform analyses of measurements vs. iteration ********************************************************************************************************//
+	//*******************************************************************************************************************************************************************************************************************//		
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if(build_image_stacks)
+	{
+		print_major_log_section_separator("Constructing image stacks from image sets containing an image for each iteration and/or ROI and saving the resulting stacks as animated GIF and/or AVI video...");			
+		for(slice_2_analyze_index = 0; slice_2_analyze_index < num_slices_2_analyze; slice_2_analyze_index++)
+		{	
+			slice									= slices_2_analyze[slice_2_analyze_index];
+			slice_string							= slices_2_analyze_strings[slice_2_analyze_index];
+			slice_2_analyze_folder					= SLICE_2_ANALYZE_FOLDER_PREFIX + slice_string + FOLDER_SEPARATOR;
+			slice_2_analyze_directory 				= construct_valid_directory_path(directory_path, slice_2_analyze_folder);			
+			if(build_slice_2_PNG_stack)		
+			{
+				image_set_filenames			= suffixes_2_filenames	(RECONSTRUCTED_IMAGE_FILE_BASENAMES, reconstructed_image_strings);
+				animation_filename 			= RECONSTRUCTED_IMAGE_FILE_BASENAMES + reconstructed_image_range_string;
+				stack_dimensions			= image_set_2_stack(PNG, slice_2_analyze_directory, reconstructed_image_strings, RECONSTRUCTED_IMAGE_FILE_BASENAMES, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+				stack_2_animated_GIF		(animation_filename, slice_2_analyze_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+				stack_2_AVI					(animation_filename, slice_2_analyze_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+			}						
+			//**************************************************************************************************************************************************************************************************//
+			//*********************************************** Repeat analysis routines for each specified circular region diameter *****************************************************************************//
+			//**************************************************************************************************************************************************************************************************//		
+			for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < ROI_selection_diameters.length; ROI_selection_diameter_index++)
+			{
+				ROI_selection_radius 					= ROI_selection_radii[ROI_selection_diameter_index];
+				ROI_selection_diameter					= ROI_selection_diameters[ROI_selection_diameter_index];
+				ROI_selection_diameter_folder			= ROI_selection_diameter_folders[ROI_selection_diameter_index] + FOLDER_SEPARATOR;			
+				//ROI_selection_diameter_directory		= directory_path + slice_2_analyze_folder + ROI_selection_diameter_folder;	
+				ROI_selection_diameter_directory 		= construct_valid_directory_path(slice_2_analyze_directory, ROI_selection_diameter_folder);			
+				run										("Input/Output...", "jpeg=85 gif=-1 file=.csv copy_column copy_row save_column save_row");
+				if(build_by_iteration_image_stacks)
+				{
+					//print("-------> Constructing image stacks from image sets containing an image for each iteration and saving the resulting stacks as animated GIF and/or AVI video...");			
+					if(build_RSP_comparison_plot_stack)		
+					{//reconstructed_image_range_string = [x_0-x_12]
+						image_set_filenames			= suffixes_2_filenames	(RSP_comparison_basename + "_", reconstructed_image_strings);
+						animation_filename 			= RSP_comparison_animation_basename + "_" + ROI_labels[ROI_selection_diameter_index] + "_" + reconstructed_image_range_string;
+						stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, RSP_comparison_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+					if(build_RSP_error_comparison_plot_stack)		
+					{//reconstructed_image_range_string = [x_0-x_12]
+						image_set_filenames					= suffixes_2_filenames	(RSP_error_comparison_basename + "_", reconstructed_image_strings);
+						animation_filename 					= RSP_error_comparison_animation_basename + "_" + ROI_labels[ROI_selection_diameter_index] + "_" + reconstructed_image_range_string;
+						stack_dimensions					= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, RSP_error_comparison_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF				(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI							(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+					if(build_std_dev_comparison_plot_stack)		
+					{//reconstructed_image_range_string = [x_0-x_12]
+						image_set_filenames				= suffixes_2_filenames	(std_dev_comparison_basename + "_", reconstructed_image_strings);
+						animation_filename 				= std_dev_comparison_animation_basename + "_" + ROI_labels[ROI_selection_diameter_index] + "_" + reconstructed_image_range_string;
+						stack_dimensions				= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, std_dev_comparison_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF			(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI						(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+				}// END if(build_by_iteration_image_stacks)
+				if(build_by_ROI_and_iteration_image_stacks)
+				{
+					//print("-------> Constructing image stacks from image sets containing an image for each iteration and ROI combination and saving the resulting stacks as animated GIF and/or AVI video...");			
+					for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < num_ROIs_2_analyze; ROI_selection_diameter_index++)
+					{		
+						if(build_profile_plot_stack)
+						{//reconstructed_image_range_string = [x_0-x_12]
+							ROI_profile_plot_basename	= profile_data_file_basenames + "_" + ROI_labels[ROI_selection_diameter_index];
+							image_set_filenames			= suffixes_2_filenames	(ROI_profile_plot_basename + "_", reconstructed_image_strings);
+							animation_filename 			= profile_data_file_basenames + "_" + ROI_labels[ROI_selection_diameter_index] + "_" + reconstructed_image_range_string;
+							stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, profile_data_file_basenames, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+							stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+							stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+						}
+						if(build_gradient_plot_stack)
+						{//reconstructed_image_range_string = [x_0-x_12]
+							ROI_gradient_plot_basename	= gradient_data_file_basenames + "_" + ROI_labels[ROI_selection_diameter_index];
+							image_set_filenames			= suffixes_2_filenames	(ROI_gradient_plot_basename + "_", reconstructed_image_strings);
+							animation_filename 			= gradient_data_file_basenames + "_" + ROI_labels[ROI_selection_diameter_index] + "_" + reconstructed_image_range_string;
+							stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, ROI_gradient_plot_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+							stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+							stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+						}
+					}// END for(n = 0; n < num_ROIs_2_analyze; n++)
+				}// END if(build_by_ROI_and_iteration_image_stacks)
+				if(build_by_ROI_image_stacks)
+				{
+					//print("-------> Constructing image stacks from image sets containing an image for each ROI and saving the resulting stacks as animated GIF and/or AVI video...");			
+					if(build_RSP_plot_stack)
+					{
+						image_set_filenames			= suffixes_2_filenames	(RSP_data_file_basenames + "_", ROI_labels);
+						animation_filename 			= RSP_animation_basename + "_[ROIs]";
+						stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, RSP_data_file_basenames, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+					if(build_RSP_error_plot_stack)
+					{
+						image_set_filenames			= suffixes_2_filenames	(RSP_error_basename + "_", ROI_labels);
+						animation_filename 			= RSP_error_animation_basename + "_[ROIs]";
+						stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, RSP_error_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+					if(build_std_dev_plot_stack)	
+					{
+						image_set_filenames			= suffixes_2_filenames	(std_dev_basename + "_", ROI_labels);
+						animation_filename 			= std_dev_animation_basename + "_[ROIs]";
+						stack_dimensions			= image_set_2_stack(PNG, ROI_selection_diameter_directory, image_set_filenames, std_dev_basename, animation_filename, print_PNG_stack_image_paths, close_stack_image_sets);
+						stack_2_animated_GIF		(animation_filename, ROI_selection_diameter_directory, animation_filename + GIF, GIF_frame_rate, GIF_stacks_2_disk, overwrite_GIF_stacks, print_GIF_stack_paths, close_animated_GIF_stack);
+						stack_2_AVI					(animation_filename, ROI_selection_diameter_directory, animation_filename + AVI, AVI_compression_format, AVI_frame_rate, AVI_stacks_2_disk, overwrite_AVI_stacks, print_AVI_stack_paths, close_AVI_stack);
+					}
+				}// END if(build_by_ROI_image_stacks)				
+			}// END for(ROI_selection_diameter_index = 0; ROI_selection_diameter_index < ROI_selection_diameters.length; ROI_selection_diameter_index++)
+		}// END for(slice = start_slice; slice <= end_slice; slice++)	
+		//close_all_windows(true, false);
+	}// END if(build_image_stacks)
 }//end macro "CTP404_Full_Analysis"
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //***************************************************************************************************************************************************************************************************//
@@ -2749,56 +3157,6 @@ function line_profile(_ROI_number, _ROI_x, _ROI_y, _ROI_radius, _profile_radius,
 		Plot.add					("line", _center_line_x, _center_line_y																			);					
 		set_plot_data_props			(data_line_color, add_text_justification, _x_frame_size, _y_frame_size											);			
 	}
-	return _profile;
-}
-function analyzeLineProfile(_ROI_number, _ROI_x, _ROI_y, _ROI_radius, _profile_radius, _profile_direction, _base_value, _ref_value, _voxel_dimensions, _is_gradient_analysis)
-{
-							
-	_voxel_width 				= _plot_parameters[0]; 	_tolerance		= _plot_parameters[1]; 	_lower_limits_scale	= _plot_parameters[2]; _upper_limits_scale 	= _plot_parameters[3]; 
-	_difference_scale 			= _plot_parameters[4]; 	_x_frame_size  	= _plot_parameters[5]; 	_y_frame_size 		= _plot_parameters[6]; _text_xpos_ratio 		= _plot_parameters[7]; 
-	_text_ypos_ratio 			= _plot_parameters[8]; 	_add_line_color 	= _plot_parameters[9]; 	_linewidth 			= _plot_parameters[10]; 
-	_voxel_width 				= _voxel_dimensions[0]; 	_voxel_height 	= _voxel_dimensions[1];	_voxel_thickness 	= _voxel_dimensions[2];
-	
-	_ROI_selection_diameter = _ROI_radius * 2;
-	if(_ROI_selection_diameter % 2 == 1)
-	{
-		_profile_center_x = _ROI_x + 0.5; 
-		_profile_center_y = _ROI_y + 0.5; 
-	}
-	else
-	{
-		_profile_center_x = _ROI_x; 
-		_profile_center_y = _ROI_y; 
-	}
-	//run											("Specify...", "width=" + ROI_selection_diameter + " height=" + ROI_selection_diameter + " x=" + selection_center_x + " y=" + selection_center_y + " oval centered");							
-	if(_profile_direction == X_DIRECTION)
-	{
-		_ROI_varying_direction 	= _profile_center_x;
-		_ROI_constant_direction = _profile_center_y;
-		_voxel_dimension	 	= _voxel_width;
-	}
-	else
-	{
-		_ROI_varying_direction 	= _profile_center_y;
-		_ROI_constant_direction = _profile_center_x;
-		_voxel_dimension 		= _voxel_height;
-	}
-	_data_shifted_distance		= _ROI_varying_direction - floor(_ROI_varying_direction);
-	
-	_profile_1st_edge			= floor((	_ROI_varying_direction - _profile_radius						) 	* _voxel_dimension	);
-	_profile_2nd_edge			= ceil(( 	_ROI_varying_direction + _profile_radius 						) 	* _voxel_dimension	);		
-	_ROI_1st_edge				= ( 		_ROI_varying_direction - _ROI_radius - _data_shifted_distance	) 	* _voxel_dimension;
-	_ROI_2nd_edge				= ( 		_ROI_varying_direction + _ROI_radius - _data_shifted_distance	) 	* _voxel_dimension;		
-	_center_coordinate 			= ( 		_ROI_varying_direction 											)	* _voxel_dimension;														
-	
-	if(_profile_direction == X_DIRECTION)
-		makeLine				(_profile_1st_edge, _ROI_constant_direction, _profile_2nd_edge, _ROI_constant_direction );	
-	else
-		makeLine				(_ROI_constant_direction, _profile_1st_edge, _ROI_constant_direction, _profile_2nd_edge );		
-	_profile 					= getProfile();
-	//setResult					(1, ROI_number, profile[0]);
-	for(i = 0; i < _profile.length; i++)							
-		setResult				(i, _ROI_number, _profile[i]);
 	return _profile;
 }
 function listFiles(dir) 

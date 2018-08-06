@@ -1,15 +1,11 @@
 #!/bin/bash
 ###################################################################################################
-################################### Define constants variables ####################################
-###################################################################################################
-###################################################################################################
 ##################################### Define global variables #####################################
 ###################################################################################################
 current_host=$(hostname)
 current_user=$(id -un)
 current_group=$(id -gn)
 user_folder="/${current_user}"
-recon_group="ionrecon"
 path_dirs=$(echo "${PATH//:/$'\n'}")
 login_dir=~
 USERS=$( users )
@@ -62,6 +58,7 @@ source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/bashvars.sh
 #source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/load_pct_functions.sh
 source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/bash_tools.sh
 source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/pct_tools.sh
+#source /ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/awk_tools.awk
 ###################################################################################################
 ####################################### PBS Queue Info ############################################
 ###################################################################################################
@@ -90,6 +87,8 @@ print_tardis_node_info 1
 print_tardis_node_info 2
 print_tardis_node_info 3
 print_tardis_node_info 4
+print_tardis_node_info 5
+print_tardis_node_info 6
 ###################################################################################################
 ########################### Establish ssh connection aliases (shortcuts) ##########################
 ###################################################################################################
@@ -102,6 +101,8 @@ print_alias $(exe alias gojpertwee="ssh ${current_user}@jpertwee")
 print_alias $(exe alias gotbaker="ssh ${current_user}@tbaker")
 print_alias $(exe alias goptroughton="ssh ${current_user}@ptroughton")
 print_alias $(exe alias gopdavison="ssh ${current_user}@pdavison")
+print_alias $(exe alias gonode6="ssh ${current_user}@ecsn006")
+print_alias $(exe alias gonode7="ssh ${current_user}@ecsn007")
 print_alias $(exe alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu")
 print_alias $(exe alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu")
 #current_node_alias=$(current_node_name )

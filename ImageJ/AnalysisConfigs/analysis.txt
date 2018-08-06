@@ -1,12 +1,13 @@
 simulated_scan 								= false
+x_columns 									= 200
+x_rows  									= 200					
+x_slices 									= 20					
 voxel_width 								= 1
 voxel_height								= 1
 voxel_thickness								= 2.5
 voxels_per_mm								= 11
 flip_horizontally							= false
-flip_vertically								= true
+flip_vertically								= false
 num_recon_iterations 						= 12
 first_iteration_2_analyze					= 0
 last_iteration_2_analyze					= 12
-first_slice_2_analyze						= 11
-last_slice_2_analyze						= 11

@@ -1,5 +1,13 @@
 #!/bin/bash
 ###################################################################################################
+###################### Define numeric/math constants and regular expressions ######################
+###################################################################################################
+NUMBER_REGEXP='^-?([0-9]*[.])?[0-9]+$'
+POS_NUMBER_REGEXP='^([0-9]*[.])?[0-9]+$'
+INTEGER_REGEXP='^[0-9]+$'
+FLOAT_REGEXP='^-?([0-9]*)?[.][0-9]*$'
+SUFFIXED_FLOAT_REGEXP='^-?([0-9]*)?[.][0-9]+$'
+###################################################################################################
 ########################## Define text printing formatting codes/setting ##########################
 ###################################################################################################
 TRUE=true
@@ -192,6 +200,27 @@ profiles=(profile_21 profile_31 profile_32 profile_33 profile_34 profile_35 prof
 ###################################################################################################
 ################### Tardis head/compute node IDs, nicknames, and IP addresses #####################
 ###################################################################################################
+# User login info
+recon_group="ionrecon"
+# Node names/nicknames (aliases)
+# print_alias $(exe alias gokodiak="ssh ${current_user}@kodiak.baylor.edu")
+# print_alias $(exe alias gowhartnell="ssh ${current_user}@whartnell")
+# print_alias $(exe alias gojpertwee="ssh ${current_user}@jpertwee")
+# print_alias $(exe alias gotbaker="ssh ${current_user}@tbaker")
+# print_alias $(exe alias goptroughton="ssh ${current_user}@ptroughton")
+# print_alias $(exe alias gopdavison="ssh ${current_user}@pdavison")
+# print_alias $(exe alias gonode6="ssh ${current_user}@ecsn006")
+# print_alias $(exe alias gonode7="ssh ${current_user}@ecsn007")
+# print_alias $(exe alias gows1="ssh schultzeb@tardis-student1.ecs.baylor.edu")
+# print_alias $(exe alias gows2="ssh schultzeb@tardis-student2.ecs.baylor.edu")
+kodiak_names=( login001 kodiak.baylor.edu login001.localdomain login001-opa )
+tardis_compute_node1_names=( ecsn001 ecsn001.localdomain )
+tardis_compute_node2_names=( ecsn002 ecsn002.localdomain )
+tardis_compute_node3_names=( ecsn003 ecsn003.localdomain )
+tardis_compute_node4_names=( ecsn004 ecsn004.localdomain )
+tardis_compute_node5_names=( ecsn005 ecsn005.localdomain )
+tardis_compute_node6_names=( ecsn006 )
+tardis_compute_node7_names=( ecsn007 )
 # Node ID numbers
 kodiak=130
 whartnell=1
@@ -199,25 +228,33 @@ ptroughton=2
 jpertwee=3
 tbaker=4
 pdavison=5
+pdavison1=6
+pdavison2=7
 # Tardis node IDs
 tardis_head_node_ID="ecsn001"
 tardis_compute_node1_ID="ecsn002"
 tardis_compute_node2_ID="ecsn003"
 tardis_compute_node3_ID="ecsn004"
 tardis_compute_node4_ID="ecsn005"
+tardis_compute_node5_ID="ecsn006"
+tardis_compute_node6_ID="ecsn007"
 # Tardis node aliases
 tardis_head_node_alias="whartnell"
 tardis_compute_node1_alias="ptroughton"
 tardis_compute_node2_alias="jpertwee"
 tardis_compute_node3_alias="tbaker"
 tardis_compute_node4_alias="pdavison"
-# Tardis node IPs
+tardis_compute_node5_alias="pdavison1"
+tardis_compute_node6_alias="pdavison2"
+# Tardis node IPs            
 tardis_IP_base="192.168.225."
 tardis_head_node_IP="${tardis_IP_base}${whartnell}"
 tardis_compute_node1_IP="${tardis_IP_base}${ptroughton}"
 tardis_compute_node2_IP="${tardis_IP_base}${jpertwee}"
 tardis_compute_node3_IP="${tardis_IP_base}${tbaker}"
 tardis_compute_node4_IP="${tardis_IP_base}${pdavison}"
+tardis_compute_node5_IP="${tardis_IP_base}${pdavison1}"
+tardis_compute_node6_IP="${tardis_IP_base}${pdavison2}"
 ###################################################################################################
 ########### User names of collaborators, including internal Baylor student user names #############
 ###################################################################################################

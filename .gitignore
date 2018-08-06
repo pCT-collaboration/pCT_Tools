@@ -29,8 +29,8 @@ ImageJ/ExecLogs/
 doc/*
 
 #---- Unorganized bash scripts ----#
-*.sh
-!bash/*.sh
+#*.sh
+#!bash/*.sh
 
 #---- Text files ----#
 *.bak

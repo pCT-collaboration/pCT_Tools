@@ -1376,3 +1376,146 @@ function create_all_tardis_user_dirs()
     create_tardis_user_dirs -p ${tardis_temp_input_data_path} -P 755
     create_tardis_user_dirs -p ${tardis_temp_output_data_path} -P 755
 }
+function recon_dirs()
+{
+    local OPTIND
+    local availabiles=$OFF
+    local echo_on=$OFF
+    local node_sep="$DEFAULT_IFS"
+    local queue='all'
+    local qnodes=(${allnodes[@]})
+    local qnodes_queried=()
+    local qnodes_info=()
+    for arg in "$@"; do
+        shift
+        case "$arg" in
+            --avail*=*|--check*=*)   set -- "$@" "-a";;
+            --queue*=*)              set -- "$@" "-q ${arg#*=}";;
+            --print*=*)              set -- "$@" "-p";;
+            --sep*=*|--new*=*)       set -- "$@" "-n";;
+            *)                       set -- "$@" "$arg";;
+        esac
+    done
+    while getopts 'aq:pn' opt; do
+        case $opt in
+            a) availabiles=$ON;;
+            q) queue=${OPTARG};;
+            p) echo_on=$ON;;
+            n) node_sep='\n';;
+            *) error "Unexpected option ${flag}";;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+    #--------------------------------------------------------------------------------------------------#
+    conditional_exec $echo_on printc -t 0,33 -b 1,49 --skip='both' "Reading Windows formatted text file..." 
+    #--------------------------------------------------------------------------------------------------#
+    filename="$1"
+    parameters=()
+    nicknames=()
+    precisions=()
+    paramvals=()
+    num_paramvals=()
+    while read -r line
+    do
+        line_data_arr=( $(echo "${line[*]}" | pipe_trimall ) )
+        echoif $echo_on "${line_data_arr[@]}"
+        parameters+=( "${line_data_arr[0]}" )
+        nicknames+=( "${line_data_arr[1]}" )
+        precisions+=( "${line_data_arr[2]}" )
+        if test $(exitcode isfloat -b "${line_data_arr[@]:3}")  == $TRUE_VAL; then 
+            current_paramvals="${line_data_arr[@]:3}"
+            paramvals+=( $( setprecisions current_paramvals ${line_data_arr[2]} ) )
+        else 
+            paramvals+=( "${line_data_arr[@]:3}" )
+        fi
+        num_paramvals+=( $(echo "${line_data_arr[@]:3}" | wc -w) )
+    done < "$filename"
+    #--------------------------------------------------------------------------------------------------#
+    offset=0
+    num_paramval_combos=1
+    param_values_offsets=()
+    paramval_combo_divisors=()
+    param_value_repeats=()
+    for values_this_param in ${num_paramvals[@]}
+    do
+        param_values_offsets+=($offset)
+        offset=$(($offset + $values_this_param))
+        num_paramval_combos=$(($num_paramval_combos*$values_this_param))
+        paramval_combo_divisors+=($(($num_paramval_combos)))
+    done
+
+    # Calculate repetitions of each value for each parameter to xtruct parameter value combinations (i.e. (3)->(2) )
+    for divisor in ${paramval_combo_divisors[@]}
+    do
+        param_value_repeats+=($(($num_paramval_combos / $divisor)))
+    done
+    #--------------------------------------------------------------------------------------------------#
+    conditional_exec $echo_on print_key_value -s 'before' -A 55 -k "# of reconstructions (hence, # of directories)" -v "$num_paramval_combos" -c 0,32 -C 0,33,6,49
+    #--------------------------------------------------------------------------------------------------#
+    ####################################################################################################
+    #-------- Iterate through cfgvals for each parameter value combination. Parameters/options --------#
+    #------ specified w/ explicit/varying values in pct_params.txt are assigned values according ------# 
+    #------- to the current parameter value combination, all others are assigned their default --------# 
+    #---------- pct_cfgdef.sh defined values: "--param_name param_value # param description. ----------# 
+    ####################################################################################################
+    #--------------------------------------------------------------------------------------------------#
+    conditional_exec $echo_on printc -t 0,33 -b 1,49 -f 4 --skip='both' "Generated reconstruction directory list:"
+    #--------------------------------------------------------------------------------------------------#
+    directories=()
+    for i in `seq 0 $(( num_paramval_combos - 1 )) | tr '\n' ' '`
+    do
+        paramval_combo_index=0
+        paramval_index=0
+        combo_values_indices=()
+        directory=''
+        get_combo_index $i num_paramvals param_values_offsets param_value_repeats combo_values_indices
+        #echo "combo_values_indices=${combo_values_indices[@]}"
+        # for reps in ${param_value_repeats[@]}
+        # do
+            # div=$(($i / $reps))
+            # modv=$(($div % ${num_paramvals[$paramval_combo_index]}))
+            # param_values_index=$(($modv + ${param_values_offsets[$paramval_combo_index]}))
+            # combo_values_indices+=($param_values_index)
+            # paramval_combo_index=$(($paramval_combo_index+1))
+        # done
+        
+        # Construct cfg file output string, combining parameter names/values/descriptions with the user supplied parameter values replacing the default values when the list reaches the corresponding parameter name for each of the combinations of user supplied parameter values  
+        for parameter in `seq 0 $((${#parameters[@]} - 1)) | tr '\n' ' '`
+        do
+            next_param_values_index=${combo_values_indices[$paramval_index]}
+            paramval=${paramvals[$next_param_values_index]}
+            paramval_index=$(($paramval_index+1))
+            if [[ -z "$directory" ]]; then prefix="$EMPTY_STRING"; else prefix="${directory}_"; fi
+            directory="${prefix}${parameters[${parameter}]}_${paramval}"
+        done    
+        directories+=( "${directory}" )
+        echoif $echo_on "directory=${directory}"
+    done   
+    recon_dirs_var=${2:-REPLY}
+    refarr_assign $recon_dirs_var directories
+}
+function recon_dir_repeats()
+{
+    dir_repeats=()
+    for dir in ${dirs[@]}; do 
+        reps=( $(ls -d ${dir}* | tr '\n' ' '))
+        dir_repeats+=( ${#reps[@]} )
+        echo "dir=$dir (${#reps[@]})"
+    done
+    recon_dir_repeats_var=${1:-REPLY}
+    refarr_assign $recon_dir_repeats_var dir_repeats
+}
+function recon_dir_count()
+{
+    dir_repeats=()
+    dircount=0
+    for dir in ${dirs[@]}; do 
+        reps=( $(ls -d ${dir}* | tr '\n' ' '))
+        dir_repeats+=( ${#reps[@]} )
+        dircount=$(( dircount + ${#reps[@]} ))
+        #echo "dir=$dir (${#reps[@]})"
+    done
+    recon_dir_count_var=${1:-REPLY}
+    refvar_assign $recon_dir_count_var dircount
+}
+#recon_dirs -p "/ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/Test_Parameters_1_win.txt" dirs
