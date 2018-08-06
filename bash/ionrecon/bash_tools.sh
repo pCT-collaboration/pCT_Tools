@@ -177,6 +177,96 @@ function cut_suffix() { sed -e 's/'"$1"'$//gi'; }
 #function cutif_suffix() { echo $1 | eval sed -r 's/\(.*\)"$2"$/\\1/'; }
 #function cutif_prefix() { printf $1 | sed -e 's/^'"$2"'//gi'; }  
 #function cutif_suffix() { printf $1 | sed -e 's/'"$2"'$//gi'; }
+
+function rename_analysis_files()
+{
+    mv -v Std_Dev.csv "Std_Dev_Nk$1_$2.csv" 
+    mv -v RSP_Error.csv "RSP_Error_Nk$1_$2.csv"
+    mv -v RSP.csv "RSP_Nk$1_$2.csv"
+}
+function rename_analysis_files_back()
+{
+    mv -v "Std_Dev_Nk$1_$2.csv" Std_Dev.csv
+    mv -v "RSP_Error_Nk$1_$2.csv" RSP_Error.csv
+    mv -v "RSP_Nk$1_$2.csv" RSP.csv
+}
+function move_and_rename_analysis_files()
+{
+    for i in `seq 1 12`
+    do
+        for j in `seq 1 10`
+        do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}_${j}/Slice_11/d7/RSP.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}_${j}/Slice_11/d7/RSP_Error.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}_${j}/Slice_11/d7/Std_Dev.csv" .
+            rename_analysis_files $i $j
+        done
+    done
+}
+function move_and_rename_base_analysis_files()
+{
+    for i in `seq 1 12`
+    do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}/Slice_11/d7/RSP.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}/Slice_11/d7/RSP_Error.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000100_TV_0_A_0.500000_L0_0_Nk_${i}/Slice_11/d7/Std_Dev.csv" .
+            rename_analysis_files $i 0
+    done
+}
+function move_and_rename_analysis_files()
+{
+    for i in `seq 1 12`
+    do
+        for j in `seq 1 10`
+        do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}_${j}/Slice_11/d7/RSP.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}_${j}/Slice_11/d7/RSP_Error.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}_${j}/Slice_11/d7/Std_Dev.csv" .
+            rename_analysis_files $i $j
+        done
+    done
+}
+function move_and_rename_base_analysis_files()
+{
+    for i in `seq 1 12`
+    do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}/Slice_11/d7/RSP.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}/Slice_11/d7/RSP_Error.csv" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}/Slice_11/d7/Std_Dev.csv" .
+            rename_analysis_files $i 0
+    done
+}
+function rename_TV_files()
+{
+    mv -v TV_measurements.txt "TV_measurements_Nk$1_$2.txt" 
+    mv -v TV_calculated.csv "TV_calculated_Nk$1_$2.csv" 
+}
+function rename_TV_files_back()
+{
+    mv -v "TV_measurements_Nk$1_$2.txt" TV_measurements.txt
+    mv -v "TV_calculated_Nk$1_$2.csv" TV_calculated.csv
+}
+function move_and_rename_TV_files()
+{
+    for i in `seq 1 12`
+    do
+        for j in `seq 1 10`
+        do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}_${j}/TV_measurements.txt" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}_${j}/TV_calculated.csv" .
+            rename_TV_files $i $j
+        done
+    done
+}
+function move_and_rename_base_TV_files()
+{
+    for i in `seq 1 12`
+    do
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}/TV_measurements.txt" .
+            cp -v "D:/pCT/pCT_data/reconstruction_data/CTP404_Sensitom/Experimental/B_25600/B_25600_L_0.000${1}0_TV_${2}_A_0.${3}0000_L0_0_Nk_${i}/TV_calculated.csv" .
+            rename_TV_files $i 0
+    done
+}
 function cutif_prefix() { printf $2 | sed -e 's/^'"$1"'//gi'; }  
 function cutif_suffix() { printf $2 | sed -e 's/'"$1"'$//gi'; }
 function char_matches() { num_occurrences=$(grep -o "$2" <<< "$1" | wc -l); REPLY=$num_occurrences; }
@@ -411,6 +501,35 @@ function numbered_dirs()
     done
     echoif $echo_on "Renamed ${renamed_dirs} Directories"
 }
+function get_dirs_matching()
+{
+    dirs=$(find . -type d -name "$1" | cut_prefix "\.\/")
+}
+function strip_repeat_dir_numbers()
+{
+    get_dirs_matching $1
+    newdirs=()
+    for dir in ${dirs[@]}; do
+        newdirs+=( $(echo $dir | cut_suffix "_$2" ) )
+    done
+    echo ${newdirs[@]}
+    for i in `seq 0 ${#newdirs[@]}`
+    do
+        echo "${dirs[$i]} -> ${newdirs[$i]}"
+        mv -v ${dirs[$i]} ${newdirs[$i]} 
+    done
+}
+# dirs=$(find . -type d -name "B*TV_1*Nk_*_1" | cut_prefix "\.\/")
+# newdirs=()
+# for dir in ${dirs[@]}; do
+    # newdirs+=( $(echo $dir | cut_suffix "_1" ) )
+# done
+# echo ${newdirs[@]}
+# for i in `seq 0 ${#newdirs[@]}`
+# do
+    # echo "${dirs[$i]} ${newdirs[$i]}"
+    # #mv ${dirs[$i]} ${newdirs[$i]} 
+# done
 function rename_statement() { echoif $1 "Renaming $2...\n${FROM_LEADER}${3}\n${TO_LEADER}${4}"; }
 function getdirsarr() { printf '%s\n' $(command ls); }
 function refarr_assign() { if [[ -n $1 ]]; then eval $1=\(\"\${$2\[\@\]}\"\); fi; }

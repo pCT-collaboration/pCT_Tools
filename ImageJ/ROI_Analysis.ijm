@@ -453,7 +453,7 @@ macro "ROI_Analysis [F2]"
 		perform_region_analysis							= true;
 			write_regions_data 							= bool_control(true, write_all_data, write_no_data, EXPLICIT_BOOL);//true;
 				overwrite_regions_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
-			write_shaded_ROI_slice						= bool_control(false, write_all_plots, write_no_plots, EXPLICIT_BOOL);//true;		
+			write_shaded_ROI_slice						= bool_control(true, write_all_plots, write_no_plots, EXPLICIT_BOOL);//true;		
 				overwrite_shaded_ROI_slice 				= bool_control(true, overwrite_all_plots, overwrite_no_plots, EXPLICIT_BOOL);//true;
 		gradient_profile_on 							= false;
 //			write_gradient_plot 						= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
@@ -492,7 +492,7 @@ macro "ROI_Analysis [F2]"
 			std_dev_analysis_on							= true_if_task;
 //				write_std_dev_plot 						= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
 //					overwrite_std_dev_plot 				= bool_control(true, overwrite_all_plots, overwrite_no_plots, DEPENDENT_BOOL);//true;
-	perform_TV_calculation								= true;
+	perform_TV_calculation								= false;
 	write_calculated_TV_2_TXT							= true;
 	overwrite_calculated_TV_TXT							= true;
 	write_calculated_TV_2_CSV							= true;
@@ -1235,7 +1235,7 @@ macro "ROI_Analysis [F2]"
 	cfg_parameter_values[12]					= last_iteration_2_analyze;
 //	plot_parameters 							= newArray(voxel_width, tolerance, lower_limits_scale, upper_limits_scale, difference_scale, x_frame_size, y_frame_size, text_xpos_ratio, text_ypos_ratio, add_line_color, linewidth);
 	plot_parameters 							= newArray(voxel_width,  0.0000001, 0.95, 1.05, 0.1, 780, 380, 0.45, 0.01, "green", 3.5);
-	print_analysis_cfgs							(CFG_PARAMETER_LIST, cfg_parameter_values, CFG_PARAMETER_DECODINGS);
+//	print_analysis_cfgs							(CFG_PARAMETER_LIST, cfg_parameter_values, CFG_PARAMETER_DECODINGS);
 	//***********************************************************************************************************************************************************************************************//
 	//************************************************** Import ROI definitions for current phantom and set corresponding internal variables/arrays *************************************************//
 	//***********************************************************************************************************************************************************************************************//
@@ -1272,7 +1272,7 @@ macro "ROI_Analysis [F2]"
 	//ROI_selection_radii 						= Array.slice(ROI_std_selection_radii,0,1);	// radii of circular selections used to analyze phantom ROIs
 	ROI_selection_diameters 					= newArray(ROI_selection_radii.length);		// diameters of circular selections used to analyze phantom ROIs	
 	num_ROI_selection_diameters					= ROI_selection_diameters.length;			// diameters of circular selections used to analyze phantom ROIs 
-	print_ROI_definitions						();
+//	print_ROI_definitions						();
 	//exit();
 	//***********************************************************************************************************************************************************************************************//
 	//************************* Construct commonly used strings for parameter values and files/folders **********************************************************************************************//
@@ -1411,6 +1411,7 @@ macro "ROI_Analysis [F2]"
 					calculated_TV_data				= newArray(images_per_reconstruction);
 					for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)		
 					{
+						ROI_analysis_index			= 0;
 						if							(print_task_progress) print(TAB_STRING + TAB_STRING + "Analyzing iteration " + iteration + " of " + last_iteration_2_analyze + "...");
 						iteration_string			= iterations_2_analyze_strings[iteration];
 						TXT_image_filename 			= reconstructed_image_strings[iteration] + TXT;
@@ -1421,11 +1422,7 @@ macro "ROI_Analysis [F2]"
 						//********************************************** Extract and save PNG of the slice of x being analysed *********************************************************************************************//
 						//**************************************************************************************************************************************************************************************************//
 						if(write_slice_2_PNG && ROI_selection_diameter_index == 0) // PNG_image_filename = "x_#.png"
-						{
-								//extract_slice(slice, x_magnification, flip_horizontally, flip_vertically, grayscale_range_min, grayscale_range_max, PNG_image_filename, print_slice_ops);
-								//slice_2_PNG			(slice_2_analyze_directory, PNG_image_filename, slice, x_magnification, flip_horizontally, flip_vertically, grayscale_range_min, grayscale_range_max, SLICES_ZERO_INDEXED, overwrite_slice_2_PNG, PNG_image_filename, close_saved_PNG_image, print_slice_ops );
 								slice_2_PNG				(slice_2_analyze_directory, PNG_image_filename, x_dimensions, slice, image_properties, SLICES_ZERO_INDEXED, overwrite_slice_2_PNG, PNG_image_filename, close_saved_PNG_image );
-						}
 						//**************************************************************************************************************************************************************************************************//
 						//************* Plot profile analysis: extract profile along line across the diameter and through the center of the ROIs and write results to disk **********************************************//
 						//**************************************************************************************************************************************************************************************************//
@@ -1455,21 +1452,18 @@ macro "ROI_Analysis [F2]"
 								ROI_slices							= parse_ROI_slices(ROI_slices_string, ROI, PRINT_ROI_SLICES);
 								if									( isMember(slice, ROI_slices, RETURN_MATCH_TF ) )
 								{
-									//print_sep						(PRINT_DASH_SEP);
-									//print							("ROI #" + ROI);
 									ROI_type						= ROI_type_LUT(ROI_types[ROI]);
 									makeROISelection				(ROI_parameters_string, ROI, ROI_type, x_dimensions, slice, PRINT_ROI_PARAMETERS );
-									other_ROI_measurements			= analyzeROISelection(ROI, num_ROIs_2_analyze, ROI_material_RSPs, iteration, images_per_reconstruction, RSPs_by_ROI, RSPs_by_iteration, RSP_errors_by_ROI, RSP_errors_by_iteration, std_devs_by_ROI, std_devs_by_iteration);
-									shade_ROI_selection				();
-									label_ROI_selection				(ROI_labels[ROI], other_ROI_measurements[BOUNDINGX_MEAS_INDEX] + 1.15*other_ROI_measurements[BOUNDING_WIDTH_MEAS_INDEX], other_ROI_measurements[BOUNDINGY_MEAS_INDEX] + 1.0 * other_ROI_measurements[BOUNDING_HEIGHT_MEAS_INDEX], 0);
+									other_ROI_measurements			= analyzeROISelection(ROI, ROI_analysis_index, num_ROIs_2_analyze, ROI_material_RSPs, iteration, images_per_reconstruction, RSPs_by_ROI, RSPs_by_iteration, RSP_errors_by_ROI, RSP_errors_by_iteration, std_devs_by_ROI, std_devs_by_iteration);
+									//shade_ROI_selection				();
+									//label_ROI_selection				(ROI_labels[ROI], other_ROI_measurements[BOUNDINGX_MEAS_INDEX] + 1.15*other_ROI_measurements[BOUNDING_WIDTH_MEAS_INDEX], other_ROI_measurements[BOUNDINGY_MEAS_INDEX] + 1.0 * other_ROI_measurements[BOUNDING_HEIGHT_MEAS_INDEX], 0);
+									ROI_analysis_index++;
 								}
 							}//END: for 									(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-							export_shaded_ROI_slice					(slice_2_analyze_directory, iteration, slice, write_shaded_ROI_slice, overwrite_shaded_ROI_slice);
+							//export_shaded_ROI_slice					(slice_2_analyze_directory, iteration, slice, write_shaded_ROI_slice, overwrite_shaded_ROI_slice);
 							if										(write_regions_data)							//regions_data_file_basenames = "Region_Statistics";
 								results_table_2_CSV					(ROI_selection_diameter_directory, filename, overwrite_regions_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);	//false );//				
-						//exit();
 						}//END: if									(perform_region_analysis)
-						//run										("Clear Results");	
 						//**************************************************************************************************************************************************************************************************//
 						//***** Plot gradient profile analysis: define a line across the diameter of ROIs through their center, extract profile along this line, and write profile values to disk ***********************//
 						//**************************************************************************************************************************************************************************************************//				
@@ -1498,11 +1492,11 @@ macro "ROI_Analysis [F2]"
 					if(write_calculated_TV_2_CSV)		//RSP_CSV_filename = "RSP" + CSV;	
 						array_2_CSV						(1, images_per_reconstruction, calculated_TV_data, 		directory_path, 	"TV_calculated.csv", 		print_output_CSV_path, overwrite_calculated_TV_CSV);
 					if									(write_RSP_CSV)						//RSP_CSV_filename = "RSP" + CSV;	
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, RSPs_by_iteration, 		ROI_selection_diameter_directory, 	RSP_CSV_filename, 		print_output_CSV_path, overwrite_RSP_CSV);
+						array_2_CSV						(ROI_analysis_index, images_per_reconstruction, RSPs_by_iteration, 		ROI_selection_diameter_directory, 	RSP_CSV_filename, 		print_output_CSV_path, overwrite_RSP_CSV);
 					if									(write_RSP_error_CSV)					//RSP_error_CSV_filename = "RSP_Error" + CSV;
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, RSP_errors_by_iteration,	ROI_selection_diameter_directory, 	RSP_error_CSV_filename, print_output_CSV_path, overwrite_RSP_error_CSV);			
+						array_2_CSV						(ROI_analysis_index, images_per_reconstruction, RSP_errors_by_iteration,	ROI_selection_diameter_directory, 	RSP_error_CSV_filename, print_output_CSV_path, overwrite_RSP_error_CSV);			
 					if									(write_std_dev_CSV)					//std_dev_CSV_filename = "Std_Dev" + CSV;
-						array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, std_devs_by_iteration, 	ROI_selection_diameter_directory, 	std_dev_CSV_filename,	print_output_CSV_path, overwrite_std_dev_CSV);						
+						array_2_CSV						(ROI_analysis_index, images_per_reconstruction, std_devs_by_iteration, 	ROI_selection_diameter_directory, 	std_dev_CSV_filename,	print_output_CSV_path, overwrite_std_dev_CSV);						
 					//exit();					
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 				}// END if(perform_ROI_analysis)	
@@ -1605,6 +1599,7 @@ function append_2_log(_log_directory)
 	_time_stamp 		= create_time_stamp(false, false);		
 	File.append			("merge_data.ijm: " + _time_stamp, _log_directory + File.separator + ANALYSIS_LOG_FNAME) 							
 }
+//	array_2_CSV						(num_ROIs_2_analyze, images_per_reconstruction, RSP_errors_by_iteration,	ROI_selection_diameter_directory, 	RSP_error_CSV_filename, print_output_CSV_path, overwrite_RSP_error_CSV);			
 function array_2_CSV(rows, columns, array, directory, filename, print_path, overwrite_existing_CSV)
 {
 	for(row = 0; row < rows; row++)
@@ -4625,11 +4620,49 @@ function all_2_uppercase(_string_array)
 		_uppercase_strings[_i] = toUpperCase(_string_array[_i]);
 	return _uppercase_strings;
 }
+function array_maxval(_array)
+{
+	maxval				=_array[0];
+	for					(_i = 1; _i < _array.length; _i++)
+		if				( _array[_i] > maxval )
+			maxval 		= _array[_i];
+	return 				maxval;
+}
+function array_minval(_array)
+{
+	minval				=_array[0];
+	for					(_i = 1; _i < _array.length; _i++)
+		if				( _array[_i] < minval )
+			minval 		= _array[_i];
+	return 				minval;
+}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //********************************************************************* Functions to look at modifying/combining/removing later *********************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function material_name_LUT(_material_name)
+{
+	_num_material_aliases			= MATERIAL_ALIAS_LUT.length;
+	_material_name_lcase			= toLowerCase(_material_name);
+	for(_alias = 0; _alias < _num_material_aliases; _alias++)
+		if(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_alias])
+			return MATERIAL_NAME_LUT_LCASE[_alias];
+}
+function material_RSP_LUT(_material_name, _is_simulated_scan)
+{
+	//SIMULATED_MATERIAL_RSPS		= newArray(0.0013, 	0.877, 	0.9973, 1.024,   1.0386,		1.144,  1.155,     1.356,     1.828,    1.788,   1.037,         1.047,          1.108		);
+	//EXPERIMENTAL_MATERIAL_RSPS	= newArray(0.0013, 	0.883, 	0.979,  1.144,   1.024,			1.160,  1.160,     1.359,     1.79,     1.788,   1.037,         1.047,          1.108		); 	
+	_material_name_lcase			= material_name_LUT(_material_name);
+	_num_material_names			 	= MATERIAL_NAMES_LCASE.length;
+	if								(_is_simulated_scan)
+		_material_RSPs 				= Array.copy(SIMULATED_MATERIAL_RSPS);
+	else
+		_material_RSPs				= Array.copy(EXPERIMENTAL_MATERIAL_RSPS);
+	for								(_material = 0; _material < _num_material_names; _material++)
+		if							(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_material])
+			return 					_material_RSPs[_material];
+}
 function extract_raw_slice(_x_dimensions, _slice, _image_properties, _slice_indexing, _overwrite_existing, _window_title, _close_image)
 {
 	//print					("Extracting an individual raw sized slice of the image...");			
@@ -5109,13 +5142,13 @@ function make_circular_ROI(_ROI_parameters_string, _ROI_index, _ROI_selection_di
 	//run										("Specify...", "width=" + _ROI_selection_diameter + " height=" + _ROI_selection_diameter + " x=" + _selection_center_x + " y=" + _selection_center_y + " oval centered");
 }
 	//function analyzeROISelection(_ROI_index, _num_ROIs_2_analyze, _ROI_material_RSPs, _iteration, _images_per_reconstruction)
-function analyzeROISelection(_ROI_index, _num_ROIs_2_analyze, _ROI_material_RSPs, _iteration, _images_per_reconstruction, _RSPs_by_ROI, _RSPs_by_iteration, _RSP_errors_by_ROI, _RSP_errors_by_iteration, _std_devs_by_ROI, _std_devs_by_iteration)
+function analyzeROISelection(_ROI_index, _ROI_analysis_index, _num_ROIs_2_analyze, _ROI_material_RSPs, _iteration, _images_per_reconstruction, _RSPs_by_ROI, _RSPs_by_iteration, _RSP_errors_by_ROI, _RSP_errors_by_iteration, _std_devs_by_ROI, _std_devs_by_iteration)
 {
 	//_other_ROI_measurements 						= newArray();
 	run												("Measure");
 	List.setMeasurements;
-	_by_ROI_index 									= _iteration * _num_ROIs_2_analyze + _ROI_index;					// Grouping all measurements for each iteration together  	
-	_by_iteration_index 							= _ROI_index * _images_per_reconstruction + _iteration;	// Grouping all measurements for each ROI together 
+	_by_ROI_index 									= _iteration * _num_ROIs_2_analyze + _ROI_analysis_index;					// Grouping all measurements for each iteration together  	
+	_by_iteration_index 							= _ROI_analysis_index * _images_per_reconstruction + _iteration;	// Grouping all measurements for each ROI together 
 	_mean_RSP_val 									= List.getValue(MEAN_COLUMN_LABEL);
 	_RSPs_by_ROI[_by_ROI_index] 					= _mean_RSP_val;	
 	_RSPs_by_iteration[_by_iteration_index] 		= _mean_RSP_val;	
@@ -5171,42 +5204,4 @@ function label_ROI_selection(_ROI_shape_string, _x, _y, _angle)
 	//makeText(_ROI_shape_string, _x, _y);
 	//fillOval(x_magnification*(ROI_xparams[i]-r), x_magnification*(ROI_yparams[i]-r), x_magnification*d, x_magnification*d);
 	//save_PNG				(_directory, _filename, _overwrite_existing, _close_image, false);				
-}
-function material_name_LUT(_material_name)
-{
-	_num_material_aliases			= MATERIAL_ALIAS_LUT.length;
-	_material_name_lcase			= toLowerCase(_material_name);
-	for(_alias = 0; _alias < _num_material_aliases; _alias++)
-		if(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_alias])
-			return MATERIAL_NAME_LUT_LCASE[_alias];
-}
-function material_RSP_LUT(_material_name, _is_simulated_scan)
-{
-	//SIMULATED_MATERIAL_RSPS		= newArray(0.0013, 	0.877, 	0.9973, 1.024,   1.0386,		1.144,  1.155,     1.356,     1.828,    1.788,   1.037,         1.047,          1.108		);
-	//EXPERIMENTAL_MATERIAL_RSPS	= newArray(0.0013, 	0.883, 	0.979,  1.144,   1.024,			1.160,  1.160,     1.359,     1.79,     1.788,   1.037,         1.047,          1.108		); 	
-	_material_name_lcase			= material_name_LUT(_material_name);
-	_num_material_names			 	= MATERIAL_NAMES_LCASE.length;
-	if								(_is_simulated_scan)
-		_material_RSPs 				= Array.copy(SIMULATED_MATERIAL_RSPS);
-	else
-		_material_RSPs				= Array.copy(EXPERIMENTAL_MATERIAL_RSPS);
-	for								(_material = 0; _material < _num_material_names; _material++)
-		if							(_material_name_lcase == MATERIAL_ALIAS_LUT_LCASE[_material])
-			return 					_material_RSPs[_material];
-}
-function array_maxval(_array)
-{
-	maxval				=_array[0];
-	for					(_i = 1; _i < _array.length; _i++)
-		if				( _array[_i] > maxval )
-			maxval 		= _array[_i];
-	return 				maxval;
-}
-function array_minval(_array)
-{
-	minval				=_array[0];
-	for					(_i = 1; _i < _array.length; _i++)
-		if				( _array[_i] < minval )
-			minval 		= _array[_i];
-	return 				minval;
 }

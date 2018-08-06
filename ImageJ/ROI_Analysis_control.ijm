@@ -4476,7 +4476,7 @@ function verify_ROI_analysis_output_files(_common_dir, _current_PVT_folder, _ROI
 			{
 				_current_analysis_xout_ofname			= _current_xout_slices_subdir 	+ File.separator	+ reconstructed_image_png_filenames[_iteration];				
 				_xout_file_path = construct_valid_file_path(_source_folder, _current_analysis_xout_ofname );				
-				print("_xout_file_path = ", _xout_file_path);
+				//print("_xout_file_path = ", _xout_file_path);
 				if(!File.exists(_xout_file_path))
 					_missing_data = true;			
 			}
