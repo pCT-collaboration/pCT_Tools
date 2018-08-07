@@ -452,7 +452,7 @@ macro "ROI_Analysis [F2]"
 				overwrite_profile_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, DEPENDENT_BOOL);//true;
 		perform_region_analysis							= true;
 			write_regions_data 							= bool_control(true, write_all_data, write_no_data, EXPLICIT_BOOL);//true;
-				overwrite_regions_data 					= bool_control(true, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
+				overwrite_regions_data 					= bool_control(false, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
 			write_shaded_ROI_slice						= bool_control(true, write_all_plots, write_no_plots, EXPLICIT_BOOL);//true;		
 				overwrite_shaded_ROI_slice 				= bool_control(true, overwrite_all_plots, overwrite_no_plots, EXPLICIT_BOOL);//true;
 		gradient_profile_on 							= false;
@@ -465,20 +465,20 @@ macro "ROI_Analysis [F2]"
 	false_if_task 										= bool_dependence(false, (perform_selection_analysis && perform_region_analysis), AND_LOGIC);
 	//*****************************************************************************************************************************************************************************
 		write_RSP_CSV									= bool_control(true_if_task, write_all_data, write_no_data, EXPLICIT_BOOL);//true && perform_selection_analysis && perform_region_analysis;
-			overwrite_RSP_CSV							= bool_control(true, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
+			overwrite_RSP_CSV							= bool_control(false, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
 		write_RSP_error_CSV								= bool_control(true_if_task, write_all_data, write_no_data, EXPLICIT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
-			overwrite_RSP_error_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
+			overwrite_RSP_error_CSV						= bool_control(false, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
 		write_std_dev_CSV								= bool_control(true_if_task, write_all_data, write_no_data, EXPLICIT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
-			overwrite_std_dev_CSV						= bool_control(true, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
+			overwrite_std_dev_CSV						= bool_control(false, overwrite_all_data, overwrite_no_data, EXPLICIT_BOOL);//true;
 		perform_vs_predicted_RSP_analysis				= task_only_bool_dependence(true, tasksof_perform_vs_predicted_RSP_analysis, write_none);//true;
 			//for(iteration = first_iteration_2_analyze; iteration <= last_iteration_2_analyze; iteration++)
-			plot_measured_vs_predicted_RSP				= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
+//			plot_measured_vs_predicted_RSP				= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
 //				write_RSP_comparison_plot				= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
 //					overwrite_RSP_comparison_plot		= bool_control(true, overwrite_all_plots, overwrite_no_plots, DEPENDENT_BOOL);//true;
-			plot_ROI_errors_vs_predicted_RSP			= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
+//			plot_ROI_errors_vs_predicted_RSP			= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
 //				write_RSP_error_comparison_plot			= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
 //					overwrite_RSP_error_comparison_plot	= bool_control(true, overwrite_all_plots, overwrite_no_plots, DEPENDENT_BOOL);//true;
-			plot_ROI_std_dev_vs_predicted_RSP			= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
+//			plot_ROI_std_dev_vs_predicted_RSP			= bool_control(true_if_task, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true  && perform_selection_analysis && perform_region_analysis;
 //				write_std_dev_comparison_plot			= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
 //					overwrite_std_dev_comparison_plot	= bool_control(true, overwrite_all_plots, overwrite_no_plots, DEPENDENT_BOOL);//true;
 		perform_vs_iteration_analysis					= bool_control(true, write_all_plots, write_no_plots, DEPENDENT_BOOL);//true;
@@ -687,29 +687,9 @@ macro "ROI_Analysis [F2]"
 	num_specs 						= 4;											// # of test parameter properties specified in Specs file
 	tolerance						= 0.0000001;									// Tolerance separating min/max values of array used in findMinima/findMaxima
 	filterwidth 					= 3;											// Width of filter used in median filtering FBP image
-//	lower_limits_scale 				= 0.95;											// Scale factor to apply to minimum value of curve to define lower axis limit
-//	upper_limits_scale 				= 1.05;											// Scale factor to apply to maximum value of curve to define upper axis limit
-//	difference_scale				= 0.1;											// Scale factor to apply to minimum/maximum value of y-axis to improve appearance
-//	alignment_column 				= 25;
-//	screen_width					= screenWidth;
-//	screen_height					= screenHeight;
-//	x_frame_size					= 780;											// Size of plots (in pixels) in x-direction
-//	y_frame_size					= 380;											// Size of plots (in pixels) in y-direction
-//	text_xpos_ratio					= 0.45;											//
-//	text_ypos_ratio					= 0.01;											//
-//	text_size						= 30;
-//	legend_text_size				= 22;
-//	axis_label_text_size			= 28;
-//	data_line_color					= "blue";										// Specify color of primary plot curves
-//	add_line_color					= "green";										// Specify color of secondary plot curves
-//	color_rotation					= newArray("green", "blue",  "cyan",  "magenta", "orange", "red", "pink", "yellow", "darkGray", "gray", "lightGray", "black", "white"); 
-//	add_text_justification			= "center";										//
-//	linewidth						= 3.5;											//
 	x_magnification 				= 5;											// Factor by which extracted slices are magnified before saving as PNG
 	grayscale_range_min				= 0.0;											// Specify min value of grayscale range, all values at or below are shown as black 
 	grayscale_range_max				= 2.0;											// Specify max value of grayscale range, all values at or above are shown as white 
-//	GIF_frame_rate					= 4;											// Specify animated GIF's frame rate in frames per second (fps)
-//	AVI_frame_rate					= 5;											// Specify AVI video frame rate in frames per second (fps)
 	//***************************************************************************************************************************************************************************************************//
 	//************************************************************************************ Define array constants *************************************************************************************//
 	//***************************************************************************************************************************************************************************************************//
@@ -846,6 +826,7 @@ macro "ROI_Analysis [F2]"
 	TV_AFTER_TVS_LABEL 								= "TV: After TVS";
 	TV_REDUCTION_LABEL 								= "TVS TV Reduction";
 	TV_TABLE_TITLES									= newArray(TV_BEFORE_TVS_LABEL, TV_AFTER_TVS_LABEL, TV_REDUCTION_LABEL);
+	OTVS_row_header									= "OTVS";
 	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
 	ASK_KILL_DIALOG_TITLE							= "Continue or cancel execution?";
@@ -1365,8 +1346,8 @@ macro "ROI_Analysis [F2]"
 //write_shaded_ROI_slice						= true;
 	write_slice_2_PNG 							= true;
 	overwrite_slice_2_PNG 						= true;
-//	write_shaded_ROI_slice						= true;		
-//	overwrite_shaded_ROI_slice 					= true;
+	write_shaded_ROI_slice						= true;		
+	overwrite_shaded_ROI_slice 					= true;
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//**************************************************************************************************************************************************************************************************//
 	//***************************************************** Repeat analysis routines for each specified slice of the image *****************************************************************************//
@@ -1455,12 +1436,15 @@ macro "ROI_Analysis [F2]"
 									ROI_type						= ROI_type_LUT(ROI_types[ROI]);
 									makeROISelection				(ROI_parameters_string, ROI, ROI_type, x_dimensions, slice, PRINT_ROI_PARAMETERS );
 									other_ROI_measurements			= analyzeROISelection(ROI, ROI_analysis_index, num_ROIs_2_analyze, ROI_material_RSPs, iteration, images_per_reconstruction, RSPs_by_ROI, RSPs_by_iteration, RSP_errors_by_ROI, RSP_errors_by_iteration, std_devs_by_ROI, std_devs_by_iteration);
-									//shade_ROI_selection				();
-									//label_ROI_selection				(ROI_labels[ROI], other_ROI_measurements[BOUNDINGX_MEAS_INDEX] + 1.15*other_ROI_measurements[BOUNDING_WIDTH_MEAS_INDEX], other_ROI_measurements[BOUNDINGY_MEAS_INDEX] + 1.0 * other_ROI_measurements[BOUNDING_HEIGHT_MEAS_INDEX], 0);
+									if(write_shaded_ROI_slice)
+									{
+										shade_ROI_selection				();
+										label_ROI_selection				(ROI_labels[ROI], other_ROI_measurements[BOUNDINGX_MEAS_INDEX] + 1.15*other_ROI_measurements[BOUNDING_WIDTH_MEAS_INDEX], other_ROI_measurements[BOUNDINGY_MEAS_INDEX] + 1.0 * other_ROI_measurements[BOUNDING_HEIGHT_MEAS_INDEX], 0);									
+									}
 									ROI_analysis_index++;
 								}
 							}//END: for 									(ROI = 0; ROI < num_ROIs_2_analyze; ROI++)
-							//export_shaded_ROI_slice					(slice_2_analyze_directory, iteration, slice, write_shaded_ROI_slice, overwrite_shaded_ROI_slice);
+							export_shaded_ROI_slice					(slice_2_analyze_directory, iteration, slice, write_shaded_ROI_slice, overwrite_shaded_ROI_slice);
 							if										(write_regions_data)							//regions_data_file_basenames = "Region_Statistics";
 								results_table_2_CSV					(ROI_selection_diameter_directory, filename, overwrite_regions_data, print_output_CSV_path, CLEAR_RESULTS_TABLE);	//false );//				
 						}//END: if									(perform_region_analysis)
@@ -2166,23 +2150,6 @@ function file_2_float_array(_path, _filename, _print_path)
 		_array[i] 			= parseFloat(_lines[i]);
 	INPUT_FILE_LIST			= Array.concat(INPUT_FILE_LIST, _file_path);			
 	return 					_array;
-}
-function file_2_decoded_key_value_pairs(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME,  _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _printing_ROI_definitions)
-{
-	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME, _printing_ROI_definitions);
-	_num_ROI_key_value_pairs					= _ROI_definition_file_key_value_pairs.length;
-	_ordered_ROI_parameter_strings				= newArray(_num_ROI_key_value_pairs);
-	for(i = 0; i < _num_ROI_key_value_pairs; i++)
-	{
-		separated_key_value_pair 				= split(_ROI_definition_file_key_value_pairs[i], "=");
-		key_string 								= separated_key_value_pair[0];
-		_spaceless_key_string 					= strip_surrounding_spaces(key_string);
-		_ROI_parameter_values_string			= strip_surrounding_spaces(separated_key_value_pair[1]);
-		for(j = 0; j < _ROI_definitions_parameter_list.length; j++)
-			if(_spaceless_key_string == _ROI_definitions_parameter_list[j] )
-				_ordered_ROI_parameter_strings[j] = _ROI_parameter_values_string;
-	}	
-	return _ordered_ROI_parameter_strings;	
 }
 function file_2_key_value_pairs(_dir, _filename, _parameter_list, _print_path)
 {
@@ -3198,13 +3165,6 @@ function opened_image_set_2_stack(image_names_matching, stack_title, close_image
 	stack_dimensions 		= newArray(width, height, channels, slices, frames);
 	return stack_dimensions;			
 }			
-function setMeasurementsFlags(_ROI_MEAS_FLAGS)
-{
-	_measurementsFlagsString			= _ROI_MEAS_FLAGS[0];
-	for									( _i = 1; _i < _ROI_MEAS_FLAGS.length; _i++)
-		_measurementsFlagsString 		= _measurementsFlagsString + SPACE_STRING + _ROI_MEAS_FLAGS[_i];
-	return 								_measurementsFlagsString;
-}
 //function IJROI_analysis_config_CSV()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_CSV);											}
 //function IJROI_analysis_config_image()									{ IJROI_analysis_config	(IJROI_analysis_measurements, IJROI_analysis_redirect, IJIO_precision_image);										}
 function IJROI_analysis_config_CSV()									{ IJROI_analysis_config	(IJROI_ANALYSIS_MEASUREMENTS, IJROI_ANALYSIS_REDIRECT, IJIO_PRECISION_CSV);										}
@@ -3335,44 +3295,6 @@ function parameter_values_2_strings(_parameter_values, _parameter_value_string_p
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------//
-function parse_analysis_cfg(_CFG_PARAMETER_LIST, _CFG_PARAMETER_DECODINGS, _print_cfg_definitions_path)
-{
-	if											(_print_cfg_definitions_path)
-		print									("Reading/parsing ROI analysis configurations from:\n\t------->" + ANALYSIS_CFG_INFO_FILE_PATH);
-	_cfg_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ANALYSIS_CFG_INFO_FILENAME, _CFG_PARAMETER_LIST, DONT_PRINT_PATH);		
-	_cfg_parameter_values						= newArray(_cfg_parameter_strings.length);
-	for											(__i = 0; __i < _cfg_parameter_values.length; __i++)
-		_cfg_parameter_values[__i]				= decode_string( _cfg_parameter_strings[__i], _CFG_PARAMETER_DECODINGS[__i]);
-	return 										_cfg_parameter_values;
-}
-function print_analysis_cfgs(_CFG_PARAMETER_LIST, _cfg_parameter_string_values, _CFG_PARAMETER_DECODINGS)
-{
-	for											(__i = 0; __i < _cfg_parameter_string_values.length; __i++)
-	{
-		if										(_CFG_PARAMETER_DECODINGS[__i] == BOOL_DECODING_OP)
-		{
-			if									( _cfg_parameter_string_values[__i] == true )
-												print(_CFG_PARAMETER_LIST[__i] + " = (evaluates) true" );
-			else								print(_CFG_PARAMETER_LIST[__i] + " = (evaluates) false" );
-		}
-		else									print(_CFG_PARAMETER_LIST[__i] + " = " +  _cfg_parameter_string_values[__i]);
-	}
-}
-function decode_string(_input_string, _decoding_op)
-{
-	_spaceless_input_string 				= strip_surrounding_spaces(_input_string);
-	if										(_decoding_op== FLOAT_DECODING_OP)
-											return parseFloat(_spaceless_input_string);
-	else if									(_decoding_op == INT_DECODING_OP)
-											return parseInt(_spaceless_input_string);
-	else if									(_decoding_op == BOOL_DECODING_OP)
-	{
-		if									( _spaceless_input_string == TRUE_STRING ) 		
-											return true;
-		else								return false;
-	}
-	else 									return _spaceless_input_string;
-}
 function path_2_phantom_name(_path, _reconstruction_data_folder)
 {
 	_folder_names 					= split(_path, File.separator);
@@ -4396,6 +4318,68 @@ function verify_distributed_file_set(directories, filenames)
 //********************************************************************* Functions to look at modifying/combining/removing later *********************************************************************//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function parse_analysis_cfg(_CFG_PARAMETER_LIST, _CFG_PARAMETER_DECODINGS, _print_cfg_definitions_path)
+{
+	if											(_print_cfg_definitions_path)
+		print									("Reading/parsing ROI analysis configurations from:\n\t------->" + ANALYSIS_CFG_INFO_FILE_PATH);
+	_cfg_parameter_strings						= file_2_key_value_pairs(GITHUB_MACRO_CONFIGS_SUBDIR, ANALYSIS_CFG_INFO_FILENAME, _CFG_PARAMETER_LIST, DONT_PRINT_PATH);		
+	_cfg_parameter_values						= newArray(_cfg_parameter_strings.length);
+	for											(__i = 0; __i < _cfg_parameter_values.length; __i++)
+		_cfg_parameter_values[__i]				= decode_string( _cfg_parameter_strings[__i], _CFG_PARAMETER_DECODINGS[__i]);
+	return 										_cfg_parameter_values;
+}
+function print_analysis_cfgs(_CFG_PARAMETER_LIST, _cfg_parameter_string_values, _CFG_PARAMETER_DECODINGS)
+{
+	for											(__i = 0; __i < _cfg_parameter_string_values.length; __i++)
+	{
+		if										(_CFG_PARAMETER_DECODINGS[__i] == BOOL_DECODING_OP)
+		{
+			if									( _cfg_parameter_string_values[__i] == true )
+												print(_CFG_PARAMETER_LIST[__i] + " = (evaluates) true" );
+			else								print(_CFG_PARAMETER_LIST[__i] + " = (evaluates) false" );
+		}
+		else									print(_CFG_PARAMETER_LIST[__i] + " = " +  _cfg_parameter_string_values[__i]);
+	}
+}
+function decode_string(_input_string, _decoding_op)
+{
+	_spaceless_input_string 				= strip_surrounding_spaces(_input_string);
+	if										(_decoding_op== FLOAT_DECODING_OP)
+											return parseFloat(_spaceless_input_string);
+	else if									(_decoding_op == INT_DECODING_OP)
+											return parseInt(_spaceless_input_string);
+	else if									(_decoding_op == BOOL_DECODING_OP)
+	{
+		if									( _spaceless_input_string == TRUE_STRING ) 		
+											return true;
+		else								return false;
+	}
+	else 									return _spaceless_input_string;
+}
+function file_2_decoded_key_value_pairs(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME,  _ROI_definitions_parameter_list, _ROI_parameter_decodings, _ROI_parameter_value_parseFloat, _printing_ROI_definitions)
+{
+	_ROI_definition_file_key_value_pairs		= file_2_array(_ROI_definitions_directory, _ROI_DEFINITIONS_FILENAME, _printing_ROI_definitions);
+	_num_ROI_key_value_pairs					= _ROI_definition_file_key_value_pairs.length;
+	_ordered_ROI_parameter_strings				= newArray(_num_ROI_key_value_pairs);
+	for(i = 0; i < _num_ROI_key_value_pairs; i++)
+	{
+		separated_key_value_pair 				= split(_ROI_definition_file_key_value_pairs[i], "=");
+		key_string 								= separated_key_value_pair[0];
+		_spaceless_key_string 					= strip_surrounding_spaces(key_string);
+		_ROI_parameter_values_string			= strip_surrounding_spaces(separated_key_value_pair[1]);
+		for(j = 0; j < _ROI_definitions_parameter_list.length; j++)
+			if(_spaceless_key_string == _ROI_definitions_parameter_list[j] )
+				_ordered_ROI_parameter_strings[j] = _ROI_parameter_values_string;
+	}	
+	return _ordered_ROI_parameter_strings;	
+}
+function setMeasurementsFlags(_ROI_MEAS_FLAGS)
+{
+	_measurementsFlagsString			= _ROI_MEAS_FLAGS[0];
+	for									( _i = 1; _i < _ROI_MEAS_FLAGS.length; _i++)
+		_measurementsFlagsString 		= _measurementsFlagsString + SPACE_STRING + _ROI_MEAS_FLAGS[_i];
+	return 								_measurementsFlagsString;
+}
 function int_2_binary(_int, _num_bits, _base_power)
 {
 	_bit_values 					= newArray(_num_bits);

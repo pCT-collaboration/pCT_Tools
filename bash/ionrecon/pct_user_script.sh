@@ -26,8 +26,9 @@ rcode_flags="-O3"
 #-------------------------------------------------------------------------------------------------#
 dindir="/input_Sensitom_CDH6/"
 doutdir="/output_Sensitom_CDH6/B_25600/"
-current_rcode="Baylor_rcode"    # Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
+#current_rcode="Baylor_rcode"    # Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
 #current_rcode=$Baylor_rcode    # Options: $Baylor_rcode, $pct_collab_rcode, $Blake_rcode, $old_rcode
+current_rcode="pct_collab_rcode"    # Options: Baylor_rcode, pct-collab_rcode, Blake_rcode, old_rcode
 current_rcode_git='direct'      # Options: user_git='user', direct_git='direct'
 #current_rcode_git=$direct_git  # Options: user_git='user', direct_git='direct'
 current_phantom="CTP404_Sensitom"
@@ -129,6 +130,7 @@ print_alias $(exe alias gocode="cd ${global_code_path}" )                       
 print_alias $(exe alias gogitcode="cd ${global_git_code_path}" )                                  #
 print_alias $(exe alias gopcode="cd ${global_pcode_path}" )                                       #
 print_alias $(exe alias gorcode="cd ${global_rcode_path}" )                                       #
+print_alias $(exe alias gokrcode="cd ${global_pct_collab_rcode_git_repo_path}" )                                       #
 print_alias $(exe alias gogitrcode="cd ${global_Baylor_rcode_git_repo_path}" )                    #
 print_alias $(exe alias gogitmyrrcode="cd ${global_Blake_rcode_git_repo_path}" )                  #
 print_alias $(exe alias gogitorcode="cd ${global_old_rcode_git_repo_path}" )                      #

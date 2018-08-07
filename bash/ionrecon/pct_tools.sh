@@ -1518,4 +1518,12 @@ function recon_dir_count()
     recon_dir_count_var=${1:-REPLY}
     refvar_assign $recon_dir_count_var dircount
 }
+function set_gitrcode ()
+{
+    if [[ $current_user == "schultze" || $current_user == "karbasip" ]]; then
+        current_rcode="Baylor_rcode"
+    else
+        current_rcode="pct_collab_rcode"
+    fi
+}
 #recon_dirs -p "/ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/Test_Parameters_1_win.txt" dirs

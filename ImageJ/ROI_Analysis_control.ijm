@@ -80,13 +80,14 @@ macro "ROI_Analysis_control"
 	analyze_all_dir_reconstructions								= true;
 	analyze_specific_data 										= false;
 	only_perform_missing_analyses 								= true;
-	overwrite_ROI_analyses		 								= false;
+	overwrite_ROI_analyses		 								= true;
 	always_perform_analyses 									= !only_perform_missing_analyses;
 	generate_averaged_data										= false;
 	generate_specific_averaged_data								= false;
 	generate_averaged_MVP_data									= false;
 	perform_all_missing_analyses								= false;
 	perform_MVP_analyses										= true;
+	reverse_analysis_order										= true;
 	exit_after_ROI_analyses 									= true;
 	exit_after_analyzing_specific_data							= false;
 	exit_after_performing_all_missing_analyses					= false;
@@ -1327,10 +1328,14 @@ macro "ROI_Analysis_control"
 		print_section							("Perform ROI analysis of ", PRINT_MAJOR_SECTION);
 		if(print_ROI_analysis_targets)
 			Appsi( "Directories targeted for ROI analysis:", ROI_analysis_targets);
-		for(i = 0; i < ROI_analysis_targets.length; i++)
-		//for(i = 0; i < 31; i++)
+		num_ROI_analyses						= ROI_analysis_targets.length;
+		for(i = 0; i < num_ROI_analyses; i++)
+		//for(i = 0; i < 31; i++) reverse_analysis_order
 		{
-			reconstructed_data_folder 			= ROI_analysis_targets[i];
+			if(reverse_analysis_order)
+				reconstructed_data_folder 		= ROI_analysis_targets[num_ROI_analyses - i - 1];			
+			else
+				reconstructed_data_folder 		= ROI_analysis_targets[i];
 			print_section						("Performing ROI analysis # " + i + " on: " + reconstructed_data_folder, PRINT_MINOR_SECTION);
 			current_analysis_target 			= construct_valid_dir_path(TEST_BATCH_DIR, reconstructed_data_folder );
 			recon_data_exists 					= verify_recon_output(TEST_BATCH_DIR, reconstructed_data_folder, reconstructed_image_filenames, ROI_ANALYSIS_TV_IFNAME, PRINT_PATH);

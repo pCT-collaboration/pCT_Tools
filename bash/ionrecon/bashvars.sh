@@ -504,6 +504,11 @@ Baylor_rcode="Baylor_rcode"
 pct_collab_rcode="pct_collab_rcode"
 Blake_rcode="Blake_rcode"
 old_rcode="old_rcode"
+if [[ $current_user == "schultze" || $current_user == "karbasip" ]]; then
+    current_rcode="Baylor_rcode"
+else
+    current_rcode="pct_collab_rcode"
+fi
 #--------------- Set current reconstruction source git account/repo/branch   -------------------#
 if [[ "$current_rcode" == "$Baylor_rcode" ]] # BaylorICTHUS/pCT_Reconstruction
 then

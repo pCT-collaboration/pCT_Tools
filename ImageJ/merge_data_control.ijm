@@ -78,6 +78,11 @@ macro "merge_data_control"
 	no_compression									= "None";
 	JPEG_compression								= "JPEG";
 	PNG_compression									= "PNG";								
+	TV_BEFORE_TVS_LABEL 							= "TV: Before TVS";	
+	TV_AFTER_TVS_LABEL 								= "TV: After TVS";
+	TV_REDUCTION_LABEL 								= "TVS TV Reduction";
+	TV_TABLE_TITLES									= newArray(TV_BEFORE_TVS_LABEL, TV_AFTER_TVS_LABEL, TV_REDUCTION_LABEL);
+	OTVS_row_header									= "OTVS";
 	MONTH_NAMES 									= newArray("Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec");
 	DAY_NAMES 										= newArray("Sun", "Mon","Tue","Wed","Thu","Fri","Sat");
 	FOLDER_SEPARATOR								= File.separator;
@@ -107,7 +112,9 @@ macro "merge_data_control"
 	experimental_data_folder						= FOLDER_SEPARATOR + "Experimental";
 	output_folder									= FOLDER_SEPARATOR + "Output";
 	geant4_data_folder_basename						= FOLDER_SEPARATOR + "G_";
-	PHANTOM_BASENAME								= "CTP404_Sensitom";
+	//PHANTOM_BASENAME									= "CTP404_Sensitom";
+	//PHANTOM_BASENAME									= "CTP404_Sensitom_4M";
+	PHANTOM_BASENAME									= "HN715_PedHead_0";
 	//PHANTOM_BASENAME								= "CTP404_Sensitom_4M";
 	PHANTOM_NAME_FOLDER								= FOLDER_SEPARATOR + PHANTOM_BASENAME;
 	run_date										= "15-05-24";
@@ -182,7 +189,7 @@ macro "merge_data_control"
 	
 	parameter_test_number						= 6;
 	parameter_test_info_filename				= PARAMETER_TEST_INFO_BASENAME + d2s(parameter_test_number, 0)  + TXT;
-	parameter_test_info 						= file_2_array(TEST_BATCH_DIR, parameter_test_info_filename, false);
+	parameter_test_info 						= file_2_array(GITHUB_MACRO_CONFIGS_SUBDIR, parameter_test_info_filename, false);
 	num_parameters 								= parameter_test_info.length;
 	parameter_values 							= newArray();
 	num_parameter_values 						= newArray(num_parameters);
