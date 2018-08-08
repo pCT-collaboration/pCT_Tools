@@ -29,6 +29,32 @@ function object_id_2_name()
         break
     fi
 }
+function object_name_2_id()
+{
+    objectID=$1
+    if [[ $objectID == "Empty" ]]; then object_name="Emp"
+    elif [[ $objectID == "Calibration" ]]; then object_name="CalEmp"
+    elif [[ $objectID == "Calibration" ]]; then object_name="Calib"
+    elif [[ $objectID == "Rod" ]]; then object_name="Rod"
+    elif [[ $objectID == "Water" ]]; then object_name="Water"   
+    elif [[ $objectID == "CTP404_Sensitom" ]]; then object_name="Sensitom"
+    elif [[ $objectID == "CTP528_Linepair" ]]; then object_name="LinePair"
+    elif [[ $objectID == "CTP515_Low_Contrast" ]]; then object_name="LowCon"
+    elif [[ $objectID == "CTP554_Dose" ]]; then object_name="Dose16"
+    elif [[ $objectID == "HN715_PedHead_0" ]]; then object_name="CIRSPHP0"
+    elif [[ $objectID == "HN715_PedHead_1" ]]; then object_name="CIRSPHP1"
+    elif [[ $objectID == "LMUDECT" ]]; then object_name="LMU_DECT"
+    elif [[ $objectID == "CIRSEdge" ]]; then object_name="CIRS_Edge"
+    elif [[ $objectID == "Birks" ]]; then object_name="Birks"
+    else error_flag="true"
+    fi
+    if [[ $error_flag == "true" ]]
+    then
+        echo "ERROR: Unknown Phantom ID '$objectID' encountered"
+        error_flag=false;
+        break
+    fi
+}
 function subcategory_tagging()
 {
     tag=$(tolowercase $1)
@@ -225,52 +251,6 @@ function parse_readme()
 #----------------------------------------------------------------------------------------------------#
 #------------------------------- pCT file/directory path construction -------------------------------#
 #----------------------------------------------------------------------------------------------------#
-function construct_pct_path()
-{
-   usage="construct_pct_path [-h] [-u <username>] -- add directory for pCT code to local SSD drive and default GitHub repository
-
-    where:
-        -h  show this help text
-        -u  desired username (if different from login)"
-    local OPTIND
-    username="$(id -un)"   
-    data_direction="${projection_link_folder}"
-    scan_type_folder="${experimental_data_folder}"
-    run_date_folder_prefix=""
-    #pct_dir="${NAS_pct_dir}"
-    parent_dir="${org_data_path}"
-    preprocessed_date=$(current_date)
-    recon_date=$(current_date)
-    data_direction="${raw_data_link_folder:1}"
-    while getopts 'ho:r:n:d:D:KCEGTIO' opt; do
-        case $opt in        
-            h) echo "${usage}"; return;;
-            o) object=${OPTARG};;
-            r) run_date=${OPTARG};;
-            n) run_number=${OPTARG};;
-            d) preprocessed_date=${OPTARG};;
-            D) recon_date=${OPTARG};;
-            K) parent_dir="${org_data_path}";;
-            C) parent_dir="${tardis_org_data_path}";;
-            E) scan_type_folder="${experimental_data_folder}";;
-            G) run_date_folder_prefix="${GEANT4_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;
-            T) run_date_folder_prefix="${TOPAS_run_data_prefix}"; scan_type_folder="${simulated_data_folder}";;         
-            I) data_direction="${raw_data_link_folder}";;
-            O) data_direction="${proj_data_link_folder}";;
-            *) error "Unexpected option ${flag}";;
-        esac
-    done    
-    run_date_folder="${run_date_folder_prefix}${run_date}"                                          # Extract run date from last directory in the path
-    #input_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}${proj_data_link_folder}/${preprocessed_date}"
-    #output_path="${parent_dir}/${object}/${scan_type_folder}/${run_date_folder}/${run_date_folder}${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
-    input_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}"
-    output_path="${object}${scan_type_folder}/${run_date_folder}/${run_number}${proj_data_link_folder}/${preprocessed_date}/${recon_date}"
-    echo "${input_path}"
-    echo "${output_path}"
-    if [[ $data_direction == "${raw_data_link_folder:1}" ]]; then REPLY="${input_path}"
-    elif [[ $data_direction == "${proj_data_link_folder:1}" ]]; then REPLY="${output_path}"; fi
-    #/ion/pCT_data/organized_data/<phantom>/<scan type>/<run date>/<run #>/Output/<preprocessed data>     
-}
 function construct_preprocessing_path()
 {
     local OPTIND
@@ -377,6 +357,26 @@ function construct_recon_path()
 }
 function construct_pct_path()
 {
+    fname=$(echo $FUNCNAME)
+    usage()
+    {
+        printc -t 0,34 -b 1,49 --skip='both' "$fname [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data"
+        
+    print "where:\n" 1,33 6,49
+        print_list -s 0 -k "\t-h" -v "show this help text" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-P" -v "preprocessing path request flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-R" -v "reconstruction path request flag (DEFAULT: preprocessing )" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-o" -v "object name (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-r" -v "run date (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-n" -v "run # + tag(s) (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-d" -v "preprocessed_date (DEFAULT: ${preprocessed_date} (today))" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-D" -v "reconstruction date, if applicable (DEFAULT: ${recon_date} (today))" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-E" -v "Experimental data flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-G" -v "GEANT4 data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-T" -v "TOPAS data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-I" -v "input data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-O" -v "output data flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+    }
     local OPTIND
     username="$(id -un)" 
     data_direction="${projection_link_folder}"
@@ -388,25 +388,9 @@ function construct_pct_path()
     data_direction="${proj_data_link_folder}"
     preprocessing_flag='true'
     verbose_flag='false'
-    usage="${echo $FUNCNAME} [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data
-
-    where:
-        -h  show this help text
-        -P  preprocessing path request flag (DEFAULT)
-        -R  reconstruction path request flag (DEFAULT: preprocessing )
-        -o  object name (REQUIRED)
-        -r  run date (REQUIRED)
-        -n  run # + tag(s) (REQUIRED)
-        -d  preprocessed_date (DEFAULT: ${preprocessed_date} (today))
-        -D  reconstruction date, if applicable (DEFAULT: ${recon_date} (today))
-        -E  Experimental data flag (DEFAULT)
-        -G  GEANT4 data flag 
-        -T  TOPAS data flag 
-        -I  input data flag
-        -O  output data flag (DEFAULT)"
     while getopts 'hvPRo:r:n:d:D:EGTIO' opt; do
         case $opt in        
-            h) echo "${usage}"; return;;
+            h) usage; return 0;;
             v) verbose_flag='true';;
             P) preprocessing_flag='true';;
             R) preprocessing_flag='false';;
@@ -436,8 +420,6 @@ function construct_pct_path()
     #echo "${output_path}"
     if [[ $data_direction == "${raw_data_link_folder}" ]]; then REPLY="${input_path}"
     elif [[ $data_direction == "${proj_data_link_folder}" ]]; then REPLY="${output_path}"; fi
-    #echo "${IO_path}"
-    REPLY="${IO_path}"         
 }
 function set_current_rdata()
 {
@@ -1527,3 +1509,96 @@ function set_gitrcode ()
     fi
 }
 #recon_dirs -p "/ion/pCT_code/git/pCT-collaboration/pCT_Tools/bash/Test_Parameters_1_win.txt" dirs
+    usage()
+    {
+        printc -t 0,34 -b 1,49 --skip='both' "$fname [-h] [-EGT] [-IO] [-o <object name>] [-r <run date>][-n <run # + tag(s)>] [-d <preprocessed data>] [-D <reconstruction date>] -- construct input or output data path for appropriately organized reconstruction data"
+        
+    print "where:\n" 1,33 6,49
+        print_list -s 0 -k "\t-h" -v "show this help text" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-P" -v "preprocessing path request flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-R" -v "reconstruction path request flag (DEFAULT: preprocessing )" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-o" -v "object name (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-r" -v "run date (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-n" -v "run # + tag(s) (REQUIRED)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-d" -v "preprocessed_date (DEFAULT: ${preprocessed_date} (today))" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-D" -v "reconstruction date, if applicable (DEFAULT: ${recon_date} (today))" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-E" -v "Experimental data flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-G" -v "GEANT4 data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-T" -v "TOPAS data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-I" -v "input data flag" -c 1,33,6,49 -C 1,32,5,40
+        print_list -s 0 -k "\t-O" -v "output data flag (DEFAULT)" -c 1,33,6,49 -C 1,32,5,40
+    }
+function printlist()
+{   
+    passarr $1
+    #newarray=( ${array[@]} )
+    local i=1
+    for val in ${array[@]}
+    do
+        echo "$i: ${val}"
+        i=$((i+1))
+   done
+}
+function combine_phantom_naming ()
+{
+    phantom_naming=()
+    local i=0
+    for phant in ${phantom_names[@]}; do
+        phantom_naming+=( "${phantom_names[$i]}(${phantom_IDs[$i]})")
+        i=$((i+1))
+    done
+}
+function print_phantoms ()
+
+function name_raw_data ()
+{
+    print_section "Raw pCT data naming routine" 1,33  5,40
+    printc -t 0,33 -b 1,49 --skip='both' "Which phantom is being scanned (select the #)?" 
+    printlist phantom_naming; printf "\nselection= " ; read phantom_index
+    while [[ ${phantom_index} < 1 || ${phantom_index} > ${#phantom_naming[@]} || `exitcode isnumber $phantom_index` == 1 ]]; do
+        printc -t 1,31 -b 1,49 --skip='both' "ERROR: Invalid selection" ;
+        printc -t 0,33 -b 1,49 --skip='both' "Which phantom is being scanned (select the #)?" ; printf "\nselection= "; read phantom_index
+    done
+    phantom_name=${phantom_names[${phantom_index}]}
+    phantomid=${phantom_ids[${phantom_index}]}
+    if [[ $phantom_name == ${phantom_names[0]} || $phantom_name == ${phantom_names[1]} ]]; then
+        list_tags=( ${calib_tags[@]} )
+        promptmsg="Which of the following tags apply (enter list #)?"
+    else
+        list_tags=( ${phantom_tags[@]} )
+        promptmsg="Do any of the following tags apply (type the #s that apply separated by spaces)?"
+    fi
+    #echo list_tags=${list_tags[@]}
+    printc -t 0,33 -b 1,49 --skip='both' "$promptmsg" 
+    tagstr=''; tag_indices=()
+    printlist list_tags; printf "\nselection= "; read tag_indices
+    #while [[ ${phantom_index} < 1 || ${phantom_index} > ${#tag_indices[@]} || `exitcode isnumber $phantom_index` == 1 ]]; do
+    #    printc -t 1,31 -b 1,49 --skip='both' "ERROR: Invalid selection" ;
+    #    printc -t 0,33 -b 1,49 --skip='both' "Which phantom is being scanned (select the #)?" ; printf "\nselection= "; read tag_indices
+    #done
+    tag_indices=( ${tag_indices[@]} )
+    #echo ${tag_indices[@]}
+    for tagind in ${tag_indices[@]}; do tagstr="${tagstr}_${list_tags[${tagind}]}"; done
+    #echo "$tagstr"
+    printc -t 0,33 -b 1,49 --skip='both' "Enter the run number as 4 digits: XXXX" ; printf "\nselection= "; read runnum
+    while [[ ${#runnum} != 4 || `exitcode isnumber $runnum` == 1 ]]; do
+        printc -t 1,31 -b 1,49 --skip='both' "ERROR: Invalid run number provided" ;
+        printc -t 0,33 -b 1,49 --skip='both' "Enter the run number as 4 digits: XXXX" ; printf "\nselection= "; read runnum
+    done
+    printc -t 0,33 -b 1,49 --skip='both' "Is this a continuous scan? (y/n)" ; printf "\nselection= "; read is_cont
+    while [[ ${is_cont} != "y" && ${is_cont} != "n" ]]; do
+        printc -t 1,31 -b 1,49 --skip='both' "ERROR: Invalid entry" ;
+        printc -t 0,33 -b 1,49 --skip='both' "Is this a continuous scan? (y/n)" ; printf "\nselection= "; read is_cont
+    done
+    if [[ $is_cont == "y" ]]; then 
+        tagstr="${tagstr}_${continuous_tag}_000"; 
+    else
+        printc -t 0,33 -b 1,49 --skip='both' "Enter the projection angle as 3 digits: XXX" ; printf "\nselection= "; read gantangle
+        while [[ ${#gantangle} != 3 || `exitcode isnumber $gantangle` == 1 ]]; do
+            printc -t 1,31 -b 1,49 --skip='both' "ERROR: Invalid projection angle provided" ;
+            printc -t 0,33 -b 1,49 --skip='both' "Enter the projection angle as 3 digits: XXX" ; printf "\nselection= "; read gantangle
+        done
+        tagstr="${tagstr}_${gantangle}"; 
+    fi
+    printc -t 0,33 -b 1,49 --skip='both' "filename = ${phantomid}_${runnum}${tagstr}.dat"
+}

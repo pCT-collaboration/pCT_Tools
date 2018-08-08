@@ -52,6 +52,7 @@ alias defof='declare -f'
 alias findfn='compgen -A function | grep'
 alias findal='compgen -a | grep'
 alias finddefof='declare -f|grep'
+alias undef='unset -f'
 alias getpbsnodelist='pbsnodes -a | grep -v = | sed '/^\s*$/d'| sort -d'
 alias delnp='tr -dc '[[:print:]]' '
 alias cutcr="tr -d '\n'"

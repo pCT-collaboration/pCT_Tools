@@ -557,3 +557,17 @@ current_tardis_group_rcode_path="${tardis_rcode_path}/${recon_group}${git_code_f
 #--------------- Set current Kodiak/Tardis preprocessing code source paths -------------------#
 current_pcode_account="${pct_collab_git_account}"
 current_pcode_repo="${pcode_git_repo}"
+###################################################################################################
+########### Phantom related info #############
+###################################################################################################
+phantom_names=( "Empty" "Calibration" "Calibration" "Rod" "Water"    "CTP404_Sensitom" "CTP528_Linepair" "CTP515_Low_Contrast" "CTP554_Dose" "HN715_PedHead_0" "HN715_PedHead_1" "LMU_DECT" "CIRS_Edge" "Birks")
+phantom_IDs=( "Emp"  "CalEmp" "Calib" "Rod" "Water" "Sensitom" "LinePair" "LowCon" "Dose16" "CIRSPHP0" "CIRSPHP1" "LMUDECT" "CIRSEdge" "Birks")
+phantom_ids=( ${phantom_IDs[@]})
+phantom_aliases=( ${phantom_IDs[@]})
+calib_tags=('emp' '0b' '1b' '2b' '3b' '4b' 'nst4b' '1bnw' '2bnw' '3bnw' '4bnw' )
+phantom_lctags=('per' 'cen' 'sup' 'inf' 'top' 'bot')
+phantom_tags=('Per' 'Cen' 'Sup' 'Inf' 'Top' 'Bot')
+continuous_tag='Cont'
+    
+
+    

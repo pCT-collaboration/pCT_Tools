@@ -61,8 +61,8 @@ macro "merge_data_control"
 	RIGHT_BRACKET_STRING 							= "]";										// String constant: right carat character string
 	NEWLINE_CMD_STRING								= "\n";
 	TAB_CMD_STRING									= "\t";
-	TAB_AS_SPACES_STRING							= string_tab_construction(USE_TAB_SPACES_STRING, NUM_TAB_SPACES);	
-	TAB_STRING										= string_tab_construction(exporting_log, NUM_TAB_SPACES);	
+	//TAB_AS_SPACES_STRING							= string_tab_construction(USE_TAB_SPACES_STRING, NUM_TAB_SPACES);	
+	//TAB_STRING										= string_tab_construction(exporting_log, NUM_TAB_SPACES);	
 	PADDED_EQUALS_STRING 							= SPACE_STRING + EQUALS_STRING + SPACE_STRING;
 	PADDED_PLUS_SIGN_STRING							= SPACE_STRING + PLUS_SIGN_STRING + SPACE_STRING;
 	TRUE_STRING										= "true";
@@ -187,7 +187,7 @@ macro "merge_data_control"
 		TEST_BATCH_DIR 						= reconstruction_data_directory + PHANTOM_NAME_FOLDER + experimental_data_folder + FOLDER_SEPARATOR + "B_25600" + FOLDER_SEPARATOR;		
 	print(TEST_BATCH_DIR);
 	
-	parameter_test_number						= 6;
+	parameter_test_number						= 1;
 	parameter_test_info_filename				= PARAMETER_TEST_INFO_BASENAME + d2s(parameter_test_number, 0)  + TXT;
 	parameter_test_info 						= file_2_array(GITHUB_MACRO_CONFIGS_SUBDIR, parameter_test_info_filename, false);
 	num_parameters 								= parameter_test_info.length;
@@ -215,17 +215,18 @@ macro "merge_data_control"
 	//************************************************************ Iteratively run merge_data.ijm macro for each parameter value combination  *************************************************************************//
 	//***********************************************************************************************************************************************************************************************************//
 	//***********************************************************************************************************************************************************************************************************//
-	allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
+	//allowed_parameter_string_prefixes			= newArray("TV", "A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A", "L");
 	//allowed_parameter_string_prefixes			= newArray("A");
+allowed_parameter_string_prefixes			= newArray("L");
 
 	App("", parameter_values);
 	for(i = 0; i < num_parameters - 1; i++)
 	{
 		if(num_parameter_values[i] > 1 && isMember(parameter_string_prefixes[i], allowed_parameter_string_prefixes))
 		{
-			print_section_separator				("Merging data for multiplot parameter w/ prefix = " + allowed_parameter_string_prefixes[i], true);
-			macroargs							= allowed_parameter_string_prefixes[i] + "-" + TEST_BATCH_DIR;
+			print_section_separator				("Merging data for multiplot parameter w/ prefix = " + parameter_string_prefixes[i], true);
+			macroargs							= parameter_string_prefixes[i] + "-" + TEST_BATCH_DIR;
 			runMacro							(merge_ROI_analysis_files_macro_path, macroargs);
 			autobreak();					
 		}
